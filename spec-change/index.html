@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사양변경 관리 | iloom SCM 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --brand:#c80a1e; --text:#333; --text-sub:#999;
+  --border:#E0E0E0; --bg:#fff; --bg-alt:#F8F8F8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:var(--bg-alt);color:var(--text);font-size:14px;letter-spacing:-0.2px;line-height:1.6}
+.page-wrap{max-width:1400px;margin:0 auto;padding:24px 16px}
+
+/* 헤더 */
+.header{background:var(--bg);border:1px solid var(--border);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-logo{font-family:Montserrat,sans-serif;font-weight:700;font-size:24px;color:var(--brand)}
+.header-logo .divider{display:inline-block;width:1px;height:16px;background:var(--border);margin:0 10px;vertical-align:middle}
+.header-logo .sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:14px;color:var(--text)}
+.header-meta{font-size:12px;color:var(--text-sub);text-align:right;line-height:1.6;font-family:Montserrat,sans-serif}
+.header-meta strong{color:var(--text);font-weight:600}
+.notice{font-size:11.5px;color:var(--brand);background:#fdf2f3;border:1px solid #fad1d5;padding:6px 10px;margin-bottom:14px}
+
+/* 요약 그리드 */
+.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+@media (max-width:1100px){.summary-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:600px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{background:#fff;border:1px solid var(--border);padding:14px 16px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:transform .15s}
+.kpi-card:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.kpi-value{font-family:Montserrat,sans-serif;font-size:26px;font-weight:700;color:#333;line-height:1.1;letter-spacing:-.5px}
+.kpi-label{font-size:12px;color:#999;font-weight:500}
+.kpi-sub{font-size:10px;color:#bbb;margin-top:2px}
+.kpi-card.urgent{border-left:3px solid var(--brand)}
+.kpi-card.urgent .kpi-value,.kpi-card.urgent .kpi-label{color:var(--brand)}
+.kpi-card.monitor{border-left:3px solid #f59e0b}
+.kpi-card.monitor .kpi-value,.kpi-card.monitor .kpi-label{color:#d97706}
+.kpi-card.ready{border-left:3px solid #059669}
+.kpi-card.ready .kpi-value,.kpi-card.ready .kpi-label{color:#059669}
+.kpi-card.selected{box-shadow:0 0 0 2px var(--brand)}
+.kpi-card.urgent.selected{box-shadow:0 0 0 2px var(--brand);background:#fef2f2}
+.kpi-card.monitor.selected{box-shadow:0 0 0 2px #f59e0b;background:#fffbeb}
+.kpi-card.ready.selected{box-shadow:0 0 0 2px #059669;background:#f0fdf4}
+
+/* 빠른 목록 */
+.quick-panel{background:#fff;border:1px solid var(--border);margin-bottom:20px}
+.quick-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.quick-title{font-size:14px;font-weight:600}
+.quick-count{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;background:#f3f4f6;color:#333;padding:2px 9px;border-radius:10px}
+.btn{padding:6px 14px;border:1px solid var(--border);background:#fff;color:#333;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--bg-alt)}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{opacity:.85;background:var(--brand)}
+.quick-list{padding:2px 0}
+.quick-item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #f0f0f0;text-decoration:none;color:#333;transition:background .1s}
+.quick-item:last-child{border-bottom:none}
+.quick-item:hover{background:#fafafa;color:var(--brand)}
+.q-badge{width:22px;text-align:center;font-size:14px;flex-shrink:0}
+.q-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.q-title{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-sub{font-size:11px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-meta{font-size:11px;color:#999;white-space:nowrap;flex-shrink:0;display:flex;gap:6px;align-items:center}
+.q-meta .dot{color:#d1d5db}
+.q-status-done{color:#059669;font-weight:600}
+.quick-empty{padding:36px 16px;text-align:center;color:#bbb;font-size:13px}
+
+/* 상세 그룹 */
+.group-wrap{margin-bottom:18px;background:#fff;border:1px solid var(--border)}
+.group-wrap[data-status="완료"]{opacity:.8}
+.group-header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#1a1a2e;color:white;flex-wrap:wrap}
+.group-wrap[data-status="완료"] .group-header{background:#064e3b}
+.group-title{font-size:13px;font-weight:700}
+.group-sub{font-size:11px;opacity:.65}
+.group-date{font-size:11px;opacity:.5;margin-left:auto}
+.badge-done{display:inline-flex;align-items:center;gap:3px;background:#10b981;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;white-space:nowrap;background:#fff}
+thead th{background:#2d2d4e;color:#fff;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;border-right:1px solid #3d3d5e}
+thead th:last-child{border-right:none}
+tbody tr{border-bottom:1px solid #f0f0f0}
+td{padding:7px 10px;text-align:right;border-right:1px solid #f0f0f0;font-size:12px}
+td:last-child{border-right:none}
+td.tl{text-align:left}
+td.tc{text-align:center}
+tr.old-row{background:#fff5f5}
+tr.old-row:hover{background:#ffe4e4}
+tr.new-row{background:#f0fdf4}
+tr.new-row:hover{background:#dcfce7}
+tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
+.badge-old{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626}
+.badge-new{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#d1fae5;color:#059669}
+.chk-danger{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#fee2e2;color:#dc2626}
+.chk-ok{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669}
+.chk-none{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#f3f4f6;color:#9ca3af}
+
+/* 스크롤 하이라이트 */
+@keyframes groupFlash{
+  0%{box-shadow:0 0 0 3px rgba(200,10,30,0)}
+  30%{box-shadow:0 0 0 3px rgba(200,10,30,.45)}
+  100%{box-shadow:0 0 0 3px rgba(200,10,30,0)}
+}
+.group-wrap.flash{animation:groupFlash 1.4s ease-out}
+</style>
+</head>
+<body>
+
+<style>
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;line-height:1;display:inline-flex;align-items:center}
+.iloom-nav-logo .iloom-nav-divider{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .iloom-nav-sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333;letter-spacing:0}
+.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.iloom-tab.placeholder{color:#bbb;cursor:not-allowed}
+.iloom-tab.placeholder:hover{color:#bbb}
+.iloom-tab .badge-soon{font-size:9px;background:#F8F8F8;color:#999;padding:1px 5px;margin-left:4px;border-radius:0;font-weight:500;letter-spacing:0.3px}
+@media(max-width:700px){
+  .iloom-nav-inner{gap:0}
+  .iloom-nav-logo{padding:10px 0;font-size:18px}
+  .iloom-tab{padding:10px 10px;font-size:12px}
+}
+</style>
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <div class="iloom-nav-tabs">
+<a class="iloom-tab active" href="../spec-change/">사양변경</a>
+<a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+<a class="iloom-tab" href="../new-product/">신제품 분석</a>
+<a class="iloom-tab" href="../cumulative/">누적재고관리</a>
+<a class="iloom-tab" href="../supply/">공급량 관리</a>
+<a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
+<a class="iloom-tab" href="../scp/">SCP 실적현황</a>
+    </div>
+  </div>
+</nav>
+<div class="page-wrap">
+  <div class="header">
+    <div>
+      <div class="header-logo">iloom<span class="divider"></span><span class="sub">사양변경 관리</span></div>
+    </div>
+    <div class="header-meta">
+      재고 기준일자: <strong>2026-06-17</strong><br>
+      생성시각: <strong>2026-06-17 14:50</strong>
+    </div>
+  </div>
+  <div class="notice">※ 이 페이지는 2026-06-17 14:50 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
+
+  <!-- 상단 요약 -->
+  <div class="summary-grid">
+    <div class="kpi-card" id="kpi-active" onclick="setView('active')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">진행중</div>
+    </div>
+    <div class="kpi-card" id="kpi-done" onclick="setView('done')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">완료</div>
+    </div>
+    <div class="kpi-card" id="kpi-this_month" onclick="setView('this_month')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">이번 달 등록</div>
+    </div>
+    <div class="kpi-card urgent" id="kpi-urgent" onclick="setView('urgent')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">🔴 긴급</div>
+      <div class="kpi-sub">구재고 소진 임박 + 신사양 미입고</div>
+    </div>
+    <div class="kpi-card monitor" id="kpi-monitor" onclick="setView('monitor')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">🟡 모니터링</div>
+      <div class="kpi-sub">구재고 여유 + 신사양 미입고</div>
+    </div>
+    <div class="kpi-card ready" id="kpi-ready" onclick="setView('ready')">
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">🟢 전환 가능</div>
+      <div class="kpi-sub">신사양 입고 완료</div>
+    </div>
+  </div>
+
+  <!-- 필터링된 목록 -->
+  <div class="quick-panel">
+    <div class="quick-header">
+      <span class="quick-title" id="quickTitle">진행중 사양변경</span>
+      <span class="quick-count" id="quickCount">0건</span>
+      <button class="btn" onclick="setView('all')" style="margin-left:auto;">전체 보기</button>
+      <button class="btn btn-primary" onclick="downloadXlsx()">⬇ 엑셀</button>
+    </div>
+    <div class="quick-list" id="quickList">
+
+    </div>
+    <div class="quick-empty" id="quickEmpty" style="display:none;">해당 조건의 사양변경이 없습니다</div>
+  </div>
+
+  <!-- 상세 그룹 -->
+  <div id="group-list">
+
+  </div>
+</div>
+
+<script>
+const EXPORT_ROWS = [];
+const VIEW_TITLES = {
+  active:'진행중 사양변경', done:'완료된 사양변경', this_month:'이번 달 등록된 사양변경',
+  urgent:'🔴 긴급 대응 필요', monitor:'🟡 모니터링', ready:'🟢 전환 가능 (완료처리 대기)',
+  all:'전체 사양변경'
+};
+
+function _matchesView(el, mode) {
+  const status = el.dataset.status;
+  const risk = el.dataset.risk;
+  const tm = el.dataset.thisMonth === '1';
+  switch(mode) {
+    case 'active': return status === '진행중';
+    case 'done': return status === '완료';
+    case 'this_month': return tm;
+    case 'urgent': return status === '진행중' && risk === 'urgent';
+    case 'monitor': return status === '진행중' && risk === 'monitor';
+    case 'ready': return status === '진행중' && risk === 'ready';
+    case 'all': return true;
+  }
+  return true;
+}
+
+function setView(mode) {
+  ['active','done','this_month','urgent','monitor','ready'].forEach(m => {
+    const el = document.getElementById('kpi-' + m);
+    if (el) el.classList.toggle('selected', m === mode);
+  });
+  let visible = 0;
+  document.querySelectorAll('.quick-item').forEach(el => {
+    const show = _matchesView(el, mode);
+    el.style.display = show ? '' : 'none';
+    const gid = el.getAttribute('href').replace('#','');
+    const g = document.getElementById(gid);
+    if (g) g.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('quickTitle').textContent = VIEW_TITLES[mode] || '사양변경';
+  document.getElementById('quickCount').textContent = visible + '건';
+  document.getElementById('quickEmpty').style.display = visible === 0 ? '' : 'none';
+  location.hash = mode === 'active' ? '' : mode;
+}
+
+function goTo(e, id) {
+  e.preventDefault();
+  setView('all');
+  setTimeout(() => {
+    const el = document.getElementById('group-' + id);
+    if (!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }, 60);
+}
+
+function downloadXlsx() {
+  // 현재 필터 상태에서 보이는 quick-item에 해당하는 그룹만 내보냄
+  const visibleIds = new Set();
+  document.querySelectorAll('.quick-item').forEach(el => {
+    if (el.style.display !== 'none') {
+      const gid = el.getAttribute('href').replace('#group-','');
+      visibleIds.add(gid);
+    }
+  });
+  // EXPORT_ROWS는 그룹 id가 없으므로 현재 모드와 동일한 전체 export (필터 무시).
+  // 간단히 지금 보이는 그룹에 속한 행을 내보내는 건 데이터 링크가 필요 — 현재는 전체 내보냄.
+  if (!EXPORT_ROWS.length) { alert('내보낼 데이터가 없습니다.'); return; }
+  const today = new Date();
+  const ds = today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0');
+  const header = Object.keys(EXPORT_ROWS[0]);
+  const aoa = [header, ...EXPORT_ROWS.map(r => header.map(h => r[h]))];
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = header.map((h, i) => ({wch: Math.max(h.length, i < 10 ? 12 : 10) + 2}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '사양변경관리');
+  XLSX.writeFile(wb, `일룸_사양변경관리_${ds}.xlsx`);
+}
+
+// 초기 뷰 — hash 유지
+document.addEventListener('DOMContentLoaded', () => {
+  const hash = location.hash.replace('#','');
+  const valid = ['done','this_month','urgent','monitor','ready','all'];
+  setView(valid.includes(hash) ? hash : 'active');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>운영품목 현황 | iloom SCM 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', 'Montserrat', sans-serif; background: #FFFFFF; color: #333333; font-size: 14px; letter-spacing: -0.2px; }
+
+/* 상단 네비 */
+.nav {
+  background: #FFFFFF;
+  color: #333333;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  gap: 0;
+  border-bottom: 1px solid #E0E0E0;
+}
+.nav-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-right: 32px;
+  white-space: nowrap;
+  color: #c80a1e;
+}
+.nav-brand span { color: #333333; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 500; margin-left: 8px; }
+.nav-menu { display: flex; gap: 0; flex: 1; align-items: center; height: 100%; }
+.nav-item {
+  padding: 0 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  color: #333333;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.nav-item:hover { color: #c80a1e; }
+.nav-item.active { color: #c80a1e; border-bottom-color: #c80a1e; font-weight: 700; }
+.nav-right { font-size: 12px; color: #999999; white-space: nowrap; display: flex; align-items: center; gap: 12px; }
+.nav-right .ref-date { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #F8F8F8; border: 1px solid #E0E0E0; color: #333333; font-weight: 500; }
+.nav-right .ref-date::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #c80a1e; }
+.nav-right .ref-date.loading::before { background: #999999; }
+.nav-right .ref-date .label { color: #999999; font-weight: 400; }
+
+/* 메인 컨텐츠 */
+.main { padding: 32px 24px; max-width: 1700px; margin: 0 auto; }
+
+/* 공통 카드 */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  margin-bottom: 20px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #E0E0E0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title { font-size: 16px; font-weight: 500; color: #333333; letter-spacing: -0.2px; }
+.card-body { padding: 20px; }
+
+/* 공통 버튼 */
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+  letter-spacing: -0.2px;
+}
+.btn-primary { background: #c80a1e; color: #FFFFFF; border-color: #c80a1e; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-danger { background: #FFFFFF; color: #c80a1e; border: 1px solid #c80a1e; }
+.btn-danger:hover { background: #c80a1e; color: #FFFFFF; }
+.btn-ghost { background: #FFFFFF; color: #333333; border: 1px solid #E0E0E0; }
+.btn-ghost:hover { background: #F8F8F8; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* 공통 폼 */
+.form-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 12px; font-weight: 500; color: #999999; }
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  background: #FFFFFF;
+  outline: none;
+  font-family: inherit;
+  color: #333333;
+}
+.form-input:focus { border-color: #c80a1e; background: #FFFFFF; }
+
+/* 알림 */
+.alert {
+  padding: 12px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.alert-error { background: #FFFFFF; color: #c80a1e; border-left: 3px solid #c80a1e; }
+.alert-info { background: #F8F8F8; color: #333333; border-left: 3px solid #333333; }
+
+/* ─────────── 공통: 일룸 코드 / 세트 구성단품 모달 ─────────── */
+.iloom-code {
+  color: #c80a1e; cursor: pointer;
+  font-family: 'Montserrat', monospace; font-weight: 600;
+  text-decoration: none;
+}
+.iloom-code:hover { text-decoration: underline; }
+.iloom-code-go {
+  display: inline-block; margin-left: 6px;
+  padding: 1px 6px; font-size: 10px; font-family: inherit;
+  background: #fff; border: 1px solid #c80a1e; color: #c80a1e;
+  cursor: pointer; border-radius: 0;
+  vertical-align: middle; line-height: 1.4;
+  text-decoration: none; transition: all 0.15s;
+}
+.iloom-code-go:hover { background: #c80a1e; color: #fff; text-decoration: none; }
+.iloom-modal-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center;
+}
+.iloom-modal-overlay.show { display: flex; }
+.iloom-modal-box {
+  background: #fff; min-width: 760px; max-width: 90vw; max-height: 80vh;
+  border: 1px solid #E0E0E0; display: flex; flex-direction: column;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.iloom-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid #E0E0E0;
+}
+.iloom-modal-title { font-size: 14px; font-weight: 600; color: #333; }
+.iloom-modal-actions { display: flex; gap: 8px; align-items: center; }
+.iloom-modal-go {
+  font-size: 11px; padding: 3px 10px; border: 1px solid #c80a1e;
+  color: #c80a1e; text-decoration: none; background: #fff;
+}
+.iloom-modal-go:hover { background: #c80a1e; color: #fff; }
+.iloom-modal-close {
+  border: none; background: none; font-size: 22px; line-height: 1;
+  cursor: pointer; color: #999; padding: 0;
+}
+.iloom-modal-close:hover { color: #c80a1e; }
+.iloom-modal-content { padding: 14px 18px; overflow: auto; }
+.iloom-modal-content table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.iloom-modal-content th {
+  background: #333; color: #fff; padding: 8px 10px;
+  text-align: left; font-weight: 700; font-size: 11px;
+}
+.iloom-modal-content th.num,
+.iloom-modal-content td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.iloom-modal-content td { padding: 7px 10px; border-bottom: 1px solid #F0F0F0; }
+.iloom-modal-content tbody tr:hover td { background: #fdf5f5; }
+.iloom-modal-empty { padding: 32px; text-align: center; color: #999; font-size: 12px; }
+
+/* 일룸 홈페이지 iframe 팝업 (큰 사이즈) */
+.iloom-modal-box.iloom-page-box {
+  width: 92vw; max-width: 1280px; height: 88vh; max-height: 88vh;
+  min-width: 760px;
+}
+.iloom-page-frame-wrap {
+  flex: 1; padding: 0; overflow: hidden; background: #F8F8F8; position: relative;
+}
+.iloom-page-frame-wrap iframe {
+  width: 100%; height: 100%; border: none; background: #fff;
+}
+.iloom-page-fallback {
+  position: absolute; inset: 0; display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: #666; font-size: 13px; text-align: center; padding: 24px;
+}
+.iloom-page-fallback.show { display: flex; }
+
+/* ══════ 컬럼 우클릭 검색 (글로벌) ══════ */
+.iloom-col-filter-popover {
+  position: absolute; z-index: 10000;
+  background: #fff; border: 1px solid #d4d4d8;
+  border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 10px 12px; min-width: 240px;
+  font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-title {
+  font-size: 11px; font-weight: 700; color: #333; margin-bottom: 6px;
+}
+.iloom-col-filter-popover .icfp-input {
+  width: 100%; box-sizing: border-box; padding: 6px 9px;
+  border: 1px solid #d4d4d8; border-radius: 5px; font-size: 12px;
+  outline: none; font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-input:focus { border-color: #c80a1e; }
+.iloom-col-filter-popover .icfp-hint {
+  font-size: 10px; color: #999; margin-top: 4px;
+}
+.iloom-col-filter-popover .icfp-actions {
+  display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;
+}
+.iloom-col-filter-popover .icfp-btn {
+  padding: 4px 10px; font-size: 11px; cursor: pointer;
+  border: 1px solid #ddd; border-radius: 4px; background: #fff;
+  font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-btn.icfp-apply {
+  background: #c80a1e; color: #fff; border-color: #c80a1e;
+}
+.iloom-col-filter-popover .icfp-btn.icfp-clear:hover { background: #f3f4f6; }
+
+/* 필터 활성 컬럼 표시 */
+th.iloom-col-filter-active {
+  box-shadow: inset 0 -3px 0 #c80a1e !important;
+  position: relative;
+}
+th.iloom-col-filter-active::after {
+  content: '🔍'; font-size: 9px; margin-left: 4px; opacity: 0.7;
+}
+
+/* 우클릭 가능 안내 (전역 미세 표시) */
+.iloom-col-filter-hint {
+  display: inline-block; font-size: 10px; color: #999;
+  margin: 4px 0; padding: 2px 6px; background: #f3f4f6; border-radius: 3px;
+}
+</style>
+
+</head>
+<body>
+
+<style>
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;line-height:1;display:inline-flex;align-items:center}
+.iloom-nav-logo .iloom-nav-divider{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .iloom-nav-sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333;letter-spacing:0}
+.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.iloom-tab.placeholder{color:#bbb;cursor:not-allowed}
+.iloom-tab.placeholder:hover{color:#bbb}
+.iloom-tab .badge-soon{font-size:9px;background:#F8F8F8;color:#999;padding:1px 5px;margin-left:4px;border-radius:0;font-weight:500;letter-spacing:0.3px}
+@media(max-width:700px){
+  .iloom-nav-inner{gap:0}
+  .iloom-nav-logo{padding:10px 0;font-size:18px}
+  .iloom-tab{padding:10px 10px;font-size:12px}
+}
+</style>
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <div class="iloom-nav-tabs">
+<a class="iloom-tab" href="../spec-change/">사양변경</a>
+<a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+<a class="iloom-tab" href="../new-product/">신제품 분석</a>
+<a class="iloom-tab" href="../cumulative/">누적재고관리</a>
+<a class="iloom-tab" href="../supply/">공급량 관리</a>
+<a class="iloom-tab active" href="../sku-status/">운영품목 현황</a>
+<a class="iloom-tab" href="../scp/">SCP 실적현황</a>
+    </div>
+  </div>
+</nav>
+
+
+<div class="main">
+  
+<style>
+  .ss-head { display:flex; align-items:baseline; gap:14px; margin-bottom:18px; flex-wrap:wrap; }
+  .ss-head h1 { font-size:22px; font-weight:700; letter-spacing:-0.5px; }
+  .ss-head .sub { color:#999; font-size:13px; }
+  .ss-card { margin-bottom:28px; }
+  .ss-sec-title { font-size:15px; font-weight:700; color:#333; margin:0 0 4px; }
+  .ss-sec-desc { color:#999; font-size:12px; margin:0 0 12px; }
+
+  table.pivot { border-collapse:collapse; width:100%; font-size:12.5px; font-variant-numeric:tabular-nums; }
+  table.pivot th, table.pivot td { border:1px solid #E0E0E0; padding:6px 8px; white-space:nowrap; }
+  table.pivot thead th { background:#F8F8F8; color:#333; font-weight:700; text-align:center; }
+  table.pivot tbody td { text-align:right; }
+  table.pivot tbody td.lbl { text-align:center; font-weight:500; background:#FCFCFC; }
+  table.pivot tbody td.grp { text-align:center; font-weight:700; background:#F4F4F4; }
+  table.pivot tr.subtotal td { background:#FFF7C0; font-weight:700; }
+  table.pivot tr.subtotal td.lbl { background:#FBEF9E; }
+  table.pivot tr.total td { background:#FFF1A8; font-weight:700; }
+  table.pivot .pos { color:#c80a1e; }
+  table.pivot .neg { color:#1d4ed8; }
+  table.pivot .zero { color:#bbb; }
+  .ss-wrap { overflow-x:auto; }
+  .badge-prev { font-size:11px; color:#999; background:#F8F8F8; border:1px solid #E0E0E0; padding:2px 8px; }
+
+  table.pivot tr.prevcmp td { background:#F4F7FB; color:#555; font-size:11.5px; }
+  table.pivot tr.prevcmp td.lbl { background:#EAF0F8; font-weight:500; color:#555; }
+  /* 전월비 행 증감 색상 (회색 override보다 우선) */
+  table.pivot tr.prevcmp td.pos { color:#c80a1e; font-weight:600; }
+  table.pivot tr.prevcmp td.neg { color:#1d4ed8; font-weight:600; }
+  table.pivot tr.prevcmp td.zero { color:#bbb; }
+  /* 요약 카드 배지 색상 */
+  .ss-summary .pos { color:#c80a1e; font-weight:700; }
+  .ss-summary .neg { color:#1d4ed8; font-weight:700; }
+  .ss-summary .zero { color:#bbb; }
+
+  .ss-summary { background:#F8F8F8; border:1px solid #E0E0E0; padding:12px 16px; margin:0 0 14px; }
+  .ss-sum-title { font-size:12px; color:#999; margin-bottom:8px; }
+  .ss-sum-grid { display:flex; gap:40px; flex-wrap:wrap; }
+  .ss-sum-item { display:flex; gap:16px; align-items:baseline; font-variant-numeric:tabular-nums; }
+  .ss-sum-label { font-weight:700; color:#333; min-width:62px; }
+  .ss-sum-metric { color:#666; }
+  .ss-sum-metric b { color:#333; font-weight:700; }
+
+  .ss-movers { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .ss-movers-label { font-size:12px; color:#999; margin-right:2px; }
+  .ss-mover { font-size:12px; padding:2px 9px; border:1px solid #E0E0E0; background:#fff; font-variant-numeric:tabular-nums; }
+  .ss-mover.pos { color:#c80a1e; border-color:#f0c4c9; }
+  .ss-mover.neg { color:#1d4ed8; border-color:#c4cef0; }
+  .ss-cause { margin-top:10px; font-size:12.5px; color:#444; background:#fff; border-left:3px solid #c80a1e; padding:8px 12px; }
+  .ss-cause b { color:#c80a1e; }
+  .ss-cause-note { margin-top:5px; color:#333; }
+  .ss-cause-note b { color:#1f6feb; }
+</style>
+
+<div class="ss-head">
+  <h1>운영품목 현황</h1>
+  <span class="sub">양지센터 SKU · 공장도가 기준</span>
+  <span class="sub">· 재고기준 2026-06-17</span>
+  <span class="sub">· 2026-06</span>
+</div>
+
+
+
+
+<div class="card ss-card">
+  <div class="card-body">
+    <p class="ss-sec-title">운영품목 SKU 현황</p>
+    <p class="ss-sec-desc">운영품목 = 사용(0재고 포함) + 개발·단종(현재고&gt;0) · 재고보유 = 현재고&gt;0 · 금액 단위: 백만원(공장도가)</p>
+
+    
+    
+    
+    <div class="ss-summary">
+      <div class="ss-sum-title">전월 대비
+        — 전월 스냅샷 없음 (다음 달부터 표시)
+      </div>
+      <div class="ss-sum-grid">
+        
+          
+          <div class="ss-sum-item">
+            <span class="ss-sum-label">운영품목</span>
+            <span class="ss-sum-metric">품목수 <b>6,114</b> <span class="zero">–</span></span>
+          </div>
+        
+          
+          <div class="ss-sum-item">
+            <span class="ss-sum-label">재고보유</span>
+            <span class="ss-sum-metric">품목수 <b>5,076</b> <span class="zero">–</span></span>
+          </div>
+        
+        
+        
+        <div class="ss-sum-item">
+          <span class="ss-sum-label">재고금액</span>
+          <span class="ss-sum-metric"><b>13,407.2</b>백만 <span class="zero">–</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ss-wrap">
+    <table class="pivot">
+      <thead>
+        <tr>
+          <th rowspan="2" colspan="2" class="no-filter">2026-06</th>
+          <th colspan="4">품목수</th>
+          <th colspan="4">수량</th>
+          <th colspan="4">재고금액 (공장도가, 백만원)</th>
+          <th colspan="4">수량 / 품목수</th>
+        </tr>
+        <tr>
+          
+            <th>사용</th><th>개발</th><th>단종</th><th>합계</th>
+          
+            <th>사용</th><th>개발</th><th>단종</th><th>합계</th>
+          
+            <th>사용</th><th>개발</th><th>단종</th><th>합계</th>
+          
+            <th>사용</th><th>개발</th><th>단종</th><th>합계</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        
+        
+        
+          
+            
+            <tr class="">
+              <td class="grp" rowspan="4">운영품목</td>
+              <td class="lbl">재고</td>
+              
+                <td>4,157</td>
+              
+                <td>110</td>
+              
+                <td>3</td>
+              
+                <td>4,270</td>
+              
+              
+                <td>221,946</td>
+              
+                <td>5,762</td>
+              
+                <td>4</td>
+              
+                <td>227,712</td>
+              
+              
+                <td>11,732.2</td>
+              
+                <td>542.7</td>
+              
+                <td>0.1</td>
+              
+                <td>12,275.0</td>
+              
+              
+                <td>53.4</td>
+              
+                <td>52.4</td>
+              
+                <td>1.3</td>
+              
+                <td>53.3</td>
+              
+            </tr>
+          
+            
+            <tr class="">
+              
+              <td class="lbl">비재고</td>
+              
+                <td>1,772</td>
+              
+                <td>71</td>
+              
+                <td>1</td>
+              
+                <td>1,844</td>
+              
+              
+                <td>22,616</td>
+              
+                <td>678</td>
+              
+                <td>1</td>
+              
+                <td>23,295</td>
+              
+              
+                <td>1,096.1</td>
+              
+                <td>36.1</td>
+              
+                <td>0.0</td>
+              
+                <td>1,132.2</td>
+              
+              
+                <td>12.8</td>
+              
+                <td>9.5</td>
+              
+                <td>1.0</td>
+              
+                <td>12.6</td>
+              
+            </tr>
+          
+            
+            <tr class="subtotal">
+              
+              <td class="lbl">소계</td>
+              
+                <td>5,929</td>
+              
+                <td>181</td>
+              
+                <td>4</td>
+              
+                <td>6,114</td>
+              
+              
+                <td>244,562</td>
+              
+                <td>6,440</td>
+              
+                <td>5</td>
+              
+                <td>251,007</td>
+              
+              
+                <td>12,828.3</td>
+              
+                <td>578.8</td>
+              
+                <td>0.1</td>
+              
+                <td>13,407.2</td>
+              
+              
+                <td>41.2</td>
+              
+                <td>35.6</td>
+              
+                <td>1.2</td>
+              
+                <td>41.1</td>
+              
+            </tr>
+          
+          
+          
+          <tr class="prevcmp">
+            <td class="lbl">전월비</td>
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+            
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+          </tr>
+        
+          
+            
+            <tr class="">
+              <td class="grp" rowspan="4">재고보유</td>
+              <td class="lbl">재고</td>
+              
+                <td>4,051</td>
+              
+                <td>110</td>
+              
+                <td>3</td>
+              
+                <td>4,164</td>
+              
+              
+                <td>221,946</td>
+              
+                <td>5,762</td>
+              
+                <td>4</td>
+              
+                <td>227,712</td>
+              
+              
+                <td>11,732.2</td>
+              
+                <td>542.7</td>
+              
+                <td>0.1</td>
+              
+                <td>12,275.0</td>
+              
+              
+                <td>54.8</td>
+              
+                <td>52.4</td>
+              
+                <td>1.3</td>
+              
+                <td>54.7</td>
+              
+            </tr>
+          
+            
+            <tr class="">
+              
+              <td class="lbl">비재고</td>
+              
+                <td>840</td>
+              
+                <td>71</td>
+              
+                <td>1</td>
+              
+                <td>912</td>
+              
+              
+                <td>22,631</td>
+              
+                <td>678</td>
+              
+                <td>1</td>
+              
+                <td>23,310</td>
+              
+              
+                <td>1,096.1</td>
+              
+                <td>36.1</td>
+              
+                <td>0.0</td>
+              
+                <td>1,132.2</td>
+              
+              
+                <td>26.9</td>
+              
+                <td>9.5</td>
+              
+                <td>1.0</td>
+              
+                <td>25.6</td>
+              
+            </tr>
+          
+            
+            <tr class="subtotal">
+              
+              <td class="lbl">소계</td>
+              
+                <td>4,891</td>
+              
+                <td>181</td>
+              
+                <td>4</td>
+              
+                <td>5,076</td>
+              
+              
+                <td>244,577</td>
+              
+                <td>6,440</td>
+              
+                <td>5</td>
+              
+                <td>251,022</td>
+              
+              
+                <td>12,828.3</td>
+              
+                <td>578.8</td>
+              
+                <td>0.1</td>
+              
+                <td>13,407.2</td>
+              
+              
+                <td>50.0</td>
+              
+                <td>35.6</td>
+              
+                <td>1.2</td>
+              
+                <td>49.5</td>
+              
+            </tr>
+          
+          
+          
+          <tr class="prevcmp">
+            <td class="lbl">전월비</td>
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+            
+            
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+              
+              
+                <td class="zero">–</td>
+              
+            
+          </tr>
+        
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="card ss-card">
+  <div class="card-body">
+    <p class="ss-sec-title">양지센터 등급별 재고현황</p>
+    <p class="ss-sec-desc">
+      운영등급 × 사용구분 · 공급처 4분류(supply 대시보드 기준) · 재고금액 단위: 원
+      · <span class="badge-prev">전월 스냅샷 없음 (다음 달부터 표시)</span>
+    </p>
+
+    
+    
+    <div class="ss-summary">
+      <div class="ss-sum-title">전월 대비
+        — 전월 스냅샷 없음 (다음 달부터 표시)
+      </div>
+      
+    </div>
+
+    <div class="ss-wrap">
+    <table class="pivot">
+      <thead>
+        <tr>
+          <th colspan="2" class="no-filter">구분</th>
+          <th colspan="5">재고금액</th>
+          <th rowspan="2">비율</th>
+          <th rowspan="2">보유<br>개월</th>
+          <th colspan="2">전월비</th>
+        </tr>
+        <tr>
+          <th>운영</th><th>사용</th>
+          <th>관계사</th><th>베트남</th><th>협력사</th><th>수입상품</th>
+          <th>계</th>
+          <th>재고금액</th><th>비율</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="1">A</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>857,277,600</td>
+            
+              <td>1,578,928,700</td>
+            
+              <td>2,562,961,600</td>
+            
+              <td>400,799,700</td>
+            
+            <td>5,399,967,600</td>
+            <td>40.3%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="1">B</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>406,076,390</td>
+            
+              <td>473,467,930</td>
+            
+              <td>1,331,615,830</td>
+            
+              <td>100,553,550</td>
+            
+            <td>2,311,713,700</td>
+            <td>17.2%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="1">C</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>313,499,800</td>
+            
+              <td>384,996,600</td>
+            
+              <td>1,919,206,735</td>
+            
+              <td>444,410,560</td>
+            
+            <td>3,062,113,695</td>
+            <td>22.8%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="1">D</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>10,569,500</td>
+            
+              <td>46,035,200</td>
+            
+              <td>108,317,960</td>
+            
+              <td>-</td>
+            
+            <td>164,922,660</td>
+            <td>1.2%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="2">N</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>130,493,860</td>
+            
+              <td>83,922,300</td>
+            
+              <td>103,202,090</td>
+            
+              <td>231,352,000</td>
+            
+            <td>548,970,250</td>
+            <td>4.1%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+            <td class="lbl">개발</td>
+            
+              <td>23,437,300</td>
+            
+              <td>81,441,600</td>
+            
+              <td>356,396,683</td>
+            
+              <td>-</td>
+            
+            <td>461,275,583</td>
+            <td>3.4%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="2">O</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>43,326,900</td>
+            
+              <td>-</td>
+            
+              <td>17,809,250</td>
+            
+              <td>-</td>
+            
+            <td>61,136,150</td>
+            <td>0.5%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+            <td class="lbl">개발</td>
+            
+              <td>6,000,000</td>
+            
+              <td>55,559,400</td>
+            
+              <td>14,610,315</td>
+            
+              <td>-</td>
+            
+            <td>76,169,715</td>
+            <td>0.6%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="2">T</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>-</td>
+            
+              <td>34,547,200</td>
+            
+              <td>27,211,700</td>
+            
+              <td>-</td>
+            
+            <td>61,758,900</td>
+            <td>0.5%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+            <td class="lbl">개발</td>
+            
+              <td>-</td>
+            
+              <td>-</td>
+            
+              <td>3,387,000</td>
+            
+              <td>-</td>
+            
+            <td>3,387,000</td>
+            <td>0.0%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+              
+              
+              <td class="grp" rowspan="3">Z</td>
+            
+            <td class="lbl">사용</td>
+            
+              <td>155,577,300</td>
+            
+              <td>129,432,170</td>
+            
+              <td>815,006,730</td>
+            
+              <td>117,684,480</td>
+            
+            <td>1,217,700,680</td>
+            <td>9.1%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+            <td class="lbl">개발</td>
+            
+              <td>9,856,630</td>
+            
+              <td>136,100</td>
+            
+              <td>24,902,790</td>
+            
+              <td>3,105,000</td>
+            
+            <td>38,000,520</td>
+            <td>0.3%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+          <tr>
+            
+            <td class="lbl">단종</td>
+            
+              <td>11,100</td>
+            
+              <td>-</td>
+            
+              <td>94,700</td>
+            
+              <td>-</td>
+            
+            <td>105,800</td>
+            <td>0.0%</td>
+            <td>0.00</td>
+            
+            
+              <td class="zero">–</td><td class="zero">–</td>
+            
+          </tr>
+        
+        
+        
+        <tr class="total">
+          <td class="lbl" colspan="2">합 계</td>
+          <td>1,956,126,380</td><td>2,868,467,200</td><td>7,284,723,383</td><td>1,297,905,290</td>
+          <td>13,407,222,253</td>
+          <td>100%</td>
+          <td>0.00</td>
+          
+            <td class="zero">–</td><td class="zero">–</td>
+          
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+<!-- 공통: 세트 구성단품 모달 (어떤 페이지에서든 IloomCode.handle/openSetComponents 호출 시 사용) -->
+<div class="iloom-modal-overlay" id="iloomSetModal" onclick="if(event.target===this) IloomCode.closeModal()">
+  <div class="iloom-modal-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomSetModalTitle">세트 구성단품</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomSetModalGoLink" href="#" class="iloom-modal-go" onclick="event.preventDefault(); IloomCode.openItem(this.dataset.code)">iloom 홈페이지 보기</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closeModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-modal-content" id="iloomSetModalContent">
+      <div class="iloom-modal-empty">로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 공통: 단품 → 포함 세트 리스트 모달 -->
+<div class="iloom-modal-overlay" id="iloomItemSetsModal" onclick="if(event.target===this) IloomCode.closeItemSetsModal()">
+  <div class="iloom-modal-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomItemSetsModalTitle">포함 세트</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomItemSetsModalGoLink" href="#" class="iloom-modal-go" onclick="event.preventDefault(); IloomCode.openItem(this.dataset.code)">iloom 홈페이지 보기</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closeItemSetsModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-modal-content" id="iloomItemSetsModalContent">
+      <div class="iloom-modal-empty">로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 공통: 일룸 홈페이지 iframe 팝업 -->
+<div class="iloom-modal-overlay" id="iloomPageModal" onclick="if(event.target===this) IloomCode.closePageModal()">
+  <div class="iloom-modal-box iloom-page-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomPageModalTitle">iloom 홈페이지</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomPageModalNewTab" href="#" target="_blank" rel="noopener" class="iloom-modal-go">새 탭으로 열기 ↗</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closePageModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-page-frame-wrap">
+      <iframe id="iloomPageModalFrame" src="about:blank" referrerpolicy="no-referrer"></iframe>
+      <div class="iloom-page-fallback" id="iloomPageModalFallback">
+        <div>일룸 홈페이지가 팝업 안에 표시되지 않을 수 있습니다.</div>
+        <div style="font-size:11px;color:#999">상대 사이트의 보안 정책(X-Frame-Options) 때문일 수 있어요.</div>
+        <a id="iloomPageModalFallbackLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:6px;">새 탭으로 열기 ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ────────── 공통: 일룸 코드 핸들러 (어떤 대시보드에서든 사용) ──────────
+ * 마크업:
+ *   <a class="iloom-code" data-iloom-code="IUX25028" data-iloom-type="set">IUX25028</a>
+ *   - data-iloom-type: 'set' | 'item' | 'auto' (기본 auto: 구성단품 있으면 모달, 없으면 새 탭)
+ *   <a class="iloom-code-go" data-iloom-go="IUX25028">iloom ↗</a>  (← 항상 새 탭으로 일룸 홈페이지)
+ * 헬퍼 (JS 렌더링용):
+ *   IloomCode.cell(code, type)  → '<a class=...>코드</a><a class="iloom-code-go" ...>iloom ↗</a>'
+ *   IloomCode.handle(code, type) / openItem(code) / openSetComponents(code)
+ */
+window.IloomCode = (function() {
+  const PRODUCT_URL = 'https://www.iloom.com/product/detail.do?productCd=';
+  const SET_COMPONENTS_ENDPOINT = '/new-product/set-components/';
+  const SETS_BY_ITEM_ENDPOINT   = '/new-product/sets-by-item/';
+
+  function baseCode(code) { return (code || '').toString().split('-')[0]; }
+  function fmtNum(v) {
+    if (v == null || v === '') return '-';
+    const n = Number(v);
+    if (!isFinite(n)) return '-';
+    return n.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
+  }
+  function escHtml(s) {
+    return (s == null ? '' : String(s))
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function openItem(code) {
+    if (!code) return;
+    const url = PRODUCT_URL + encodeURIComponent(baseCode(code));
+    const modal    = document.getElementById('iloomPageModal');
+    const frame    = document.getElementById('iloomPageModalFrame');
+    const title    = document.getElementById('iloomPageModalTitle');
+    const newTab   = document.getElementById('iloomPageModalNewTab');
+    const fallback = document.getElementById('iloomPageModalFallback');
+    const fbLink   = document.getElementById('iloomPageModalFallbackLink');
+    if (!modal || !frame) {
+      // 모달이 없으면 새 탭으로 폴백
+      window.open(url, '_blank', 'noopener');
+      return;
+    }
+    title.textContent = baseCode(code) + ' · iloom 홈페이지';
+    newTab.href = url;
+    if (fbLink) fbLink.href = url;
+    fallback.classList.remove('show');
+    frame.src = url;
+    modal.classList.add('show');
+
+    // X-Frame-Options 등으로 iframe 로드가 막히면 일정 시간 후 폴백 안내 노출
+    clearTimeout(window._iloomPageFallbackTimer);
+    window._iloomPageFallbackTimer = setTimeout(() => {
+      try {
+        // 동일 오리진이면 contentDocument 접근 가능, 아니면 throw
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        if (!doc || !doc.body || doc.body.children.length === 0) {
+          fallback.classList.add('show');
+        }
+      } catch (e) {
+        // cross-origin 접근 차단 = iframe이 정상 로드되었거나 차단된 경우 둘 다 가능.
+        // 차단 여부를 정확히 알 수 없어 폴백 링크는 헤더에 항상 노출됨.
+      }
+    }, 2500);
+  }
+
+  function openItemNewTab(code) {
+    if (!code) return;
+    window.open(PRODUCT_URL + encodeURIComponent(baseCode(code)), '_blank', 'noopener');
+  }
+
+  function closePageModal() {
+    const modal = document.getElementById('iloomPageModal');
+    const frame = document.getElementById('iloomPageModalFrame');
+    if (frame) frame.src = 'about:blank';
+    if (modal) modal.classList.remove('show');
+    clearTimeout(window._iloomPageFallbackTimer);
+  }
+
+  async function openSetComponents(code) {
+    if (!code) return;
+    const modal     = document.getElementById('iloomSetModal');
+    const titleEl   = document.getElementById('iloomSetModalTitle');
+    const goEl      = document.getElementById('iloomSetModalGoLink');
+    const contentEl = document.getElementById('iloomSetModalContent');
+    if (!modal) return;
+    titleEl.textContent = code + ' · 구성단품';
+    goEl.href = PRODUCT_URL + encodeURIComponent(baseCode(code));
+    goEl.dataset.code = code;  // 헤더 링크 클릭 시 iframe 팝업으로 사용
+    contentEl.innerHTML = '<div class="iloom-modal-empty">로딩 중...</div>';
+    modal.classList.add('show');
+    try {
+      const res = await fetch(SET_COMPONENTS_ENDPOINT + encodeURIComponent(code));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const comps = data.components || [];
+      if (comps.length === 0) {
+        contentEl.innerHTML = '<div class="iloom-modal-empty">구성단품이 없습니다 (단품일 가능성)</div>';
+        return;
+      }
+      const note = data.shipment_status && data.shipment_status !== 'ready'
+        ? `<div style="font-size:11px;color:#999;margin-bottom:8px">⚠ shipment 캐시 ${escHtml(data.shipment_status)} — 단품 월평균출고량 미표시</div>`
+        : '';
+      const rows = comps.map(c => `
+        <tr>
+          <td><a class="iloom-code" data-iloom-code="${escHtml(c.단품코드 + (c.단품색상 ? '-' + c.단품색상 : ''))}" data-iloom-type="item">${escHtml(c.단품코드)}</a></td>
+          <td>${escHtml(c.단품색상 || '')}</td>
+          <td>${escHtml(c.단품명칭 || '')}</td>
+          <td class="num">${fmtNum(c.구성수량)}</td>
+          <td>${escHtml(c.사용구분 || '')}</td>
+          <td class="num">${fmtNum(c.가용재고)}</td>
+          <td class="num">${fmtNum(c.월평균출고량)}</td>
+        </tr>`).join('');
+      contentEl.innerHTML = note + `
+        <table>
+          <thead>
+            <tr>
+              <th>단품코드</th><th>색상</th><th>단품명칭</th>
+              <th class="num">구성수량</th><th>사용구분</th>
+              <th class="num">가용재고</th><th class="num">단품 월평균출고량</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } catch (e) {
+      contentEl.innerHTML =
+        '<div class="iloom-modal-empty" style="color:#c80a1e">조회 실패: ' +
+        escHtml(e.message || String(e)) + '</div>';
+    }
+  }
+
+  function closeModal() {
+    const m = document.getElementById('iloomSetModal');
+    if (m) m.classList.remove('show');
+  }
+
+  async function openItemSets(combo) {
+    if (!combo) return;
+    const modal     = document.getElementById('iloomItemSetsModal');
+    const titleEl   = document.getElementById('iloomItemSetsModalTitle');
+    const goEl      = document.getElementById('iloomItemSetsModalGoLink');
+    const contentEl = document.getElementById('iloomItemSetsModalContent');
+    if (!modal) return openItem(combo);  // 폴백: 모달 없으면 홈페이지 팝업
+    titleEl.textContent = combo + ' · 포함 세트';
+    goEl.dataset.code = combo;
+    contentEl.innerHTML = '<div class="iloom-modal-empty">로딩 중...</div>';
+    modal.classList.add('show');
+    try {
+      const res = await fetch(SETS_BY_ITEM_ENDPOINT + encodeURIComponent(combo));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const sets = data.sets || [];
+      if (sets.length === 0) {
+        contentEl.innerHTML = '<div class="iloom-modal-empty">해당 단품을 포함한 세트가 없습니다</div>';
+        return;
+      }
+      const note = data.shipment_status && data.shipment_status !== 'ready'
+        ? `<div style="font-size:11px;color:#999;margin-bottom:8px">⚠ shipment 캐시 ${escHtml(data.shipment_status)} — 월 평출량 미표시</div>`
+        : '';
+      const rows = sets.map(s => {
+        const setCombo = s.세트색상 ? `${s.세트코드}-${s.세트색상}` : s.세트코드;
+        return `
+          <tr>
+            <td>
+              <a class="iloom-code" data-iloom-code="${escHtml(setCombo)}" data-iloom-type="set" title="구성단품 보기">${escHtml(s.세트코드)}</a>
+              <a class="iloom-code-go" data-iloom-go="${escHtml(setCombo)}" title="일룸 홈페이지 팝업">iloom ↗</a>
+            </td>
+            <td>${escHtml(s.세트색상 || '')}</td>
+            <td>${escHtml(s.세트명칭 || '')}</td>
+            <td class="num">${fmtNum(s.월평출량_최근1년)}</td>
+          </tr>`;
+      }).join('');
+      contentEl.innerHTML = note + `
+        <table>
+          <thead>
+            <tr>
+              <th>세트코드</th><th>색상</th><th>세트명칭</th>
+              <th class="num">월 평출량 (최근1년)</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } catch (e) {
+      contentEl.innerHTML =
+        '<div class="iloom-modal-empty" style="color:#c80a1e">조회 실패: ' +
+        escHtml(e.message || String(e)) + '</div>';
+    }
+  }
+
+  function closeItemSetsModal() {
+    const m = document.getElementById('iloomItemSetsModal');
+    if (m) m.classList.remove('show');
+  }
+
+  // type: 'set' | 'item' | 'auto'
+  //   set  → 구성단품 모달
+  //   item → 포함 세트 모달 (해당 단품을 포함한 세트 목록)
+  //   auto → 구성단품 조회 시도 → 있으면 set 모달, 없으면 item 모달, 둘 다 없으면 홈페이지
+  async function handle(code, type) {
+    if (!code) return;
+    if (type === 'item') return openItemSets(code);
+    if (type === 'set')  return openSetComponents(code);
+    try {
+      const res = await fetch(SET_COMPONENTS_ENDPOINT + encodeURIComponent(code));
+      const data = res.ok ? await res.json() : { components: [] };
+      if ((data.components || []).length > 0) return openSetComponents(code);
+    } catch (e) { /* fall through */ }
+    return openItemSets(code);
+  }
+
+  // JS 렌더링용 셀 HTML (코드 + iloom ↗ 버튼)
+  function cell(code, type) {
+    if (code == null || code === '') return '';
+    const safeCode = escHtml(code);
+    const safeType = (type === 'set' || type === 'item') ? type : 'auto';
+    return `<a class="iloom-code" data-iloom-code="${safeCode}" data-iloom-type="${safeType}" title="클릭: ${
+              safeType === 'set' ? '구성단품 보기' : safeType === 'item' ? '포함 세트 보기' : '자동 판별'
+            }">${safeCode}</a>` +
+           `<a class="iloom-code-go" data-iloom-go="${safeCode}" title="일룸 홈페이지 팝업">iloom ↗</a>`;
+  }
+
+  // 클릭 위임 (모든 페이지에서 자동 동작)
+  document.addEventListener('click', function(e) {
+    const goEl = e.target.closest('[data-iloom-go]');
+    if (goEl) {
+      e.preventDefault();
+      openItem(goEl.getAttribute('data-iloom-go'));
+      return;
+    }
+    const codeEl = e.target.closest('[data-iloom-code]');
+    if (codeEl) {
+      e.preventDefault();
+      handle(codeEl.getAttribute('data-iloom-code'),
+             codeEl.getAttribute('data-iloom-type') || 'auto');
+    }
+  });
+
+  // ESC로 공통 모달 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeItemSetsModal();
+      closePageModal();
+    }
+  });
+
+  return {
+    openItem, openItemNewTab, openSetComponents, openItemSets,
+    closeModal, closeItemSetsModal, closePageModal,
+    handle, cell, baseCode, fmtNum
+  };
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+ * IloomColFilter — 모든 페이지의 모든 테이블에 적용되는 글로벌 모듈
+ *   • 테이블 헤더(thead th)를 우클릭하면 컬럼별 검색 popover 표시
+ *   • 다중 컬럼 필터 AND 조합 (각 컬럼 contains, case-insensitive)
+ *   • DataTables 사용 테이블은 본인의 contextmenu 핸들러가 우선 처리하므로
+ *     이 모듈은 .dataTables_wrapper 안의 헤더는 무시 (충돌 방지)
+ *   • 보호된 셀(.no-filter, target-cell 등)은 그대로 동작
+ * ══════════════════════════════════════════════════════════════════ */
+(function() {
+  // table 요소별 필터 상태: tableEl → { colIdx: query, ... }
+  const _filters = new WeakMap();
+  let _active = null;  // { tableEl, colIdx }
+
+  function _ensurePopover() {
+    let pop = document.getElementById('iloomColFilterPopover');
+    if (pop) return pop;
+    pop = document.createElement('div');
+    pop.id = 'iloomColFilterPopover';
+    pop.className = 'iloom-col-filter-popover';
+    pop.style.display = 'none';
+    pop.innerHTML = `
+      <div class="icfp-title" id="icfp-title"></div>
+      <input type="text" class="icfp-input" id="icfp-input" placeholder="검색어 입력" />
+      <div class="icfp-hint">Enter: 적용 · Esc: 닫기 · 빈 값으로 적용 시 해제</div>
+      <div class="icfp-actions">
+        <button type="button" class="icfp-btn icfp-clear">지우기</button>
+        <button type="button" class="icfp-btn icfp-apply">적용</button>
+      </div>`;
+    document.body.appendChild(pop);
+
+    pop.querySelector('.icfp-apply').addEventListener('click', _apply);
+    pop.querySelector('.icfp-clear').addEventListener('click', _clear);
+
+    document.addEventListener('mousedown', e => {
+      if (pop.style.display !== 'none' && !pop.contains(e.target)) _hide();
+    });
+    document.addEventListener('keydown', e => {
+      if (pop.style.display === 'none') return;
+      if (e.key === 'Escape') _hide();
+      else if (e.key === 'Enter' && document.activeElement.id === 'icfp-input') _apply();
+    });
+    return pop;
+  }
+
+  function _show(tableEl, colIdx, headerEl) {
+    const pop = _ensurePopover();
+    _active = { tableEl, colIdx };
+    const title = (headerEl.cloneNode(true).childNodes[0]?.textContent || headerEl.textContent || '').trim();
+    document.getElementById('icfp-title').textContent = `${title || '컬럼'} 검색`;
+    const current = (_filters.get(tableEl) || {})[colIdx] || '';
+    const input = document.getElementById('icfp-input');
+    input.value = current;
+    const rect = headerEl.getBoundingClientRect();
+    pop.style.display = 'block';
+    pop.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+    pop.style.left = (rect.left + window.scrollX) + 'px';
+    setTimeout(() => {
+      const r = pop.getBoundingClientRect();
+      if (r.right > window.innerWidth - 10) {
+        pop.style.left = (window.innerWidth - r.width - 10 + window.scrollX) + 'px';
+      }
+      input.focus(); input.select();
+    }, 30);
+  }
+
+  function _hide() {
+    const pop = document.getElementById('iloomColFilterPopover');
+    if (pop) pop.style.display = 'none';
+    _active = null;
+  }
+
+  function _apply() {
+    if (!_active) return;
+    const { tableEl, colIdx } = _active;
+    const v = (document.getElementById('icfp-input').value || '').trim();
+    const f = _filters.get(tableEl) || {};
+    if (v) f[colIdx] = v; else delete f[colIdx];
+    _filters.set(tableEl, f);
+    _applyTableFilters(tableEl);
+    _markHeader(tableEl, colIdx, !!v);
+    _hide();
+  }
+
+  function _clear() {
+    if (!_active) return;
+    const { tableEl, colIdx } = _active;
+    const f = _filters.get(tableEl) || {};
+    delete f[colIdx];
+    _filters.set(tableEl, f);
+    document.getElementById('icfp-input').value = '';
+    _applyTableFilters(tableEl);
+    _markHeader(tableEl, colIdx, false);
+    _hide();
+  }
+
+  function _applyTableFilters(tableEl) {
+    const f = _filters.get(tableEl) || {};
+    const entries = Object.entries(f).map(([k, v]) => [parseInt(k), v.toUpperCase()]);
+    const tbody = tableEl.tBodies[0];
+    if (!tbody) return;
+    [...tbody.rows].forEach(row => {
+      // 펼침/상세 행이나 보조 행은 건너뜀 (data-no-filter 또는 colspan)
+      if (row.dataset.noFilter !== undefined) return;
+      const firstCellSpan = row.cells[0] ? parseInt(row.cells[0].getAttribute('colspan') || '1') : 1;
+      if (firstCellSpan > 1) return;
+      let match = true;
+      for (const [colIdx, q] of entries) {
+        const cell = row.cells[colIdx];
+        const text = (cell ? (cell.textContent || '') : '').toUpperCase();
+        if (!text.includes(q)) { match = false; break; }
+      }
+      row.style.display = match ? '' : 'none';
+    });
+  }
+
+  function _markHeader(tableEl, colIdx, on) {
+    const ths = tableEl.tHead ? tableEl.tHead.rows[0]?.cells : null;
+    if (!ths || !ths[colIdx]) return;
+    ths[colIdx].classList.toggle('iloom-col-filter-active', on);
+  }
+
+  // contextmenu 핸들러 (글로벌)
+  document.addEventListener('contextmenu', e => {
+    const th = e.target.closest('thead th');
+    if (!th) return;
+    // DataTables 컴포넌트는 별도 처리 → 충돌 방지
+    if (th.closest('.dataTables_wrapper')) return;
+    const tableEl = th.closest('table');
+    if (!tableEl) return;
+    // opt-out: 테이블에 data-no-col-filter 속성 있으면 무시
+    if (tableEl.dataset.noColFilter !== undefined) return;
+    // 컬럼 인덱스 계산 (rowspan/colspan 무시한 단순 인덱스)
+    const headerRow = th.parentElement;
+    const colIdx = [...headerRow.cells].indexOf(th);
+    if (colIdx < 0) return;
+    e.preventDefault();
+    _show(tableEl, colIdx, th);
+  });
+
+  // 페이지 전역: 헤더에 우클릭 가능 안내 (visual hint via cursor)
+  const style = document.createElement('style');
+  style.textContent = `
+    table thead th:not(.no-filter) { cursor: context-menu; }
+    .dataTables_wrapper table thead th { cursor: pointer; }
+  `;
+  document.head.appendChild(style);
+
+  // 외부 API
+  window.IloomColFilter = {
+    reset(tableEl) {
+      _filters.set(tableEl, {});
+      tableEl.tHead && [...tableEl.tHead.rows[0].cells].forEach(th => th.classList.remove('iloom-col-filter-active'));
+      _applyTableFilters(tableEl);
+    },
+  };
+})();
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,2683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCP 실적현황 | iloom SCM 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', 'Montserrat', sans-serif; background: #FFFFFF; color: #333333; font-size: 14px; letter-spacing: -0.2px; }
+
+/* 상단 네비 */
+.nav {
+  background: #FFFFFF;
+  color: #333333;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  gap: 0;
+  border-bottom: 1px solid #E0E0E0;
+}
+.nav-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-right: 32px;
+  white-space: nowrap;
+  color: #c80a1e;
+}
+.nav-brand span { color: #333333; font-family: 'Noto Sans KR', sans-serif; font-size: 14px; font-weight: 500; margin-left: 8px; }
+.nav-menu { display: flex; gap: 0; flex: 1; align-items: center; height: 100%; }
+.nav-item {
+  padding: 0 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  color: #333333;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.nav-item:hover { color: #c80a1e; }
+.nav-item.active { color: #c80a1e; border-bottom-color: #c80a1e; font-weight: 700; }
+.nav-right { font-size: 12px; color: #999999; white-space: nowrap; display: flex; align-items: center; gap: 12px; }
+.nav-right .ref-date { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #F8F8F8; border: 1px solid #E0E0E0; color: #333333; font-weight: 500; }
+.nav-right .ref-date::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #c80a1e; }
+.nav-right .ref-date.loading::before { background: #999999; }
+.nav-right .ref-date .label { color: #999999; font-weight: 400; }
+
+/* 메인 컨텐츠 */
+.main { padding: 32px 24px; max-width: 1700px; margin: 0 auto; }
+
+/* 공통 카드 */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  margin-bottom: 20px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #E0E0E0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title { font-size: 16px; font-weight: 500; color: #333333; letter-spacing: -0.2px; }
+.card-body { padding: 20px; }
+
+/* 공통 버튼 */
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+  letter-spacing: -0.2px;
+}
+.btn-primary { background: #c80a1e; color: #FFFFFF; border-color: #c80a1e; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-danger { background: #FFFFFF; color: #c80a1e; border: 1px solid #c80a1e; }
+.btn-danger:hover { background: #c80a1e; color: #FFFFFF; }
+.btn-ghost { background: #FFFFFF; color: #333333; border: 1px solid #E0E0E0; }
+.btn-ghost:hover { background: #F8F8F8; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* 공통 폼 */
+.form-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 12px; font-weight: 500; color: #999999; }
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  background: #FFFFFF;
+  outline: none;
+  font-family: inherit;
+  color: #333333;
+}
+.form-input:focus { border-color: #c80a1e; background: #FFFFFF; }
+
+/* 알림 */
+.alert {
+  padding: 12px 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 0;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.alert-error { background: #FFFFFF; color: #c80a1e; border-left: 3px solid #c80a1e; }
+.alert-info { background: #F8F8F8; color: #333333; border-left: 3px solid #333333; }
+
+/* ─────────── 공통: 일룸 코드 / 세트 구성단품 모달 ─────────── */
+.iloom-code {
+  color: #c80a1e; cursor: pointer;
+  font-family: 'Montserrat', monospace; font-weight: 600;
+  text-decoration: none;
+}
+.iloom-code:hover { text-decoration: underline; }
+.iloom-code-go {
+  display: inline-block; margin-left: 6px;
+  padding: 1px 6px; font-size: 10px; font-family: inherit;
+  background: #fff; border: 1px solid #c80a1e; color: #c80a1e;
+  cursor: pointer; border-radius: 0;
+  vertical-align: middle; line-height: 1.4;
+  text-decoration: none; transition: all 0.15s;
+}
+.iloom-code-go:hover { background: #c80a1e; color: #fff; text-decoration: none; }
+.iloom-modal-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,0.4);
+  display: none; align-items: center; justify-content: center;
+}
+.iloom-modal-overlay.show { display: flex; }
+.iloom-modal-box {
+  background: #fff; min-width: 760px; max-width: 90vw; max-height: 80vh;
+  border: 1px solid #E0E0E0; display: flex; flex-direction: column;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.iloom-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid #E0E0E0;
+}
+.iloom-modal-title { font-size: 14px; font-weight: 600; color: #333; }
+.iloom-modal-actions { display: flex; gap: 8px; align-items: center; }
+.iloom-modal-go {
+  font-size: 11px; padding: 3px 10px; border: 1px solid #c80a1e;
+  color: #c80a1e; text-decoration: none; background: #fff;
+}
+.iloom-modal-go:hover { background: #c80a1e; color: #fff; }
+.iloom-modal-close {
+  border: none; background: none; font-size: 22px; line-height: 1;
+  cursor: pointer; color: #999; padding: 0;
+}
+.iloom-modal-close:hover { color: #c80a1e; }
+.iloom-modal-content { padding: 14px 18px; overflow: auto; }
+.iloom-modal-content table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.iloom-modal-content th {
+  background: #333; color: #fff; padding: 8px 10px;
+  text-align: left; font-weight: 700; font-size: 11px;
+}
+.iloom-modal-content th.num,
+.iloom-modal-content td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.iloom-modal-content td { padding: 7px 10px; border-bottom: 1px solid #F0F0F0; }
+.iloom-modal-content tbody tr:hover td { background: #fdf5f5; }
+.iloom-modal-empty { padding: 32px; text-align: center; color: #999; font-size: 12px; }
+
+/* 일룸 홈페이지 iframe 팝업 (큰 사이즈) */
+.iloom-modal-box.iloom-page-box {
+  width: 92vw; max-width: 1280px; height: 88vh; max-height: 88vh;
+  min-width: 760px;
+}
+.iloom-page-frame-wrap {
+  flex: 1; padding: 0; overflow: hidden; background: #F8F8F8; position: relative;
+}
+.iloom-page-frame-wrap iframe {
+  width: 100%; height: 100%; border: none; background: #fff;
+}
+.iloom-page-fallback {
+  position: absolute; inset: 0; display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: #666; font-size: 13px; text-align: center; padding: 24px;
+}
+.iloom-page-fallback.show { display: flex; }
+
+/* ══════ 컬럼 우클릭 검색 (글로벌) ══════ */
+.iloom-col-filter-popover {
+  position: absolute; z-index: 10000;
+  background: #fff; border: 1px solid #d4d4d8;
+  border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 10px 12px; min-width: 240px;
+  font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-title {
+  font-size: 11px; font-weight: 700; color: #333; margin-bottom: 6px;
+}
+.iloom-col-filter-popover .icfp-input {
+  width: 100%; box-sizing: border-box; padding: 6px 9px;
+  border: 1px solid #d4d4d8; border-radius: 5px; font-size: 12px;
+  outline: none; font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-input:focus { border-color: #c80a1e; }
+.iloom-col-filter-popover .icfp-hint {
+  font-size: 10px; color: #999; margin-top: 4px;
+}
+.iloom-col-filter-popover .icfp-actions {
+  display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px;
+}
+.iloom-col-filter-popover .icfp-btn {
+  padding: 4px 10px; font-size: 11px; cursor: pointer;
+  border: 1px solid #ddd; border-radius: 4px; background: #fff;
+  font-family: inherit;
+}
+.iloom-col-filter-popover .icfp-btn.icfp-apply {
+  background: #c80a1e; color: #fff; border-color: #c80a1e;
+}
+.iloom-col-filter-popover .icfp-btn.icfp-clear:hover { background: #f3f4f6; }
+
+/* 필터 활성 컬럼 표시 */
+th.iloom-col-filter-active {
+  box-shadow: inset 0 -3px 0 #c80a1e !important;
+  position: relative;
+}
+th.iloom-col-filter-active::after {
+  content: '🔍'; font-size: 9px; margin-left: 4px; opacity: 0.7;
+}
+
+/* 우클릭 가능 안내 (전역 미세 표시) */
+.iloom-col-filter-hint {
+  display: inline-block; font-size: 10px; color: #999;
+  margin: 4px 0; padding: 2px 6px; background: #f3f4f6; border-radius: 3px;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  /* ───── 헤더 ───── */
+  .scp-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px; padding: 0 4px;
+  }
+
+  /* ───── KPI 도넛 3개 ───── */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: #FFFFFF; border: 1px solid #E0E0E0;
+    padding: 20px 24px; display: flex; align-items: center; gap: 20px;
+  }
+  .kpi-donut-wrap {
+    position: relative; width: 130px; height: 130px; flex-shrink: 0;
+  }
+  .kpi-donut-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; pointer-events: none;
+  }
+  .kpi-donut-pct {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-donut-pct.green { color: #2E7D32; }
+  .kpi-donut-pct.yellow { color: #C77700; }
+  .kpi-donut-pct.red { color: #c80a1e; }
+  .kpi-donut-label { font-size: 10px; color: #999; margin-top: 2px; }
+  .kpi-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .kpi-title { font-size: 13px; color: #666; font-weight: 500; }
+  .kpi-value-main { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .kpi-value-sub { font-size: 11px; color: #999; font-variant-numeric: tabular-nums; }
+  .kpi-dev {
+    font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+    padding: 2px 8px; display: inline-block; align-self: flex-start;
+    margin-top: 4px; border: 1px solid;
+  }
+  .kpi-dev.pos { color: #2E7D32; border-color: #2E7D32; background: #E8F5E9; }
+  .kpi-dev.neg { color: #c80a1e; border-color: #c80a1e; background: #FCE4E4; }
+  .kpi-dev.flat { color: #666; border-color: #999; background: #F8F8F8; }
+
+  .scp-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .scp-meta { font-size: 12px; color: #999; display: flex; gap: 16px; }
+  .scp-meta b { color: #c80a1e; font-weight: 600; }
+
+  /* ───── 임원용 메인 진단 카드 ───── */
+  .overall-card {
+    border: 1px solid #E0E0E0; padding: 24px 28px; margin-bottom: 24px;
+    background: #FFFFFF;
+    display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: center;
+  }
+  .overall-summary { display: flex; flex-direction: column; gap: 8px; }
+  .overall-label { font-size: 12px; color: #999; font-weight: 500; }
+  .overall-headline {
+    font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2;
+  }
+  .overall-headline.green { color: #2E7D32; }
+  .overall-headline.yellow { color: #C77700; }
+  .overall-headline.red { color: #c80a1e; }
+  .overall-dev { font-size: 13px; color: #666; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .overall-dev b { font-size: 18px; font-weight: 700; }
+
+  .overall-issues { display: flex; flex-direction: column; gap: 10px; }
+  .overall-issues .ov-title { font-size: 12px; font-weight: 700; color: #666; margin-bottom: 4px; }
+  .issue-row {
+    display: grid; grid-template-columns: 90px 70px 1fr auto; gap: 12px;
+    padding: 8px 12px; border-left: 3px solid; align-items: center;
+    background: #FAFAFA; font-size: 13px;
+  }
+  .issue-row.red { border-color: #c80a1e; }
+  .issue-row.yellow { border-color: #FFA000; }
+  .issue-row.green { border-color: #2E7D32; }
+  .issue-row .ig-group { font-weight: 700; color: #333; }
+  .issue-row .ig-label {
+    font-size: 11px; padding: 2px 7px; font-weight: 600;
+    background: #fff; border: 1px solid;
+  }
+  .issue-row.red .ig-label { color: #c80a1e; border-color: #c80a1e; }
+  .issue-row.yellow .ig-label { color: #C77700; border-color: #FFA000; }
+  .issue-row .ig-cap { color: #555; }
+  .issue-row .ig-dev { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .issue-row.red .ig-dev { color: #c80a1e; }
+  .issue-row.yellow .ig-dev { color: #C77700; }
+
+  .no-issues {
+    padding: 14px 16px; background: #E8F5E9; color: #2E7D32; font-size: 13px;
+    border-left: 3px solid #2E7D32; font-weight: 500;
+  }
+
+  /* ───── 신호등 카운터 ───── */
+  .signal-counts {
+    display: flex; gap: 16px; margin-bottom: 24px;
+  }
+  .signal-pill {
+    flex: 1; padding: 14px 18px; background: #FFFFFF; border: 1px solid #E0E0E0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .signal-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+  }
+  .signal-dot.green { background: #2E7D32; }
+  .signal-dot.yellow { background: #FFA000; }
+  .signal-dot.red { background: #c80a1e; }
+  .signal-label { font-size: 12px; color: #999; flex: 1; }
+  .signal-count {
+    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+  }
+
+  /* ───── 공급처 상세 표 ───── */
+  .supplier-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    background: #FFFFFF; border: 1px solid #E0E0E0;
+  }
+  .supplier-table thead th {
+    background: #333; color: #fff; padding: 10px 12px; font-weight: 600;
+    text-align: center; font-size: 12px; white-space: nowrap;
+  }
+  .supplier-table tbody td {
+    padding: 11px 12px; border-bottom: 1px solid #F0F0F0; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .supplier-table tbody td.txt { text-align: left; }
+  .supplier-table tbody tr:hover td { background: #FDF5F5; cursor: pointer; }
+  .supplier-table tbody tr.total-row td {
+    font-weight: 700; background: #F8F8F8; border-top: 2px solid #333;
+  }
+  .group-name { font-weight: 600; color: #333; }
+  .group-name .iloom-code { font-size: 11px; margin-left: 6px; color: #c80a1e; }
+
+  /* 신호등 셀 */
+  .sig-cell {
+    display: inline-flex; align-items: center; gap: 4px; font-weight: 600;
+    font-size: 12px;
+  }
+  .sig-dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  }
+  .sig-up { color: #C77700; }
+  .sig-down { color: #c80a1e; }
+  .sig-normal { color: #666; }
+  .sig-up .sig-dot { background: #FFA000; }
+  .sig-down .sig-dot { background: #c80a1e; }
+  .sig-normal .sig-dot { background: #999; }
+
+  .dev-cell {
+    font-weight: 600;
+  }
+  .dev-cell.pos { color: #2E7D32; }
+  .dev-cell.neg { color: #c80a1e; }
+  .dev-cell.flat { color: #666; }
+
+  .diag-cell {
+    display: inline-block; padding: 3px 10px; font-size: 11px;
+    font-weight: 600; border: 1px solid;
+  }
+  .diag-cell.green { color: #2E7D32; border-color: #2E7D32; background: #E8F5E9; }
+  .diag-cell.yellow { color: #C77700; border-color: #FFA000; background: #FFF8E1; }
+  .diag-cell.red { color: #c80a1e; border-color: #c80a1e; background: #FCE4E4; }
+  .diag-cell.gray { color: #666; border-color: #BBB; background: #F5F5F5; }
+
+  /* 드릴다운 모달 */
+  .contrib-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .contrib-table thead th {
+    background: #333; color: #fff; padding: 7px 10px; text-align: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .contrib-table tbody td {
+    padding: 6px 10px; border-bottom: 1px solid #F0F0F0;
+    font-variant-numeric: tabular-nums; text-align: right;
+  }
+  .contrib-table tbody td.txt { text-align: left; }
+  .contrib-table tbody td.pos { color: #2E7D32; font-weight: 600; }
+  .contrib-table tbody td.neg { color: #c80a1e; font-weight: 600; }
+
+  .loading-banner {
+    padding: 32px; text-align: center; color: #999; font-size: 14px;
+    border: 1px dashed #E0E0E0; background: #FAFAFA;
+  }
+
+  /* 섹션 라벨 */
+  .section-label {
+    font-size: 12px; font-weight: 700; color: #999; margin: 24px 4px 12px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  /* ───── KPI 페이스 캡션 ───── */
+  .kpi-pace {
+    font-size: 11px; color: #666; margin-top: 6px; line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-pace b { color: #333; font-weight: 700; }
+  .kpi-pace .gap-pos { color: #2E7D32; font-weight: 700; }
+  .kpi-pace .gap-neg { color: #c80a1e; font-weight: 700; }
+
+  /* ───── 3패널 불릿 차트 ───── */
+  .bullet-card {
+    background: #FFFFFF; border: 1px solid #E0E0E0;
+    margin-bottom: 24px;
+  }
+  .bullet-header {
+    padding: 14px 20px; border-bottom: 1px solid #E0E0E0;
+  }
+  .bullet-title { font-size: 14px; font-weight: 700; color: #333; }
+  .bullet-legend {
+    margin-top: 8px; font-size: 11px; color: #666;
+    display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+  }
+  .bullet-legend b { color: #c80a1e; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .legend-swatch { display: inline-block; vertical-align: middle; margin-right: 4px; }
+  .legend-bar    { width: 14px; height: 10px; background: #2E7D32; }
+  .legend-pace   { width: 0; height: 12px; border-left: 2px dashed #c80a1e; }
+  .legend-plan   { width: 0; height: 12px; border-left: 2px solid #333; }
+
+  .bullet-grid { padding: 4px 20px 12px; }
+  .bullet-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 1fr 1fr 86px;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #F0F0F0;
+    cursor: pointer;
+  }
+  .bullet-row:hover { background: #FDF5F5; }
+  .bullet-row.bullet-head {
+    cursor: default; padding: 10px 0 8px;
+    border-bottom: 2px solid #333;
+    font-size: 11px; color: #999; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .bullet-row.bullet-head:hover { background: transparent; }
+  .bullet-row:last-child { border-bottom: none; }
+
+  .bullet-group { font-size: 13px; font-weight: 600; color: #333; }
+  .bullet-head .bullet-group,
+  .bullet-head .bullet-cell-head { text-transform: uppercase; }
+  .bullet-cell-head { font-size: 11px; color: #999; }
+  .bullet-cell-head small { color: #c80a1e; font-weight: 600; }
+
+  .bullet-cell { display: block; }
+  .bullet-bar-wrap {
+    position: relative; height: 24px;
+    background: #F8F8F8; border: 1px solid #EAEAEA;
+  }
+  .bullet-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    transition: width 0.4s ease; z-index: 1;
+  }
+  .bullet-bar.green  { background: #2E7D32; }
+  .bullet-bar.yellow { background: #FFA000; }
+  .bullet-bar.red    { background: #c80a1e; }
+  .bullet-bar.over {
+    background: repeating-linear-gradient(45deg,
+      #c80a1e 0, #c80a1e 5px, #a00818 5px, #a00818 10px);
+  }
+  .bullet-plan {
+    position: absolute; top: -3px; bottom: -3px;
+    left: 83.333%; width: 2px; background: #333; z-index: 3;
+  }
+  .bullet-pace {
+    position: absolute; top: -3px; bottom: -3px;
+    border-left: 2px dashed #c80a1e; z-index: 4;
+    pointer-events: none;
+  }
+  /* 막대 내부/외부 라벨: 폭 35% 임계로 Jinja에서 클래스 분기 */
+  .bar-label {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
+    white-space: nowrap; pointer-events: none; z-index: 2;
+    letter-spacing: -0.2px;
+  }
+  .bar-label.inside  { right: 8px; color: #FFFFFF; }
+  .bar-label.outside { margin-left: 6px; color: #333; }
+
+  .bullet-diag { text-align: center; }
+</style>
+
+<script>window.__SCP_STATIC__ = {"contributions": {"일룸상품(통합)": [{"단품코드": "IBH11AW01A", "색상": "2V2L", "품목명": "침대 헤드보드 1100폭(실리콘패브릭)", "품목군": "(일룸)침실", "매출계획": 307452200.0, "매출실적": 0, "편차금액": -307452200.0, "편차율": -1.0}, {"단품코드": "HB72Y11EAA", "색상": "A482M", "품목명": "침대 헤드보드 1100폭", "품목군": "(일룸)침실", "매출계획": 237698700.0, "매출실적": 0, "편차금액": -237698700.0, "편차율": -1.0}, {"단품코드": "IBH15AW01A", "색상": "2V2L", "품목명": "침대 헤드/가드 1500폭(실리콘패브릭)", "품목군": "(일룸)침실", "매출계획": 199902800.0, "매출실적": 0, "편차금액": -199902800.0, "편차율": -1.0}, {"단품코드": "HB72Y15EBA", "색상": "A482M", "품목명": "침대 헤드/가드 1500폭", "품목군": "(일룸)침실", "매출계획": 147508200.0, "매출실적": 0, "편차금액": -147508200.0, "편차율": -1.0}, {"단품코드": "IBG20AW02A", "색상": "2V2L", "품목명": "쿠시노코지 벽가드 2000폭(실리콘패브릭)", "품목군": "(일룸)침실", "매출계획": 147305800.0, "매출실적": 0, "편차금액": -147305800.0, "편차율": -1.0}, {"단품코드": "IDL00CP02A", "색상": "PW", "품목명": "모션데스크 LINAK 다리(DL11+)", "품목군": "(일룸)스터디", "매출계획": 128282000.0, "매출실적": 0, "편차금액": -128282000.0, "편차율": -1.0}, {"단품코드": "HB72Y15EBA", "색상": "A4810", "품목명": "침대 가드 1500폭", "품목군": "(일룸)침실", "매출계획": 114372300.0, "매출실적": 0, "편차금액": -114372300.0, "편차율": -1.0}, {"단품코드": "HSKA0904N", "색상": "XX", "품목명": "LED 책상조명(인출,각도조절형)", "품목군": "(일룸)스터디", "매출계획": 94114200.0, "매출실적": 0, "편차금액": -94114200.0, "편차율": -1.0}, {"단품코드": "IDM00AZ00A", "색상": "SP", "품목명": "높이조절 다리 (메커니즘)", "품목군": "(일룸)다이닝", "매출계획": 86296000.0, "매출실적": 0, "편차금액": -86296000.0, "편차율": -1.0}, {"단품코드": "IBX03AW00A", "색상": "OAT", "품목명": "가드브라켓(3ea,커버포함)", "품목군": "(일룸)침실", "매출계획": 81876600.0, "매출실적": 0, "편차금액": -81876600.0, "편차율": -1.0}, {"단품코드": "IAA00AA00", "색상": "WW", "품목명": "LED 책상조명(인출형)", "품목군": "(일룸)스터디", "매출계획": 78010800.0, "매출실적": 0, "편차금액": -78010800.0, "편차율": -1.0}, {"단품코드": "IPP80AP00A", "색상": "IVGY", "품목명": "에디키즈 서랍장 4단 800폭", "품목군": "(일룸)키즈", "매출계획": 64470300.0, "매출실적": 0, "편차금액": -64470300.0, "편차율": -1.0}, {"단품코드": "IBH11AW00A", "색상": "2Z2", "품목명": "침대 헤드보드 1100폭(패브릭)", "품목군": "(일룸)침실", "매출계획": 55192800.0, "매출실적": 0, "편차금액": -55192800.0, "편차율": -1.0}, {"단품코드": "IBX00AA01A", "색상": "XX", "품목명": "밀림방지패드", "품목군": "(일룸)침실", "매출계획": 51093300.0, "매출실적": 0, "편차금액": -51093300.0, "편차율": -1.0}, {"단품코드": "HB72Y10EBA", "색상": "A482M", "품목명": "침대 가드 1000폭", "품목군": "(일룸)침실", "매출계획": 43517600.0, "매출실적": 0, "편차금액": -43517600.0, "편차율": -1.0}, {"단품코드": "IBG20AW00A", "색상": "A482M", "품목명": "쿠시노 벽가드 2000폭(인조)", "품목군": "(일룸)침실", "매출계획": 42685200.0, "매출실적": 0, "편차금액": -42685200.0, "편차율": -1.0}, {"단품코드": "IPP80BV02A", "색상": "SP", "품목명": "그립 5단 서랍장 800폭", "품목군": "(일룸)침실", "매출계획": 42120000.0, "매출실적": 0, "편차금액": -42120000.0, "편차율": -1.0}, {"단품코드": "IBH15AW00A", "색상": "2Z2", "품목명": "침대 헤드/가드 1500폭(패브릭)", "품목군": "(일룸)침실", "매출계획": 38790400.0, "매출실적": 0, "편차금액": -38790400.0, "편차율": -1.0}, {"단품코드": "IBU00CG00A", "색상": "BG", "품목명": "원형 USB포트 (고속)", "품목군": "(일룸)침실", "매출계획": 38341200.0, "매출실적": 0, "편차금액": -38341200.0, "편차율": -1.0}, {"단품코드": "IDL00CP00A", "색상": "WW", "품목명": "다리형책상 원형다리", "품목군": "(일룸)스터디", "매출계획": 37324800.0, "매출실적": 0, "편차금액": -37324800.0, "편차율": -1.0}, {"단품코드": "ITY00BR00A", "색상": "CZ", "품목명": "베라 암체어", "품목군": "(일룸)다이닝", "매출계획": 37324000.0, "매출실적": 0, "편차금액": -37324000.0, "편차율": -1.0}, {"단품코드": "HBA40P06EGLN", "색상": "BRC", "품목명": "서랍류(3EA)", "품목군": "(일룸)침실", "매출계획": 32234400.0, "매출실적": 0, "편차금액": -32234400.0, "편차율": -1.0}, {"단품코드": "IBG20AW00A", "색상": "A4810", "품목명": "쿠시노 벽가드 2000폭(인조)", "품목군": "(일룸)침실", "매출계획": 31566600.0, "매출실적": 0, "편차금액": -31566600.0, "편차율": -1.0}, {"단품코드": "HB72Y10EBA", "색상": "A4810", "품목명": "침대 가드 1000폭", "품목군": "(일룸)침실", "매출계획": 28515200.0, "매출실적": 0, "편차금액": -28515200.0, "편차율": -1.0}, {"단품코드": "HCH9003", "색상": "3J3CZ", "품목명": "핀 원목의자 (2ea)", "품목군": "(일룸)다이닝", "매출계획": 27729950.0, "매출실적": 0, "편차금액": -27729950.0, "편차율": -1.0}, {"단품코드": "IPP10BV01A", "색상": "SP", "품목명": "그립 4단 서랍장 1000폭", "품목군": "(일룸)침실", "매출계획": 26083200.0, "매출실적": 0, "편차금액": -26083200.0, "편차율": -1.0}, {"단품코드": "IHU00AA00A", "색상": "WW", "품목명": "멀티탭 2구2포트 (A,C타입)", "품목군": "(일룸)스터디", "매출계획": 25530000.0, "매출실적": 0, "편차금액": -25530000.0, "편차율": -1.0}, {"단품코드": "HSSE2600X", "색상": "TS", "품목명": "철제프레임 1100", "품목군": "(일룸)스터디", "매출계획": 25290600.0, "매출실적": 0, "편차금액": -25290600.0, "편차율": -1.0}, {"단품코드": "HSOD0001A", "색상": "PW", "품목명": "높이조절 메커니즘 (사선형)", "품목군": "(일룸)스터디", "매출계획": 25172400.0, "매출실적": 0, "편차금액": -25172400.0, "편차율": -1.0}, {"단품코드": "IBG20AW01A", "색상": "2Z2", "품목명": "쿠시노 벽가드 2000폭(아쿠아클린)", "품목군": "(일룸)침실", "매출계획": 24378800.0, "매출실적": 0, "편차금액": -24378800.0, "편차율": -1.0}], "일룸상품(통합)__total": 3136, "매트리스": [{"단품코드": "IMS11CQ00A", "색상": "3M2", "품목명": "쿠시노 투인원 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 404400000.0, "매출실적": 0, "편차금액": -404400000.0, "편차율": -1.0}, {"단품코드": "IMS11AB01A", "색상": "9M1", "품목명": "데일리 라이트 펌 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 195022800.0, "매출실적": 0, "편차금액": -195022800.0, "편차율": -1.0}, {"단품코드": "IYX2602000", "색상": "3M2", "품목명": "(쿠시노 프로모션 전용, 단독사용 불가) 쿠시노 투인원 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 91200000.0, "매출실적": 0, "편차금액": -91200000.0, "편차율": -1.0}, {"단품코드": "IMS11AC01A", "색상": "9M2", "품목명": "데일리 펌 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 88100000.0, "매출실적": 0, "편차금액": -88100000.0, "편차율": -1.0}, {"단품코드": "IMS11HV07A", "색상": "3M2", "품목명": "헤이븐 슬림 하드 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 70452000.0, "매출실적": 0, "편차금액": -70452000.0, "편차율": -1.0}, {"단품코드": "IMS11AC00A", "색상": "9M2", "품목명": "데일리 미디엄 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 65546400.0, "매출실적": 0, "편차금액": -65546400.0, "편차율": -1.0}, {"단품코드": "IMS11AB00A", "색상": "9M1", "품목명": "데일리 라이트 미디엄 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 53420400.0, "매출실적": 0, "편차금액": -53420400.0, "편차율": -1.0}, {"단품코드": "IMF11AB00A", "색상": "9M3", "품목명": "플렉서블 라이트 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 41766300.0, "매출실적": 0, "편차금액": -41766300.0, "편차율": -1.0}, {"단품코드": "IMS11AC02A", "색상": "9M2", "품목명": "데일리 키즈 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 39451600.0, "매출실적": 0, "편차금액": -39451600.0, "편차율": -1.0}, {"단품코드": "IMS15CQ00A", "색상": "3M2", "품목명": "쿠시노 투인원 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 29890800.0, "매출실적": 0, "편차금액": -29890800.0, "편차율": -1.0}, {"단품코드": "IMS11HV06A", "색상": "3M2", "품목명": "헤이븐 슬림 미디엄 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 28728000.0, "매출실적": 0, "편차금액": -28728000.0, "편차율": -1.0}, {"단품코드": "IMF11HV04A", "색상": "3M2", "품목명": "헤이븐 플렉서블 메모리폼 매트리스 빌트인 (SS)", "품목군": "(일룸)침실", "매출계획": 28700000.0, "매출실적": 0, "편차금액": -28700000.0, "편차율": -1.0}, {"단품코드": "IMS11HV11A", "색상": "3M2", "품목명": "헤이븐 플렉서블 스프링 매트리스 빌트인 (SS)", "품목군": "(일룸)침실", "매출계획": 28700000.0, "매출실적": 0, "편차금액": -28700000.0, "편차율": -1.0}, {"단품코드": "IMF11AC00A", "색상": "S5G2A", "품목명": "플렉서블 바운텍스폼 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 28292550.0, "매출실적": 0, "편차금액": -28292550.0, "편차율": -1.0}, {"단품코드": "IMS11AC11A", "색상": "S5MT4", "품목명": "플렉서블 스프링 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 28190400.0, "매출실적": 0, "편차금액": -28190400.0, "편차율": -1.0}, {"단품코드": "HM50S11ECEN", "색상": "S5G2A", "품목명": "코코 스프링 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 25436400.0, "매출실적": 0, "편차금액": -25436400.0, "편차율": -1.0}, {"단품코드": "IMS11HV05A", "색상": "3M2", "품목명": "헤이븐 디럭스 하드 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 22963200.0, "매출실적": 0, "편차금액": -22963200.0, "편차율": -1.0}, {"단품코드": "HM40F11EBE", "색상": "S5G2A", "품목명": "플렉서블 메모리폼 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 21765000.0, "매출실적": 0, "편차금액": -21765000.0, "편차율": -1.0}, {"단품코드": "IMS16HV05A", "색상": "3M2", "품목명": "헤이븐 디럭스 하드 매트리스 (K)", "품목군": "(일룸)침실", "매출계획": 20157000.0, "매출실적": 0, "편차금액": -20157000.0, "편차율": -1.0}, {"단품코드": "IMS15HV07A", "색상": "3M2", "품목명": "헤이븐 슬림 하드 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 17266200.0, "매출실적": 0, "편차금액": -17266200.0, "편차율": -1.0}, {"단품코드": "IMS15HV05A", "색상": "3M2", "품목명": "헤이븐 디럭스 하드 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 16878400.0, "매출실적": 0, "편차금액": -16878400.0, "편차율": -1.0}, {"단품코드": "IMS11HV04A", "색상": "3M2", "품목명": "헤이븐 디럭스 미디엄 매트리스 (SS)", "품목군": "(일룸)침실", "매출계획": 14976000.0, "매출실적": 0, "편차금액": -14976000.0, "편차율": -1.0}, {"단품코드": "IMS16HV04A", "색상": "3M2", "품목명": "헤이븐 디럭스 미디엄 매트리스 (K)", "품목군": "(일룸)침실", "매출계획": 13438000.0, "매출실적": 0, "편차금액": -13438000.0, "편차율": -1.0}, {"단품코드": "IMS15AB01A", "색상": "9M1", "품목명": "데일리 라이트 펌 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 10611200.0, "매출실적": 0, "편차금액": -10611200.0, "편차율": -1.0}, {"단품코드": "IMS10CQ00A", "색상": "3M2", "품목명": "쿠시노 투인원 매트리스 (S)", "품목군": "(일룸)침실", "매출계획": 9861800.0, "매출실적": 0, "편차금액": -9861800.0, "편차율": -1.0}, {"단품코드": "IMS15AC01A", "색상": "9M2", "품목명": "데일리 펌 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 9396000.0, "매출실적": 0, "편차금액": -9396000.0, "편차율": -1.0}, {"단품코드": "IMS10AC02A", "색상": "9M2", "품목명": "데일리 키즈 매트리스 (S)", "품목군": "(일룸)침실", "매출계획": 9090400.0, "매출실적": 0, "편차금액": -9090400.0, "편차율": -1.0}, {"단품코드": "IMS16CQ00A", "색상": "3M2", "품목명": "쿠시노 투인원 매트리스 (K)", "품목군": "(일룸)침실", "매출계획": 8502200.0, "매출실적": 0, "편차금액": -8502200.0, "편차율": -1.0}, {"단품코드": "IMS15HV04A", "색상": "3M2", "품목명": "헤이븐 디럭스 미디엄 매트리스 (Q)", "품목군": "(일룸)침실", "매출계획": 8439200.0, "매출실적": 0, "편차금액": -8439200.0, "편차율": -1.0}, {"단품코드": "IUX2602019", "색상": "3M2", "품목명": "(2026 프로모션) 헤이븐 디럭스 미디엄 매트리스 (K)", "품목군": "(일룸)침실", "매출계획": 8173200.0, "매출실적": 0, "편차금액": -8173200.0, "편차율": -1.0}], "매트리스__total": 92, "충주내작": [{"단품코드": "HB72F11EEL", "색상": "OS", "품목명": "침대 프레임(SS)", "품목군": "(일룸)침실", "매출계획": 130410000.0, "매출실적": 0, "편차금액": -130410000.0, "편차율": -1.0}, {"단품코드": "IBW11CP00A", "색상": "WW", "품목명": "침대 중측판류", "품목군": "(일룸)스터디", "매출계획": 27357000.0, "매출실적": 0, "편차금액": -27357000.0, "편차율": -1.0}, {"단품코드": "IDT14CP00A", "색상": "WW", "품목명": "다리형책상 상판 1400폭", "품목군": "(일룸)스터디", "매출계획": 20116000.0, "매출실적": 0, "편차금액": -20116000.0, "편차율": -1.0}, {"단품코드": "HBA40F11PHLN", "색상": "SP", "품목명": "평판류(SS)", "품목군": "(일룸)침실", "매출계획": 19021200.0, "매출실적": 0, "편차금액": -19021200.0, "편차율": -1.0}, {"단품코드": "IDT14CP04A", "색상": "WW", "품목명": "뉴트 모션데스크 상판 1400폭(D700)", "품목군": "(일룸)스터디", "매출계획": 18144000.0, "매출실적": 0, "편차금액": -18144000.0, "편차율": -1.0}, {"단품코드": "IBB11CP01A", "색상": "WW", "품목명": "침대 바닥판류(세로수납형)", "품목군": "(일룸)스터디", "매출계획": 18102600.0, "매출실적": 0, "편차금액": -18102600.0, "편차율": -1.0}, {"단품코드": "HL72Y12EEL", "색상": "SOAT", "품목명": "리프트업 바디 1200폭(D725)", "품목군": "(일룸)거실", "매출계획": 17892000.0, "매출실적": 0, "편차금액": -17892000.0, "편차율": -1.0}, {"단품코드": "IHS14CP03A", "색상": "WW", "품목명": "레이어드 선반류 (1400폭용)", "품목군": "(일룸)스터디", "매출계획": 15073300.0, "매출실적": 0, "편차금액": -15073300.0, "편차율": -1.0}, {"단품코드": "IBD00CP00A", "색상": "WW", "품목명": "벙커 수납도어", "품목군": "(일룸)스터디", "매출계획": 14817000.0, "매출실적": 0, "편차금액": -14817000.0, "편차율": -1.0}, {"단품코드": "IDT12CP00A", "색상": "WW", "품목명": "다리형책상 상판 1200폭", "품목군": "(일룸)스터디", "매출계획": 14713200.0, "매출실적": 0, "편차금액": -14713200.0, "편차율": -1.0}, {"단품코드": "IBV00CP02B", "색상": "WW", "품목명": "침대 측판류(세로수납형)", "품목군": "(일룸)스터디", "매출계획": 14220600.0, "매출실적": 0, "편차금액": -14220600.0, "편차율": -1.0}, {"단품코드": "HB72F15EEL", "색상": "OS", "품목명": "침대 프레임(Q)", "품목군": "(일룸)침실", "매출계획": 13870600.0, "매출실적": 0, "편차금액": -13870600.0, "편차율": -1.0}, {"단품코드": "HYC9091V", "색상": "GYC", "품목명": "기본장 측판류", "품목군": "(일룸)침실", "매출계획": 13061100.0, "매출실적": 0, "편차금액": -13061100.0, "편차율": -1.0}, {"단품코드": "IHV12CP03A", "색상": "WW", "품목명": "모션용 6단 책상장 측판류 (W1200,1400 공용)", "품목군": "(일룸)스터디", "매출계획": 12783500.0, "매출실적": 0, "편차금액": -12783500.0, "편차율": -1.0}, {"단품코드": "IBB11DD00A", "색상": "WW", "품목명": "바닥판", "품목군": "(일룸)스터디", "매출계획": 12448800.0, "매출실적": 0, "편차금액": -12448800.0, "편차율": -1.0}, {"단품코드": "ICV00CP04A", "색상": "WW", "품목명": "4단 적층장 측판류", "품목군": "(일룸)스터디", "매출계획": 12230400.0, "매출실적": 0, "편차금액": -12230400.0, "편차율": -1.0}, {"단품코드": "IHS14CP06A", "색상": "WW", "품목명": "모션용 책상장 선반류 1400폭(6단)", "품목군": "(일룸)스터디", "매출계획": 12206700.0, "매출실적": 0, "편차금액": -12206700.0, "편차율": -1.0}, {"단품코드": "HL72Y12MEL", "색상": "SOAT", "품목명": "리프트업 바디 1200폭(D540)", "품목군": "(일룸)거실", "매출계획": 11721800.0, "매출실적": 0, "편차금액": -11721800.0, "편차율": -1.0}, {"단품코드": "IHV14CP01B", "색상": "WW", "품목명": "6단 책상장 측판류 1400폭", "품목군": "(일룸)스터디", "매출계획": 11580400.0, "매출실적": 0, "편차금액": -11580400.0, "편차율": -1.0}, {"단품코드": "ICV14DD01A", "색상": "WW", "품목명": "1400폭 1단 적층장 측판,선반류", "품목군": "(일룸)스터디", "매출계획": 11329500.0, "매출실적": 0, "편차금액": -11329500.0, "편차율": -1.0}, {"단품코드": "HSFC5080D", "색상": "IV", "품목명": "옷장 도어 800폭", "품목군": "(일룸)키즈", "매출계획": 11227300.0, "매출실적": 0, "편차금액": -11227300.0, "편차율": -1.0}, {"단품코드": "IHY14CP01A", "색상": "WW", "품목명": "뉴트 수납선반 1400폭(모션데스크용)", "품목군": "(일룸)스터디", "매출계획": 11047500.0, "매출실적": 0, "편차금액": -11047500.0, "편차율": -1.0}, {"단품코드": "IHB14CP03A", "색상": "WW", "품목명": "모션용 6단 책상장 중측판, 뒷판 1400폭", "품목군": "(일룸)스터디", "매출계획": 10603800.0, "매출실적": 0, "편차금액": -10603800.0, "편차율": -1.0}, {"단품코드": "IHS12CP02A", "색상": "WW", "품목명": "레이어드 선반류 (1200폭용)", "품목군": "(일룸)스터디", "매출계획": 10319100.0, "매출실적": 0, "편차금액": -10319100.0, "편차율": -1.0}, {"단품코드": "HSFC5080V", "색상": "IV", "품목명": "옷장 측판류 800폭", "품목군": "(일룸)키즈", "매출계획": 9815000.0, "매출실적": 0, "편차금액": -9815000.0, "편차율": -1.0}, {"단품코드": "IHB14CP01B", "색상": "WW", "품목명": "6단 책상장 중측판,뒷판 1400폭", "품목군": "(일룸)스터디", "매출계획": 8777000.0, "매출실적": 0, "편차금액": -8777000.0, "편차율": -1.0}, {"단품코드": "IHV12CP01B", "색상": "WW", "품목명": "6단 책상장 측판류 1200폭", "품목군": "(일룸)스터디", "매출계획": 8741400.0, "매출실적": 0, "편차금액": -8741400.0, "편차율": -1.0}, {"단품코드": "ICS14DD00A", "색상": "WW", "품목명": "1400폭 2단 책장 선반류", "품목군": "(일룸)스터디", "매출계획": 8019000.0, "매출실적": 0, "편차금액": -8019000.0, "편차율": -1.0}, {"단품코드": "ICS20DD00A", "색상": "WW", "품목명": "2000폭 2단 책장 선반류", "품목군": "(일룸)스터디", "매출계획": 7896000.0, "매출실적": 0, "편차금액": -7896000.0, "편차율": -1.0}, {"단품코드": "IGD80CP00A", "색상": "WW", "품목명": "2단 서랍옷장류 옷장도어 (뉴트 손잡이용)", "품목군": "(일룸)스터디", "매출계획": 7610900.0, "매출실적": 0, "편차금액": -7610900.0, "편차율": -1.0}], "충주내작__total": 517, "VN목제": [{"단품코드": "IVBB11AW00A", "색상": "IV", "품목명": "바닥판(SS)", "품목군": "(일룸)침실", "매출계획": 189939200.0, "매출실적": 0, "편차금액": -189939200.0, "편차율": -1.0}, {"단품코드": "HVBA40H11EAL", "색상": "SP", "품목명": "모던 수납헤드(SS)", "품목군": "(일룸)침실", "매출계획": 28150000.0, "매출실적": 0, "편차금액": -28150000.0, "편차율": -1.0}, {"단품코드": "IVBB15AW00A", "색상": "IV", "품목명": "바닥판(Q)", "품목군": "(일룸)침실", "매출계획": 22895600.0, "매출실적": 0, "편차금액": -22895600.0, "편차율": -1.0}, {"단품코드": "HVBA40F20PEL", "색상": "SP", "품목명": "측판류", "품목군": "(일룸)침실", "매출계획": 21853600.0, "매출실적": 0, "편차금액": -21853600.0, "편차율": -1.0}, {"단품코드": "HVSKD0612FN", "색상": "IV", "품목명": "모션데스크 상판 1200폭 (멀티탭용)", "품목군": "(일룸)스터디", "매출계획": 19423800.0, "매출실적": 0, "편차금액": -19423800.0, "편차율": -1.0}, {"단품코드": "HVSLD1008N", "색상": "IVTSS", "품목명": "피넛형 책상상판 800폭(포밍범퍼)", "품목군": "(일룸)키즈", "매출계획": 19330800.0, "매출실적": 0, "편차금액": -19330800.0, "편차율": -1.0}, {"단품코드": "HVSSE2800B", "색상": "SP", "품목명": "수납형침대 바닥판", "품목군": "(일룸)스터디", "매출계획": 18380100.0, "매출실적": 0, "편차금액": -18380100.0, "편차율": -1.0}, {"단품코드": "IVBP11BH01A", "색상": "IV", "품목명": "침대 하부 속서랍", "품목군": "(일룸)키즈", "매출계획": 18278400.0, "매출실적": 0, "편차금액": -18278400.0, "편차율": -1.0}, {"단품코드": "HVBA40F11AML", "색상": "SP", "품목명": "모던 중측판류(SS)", "품목군": "(일룸)침실", "매출계획": 18094700.0, "매출실적": 0, "편차금액": -18094700.0, "편차율": -1.0}, {"단품코드": "HVSSE2800SBN", "색상": "SP", "품목명": "수납형침대 서랍앞판,측판류", "품목군": "(일룸)스터디", "매출계획": 17241600.0, "매출실적": 0, "편차금액": -17241600.0, "편차율": -1.0}, {"단품코드": "HVSOD1014R", "색상": "SP", "품목명": "상판 1400폭", "품목군": "(일룸)스터디", "매출계획": 16088600.0, "매출실적": 0, "편차금액": -16088600.0, "편차율": -1.0}, {"단품코드": "HVSOP1063R", "색상": "SP", "품목명": "600폭 3단 서랍장(손잡이 제외)", "품목군": "(일룸)스터디", "매출계획": 15208200.0, "매출실적": 0, "편차금액": -15208200.0, "편차율": -1.0}, {"단품코드": "HVBA40D10EFL", "색상": "SP", "품목명": "벙커수납도어", "품목군": "(일룸)침실", "매출계획": 14648100.0, "매출실적": 0, "편차금액": -14648100.0, "편차율": -1.0}, {"단품코드": "IVBV00BH00A", "색상": "GYM", "품목명": "침대 측판류", "품목군": "(일룸)키즈", "매출계획": 13912000.0, "매출실적": 0, "편차금액": -13912000.0, "편차율": -1.0}, {"단품코드": "HVSSE2800B", "색상": "IV", "품목명": "수납형침대 바닥판", "품목군": "(일룸)스터디", "매출계획": 11849100.0, "매출실적": 0, "편차금액": -11849100.0, "편차율": -1.0}, {"단품코드": "HVSSE2800SBN", "색상": "IV", "품목명": "수납형침대 서랍앞판,측판류", "품목군": "(일룸)스터디", "매출계획": 11135200.0, "매출실적": 0, "편차금액": -11135200.0, "편차율": -1.0}, {"단품코드": "HVSKD0512FN", "색상": "IVTSS", "품목명": "스마트데스크 1200폭 상판", "품목군": "(일룸)스터디", "매출계획": 9806500.0, "매출실적": 0, "편차금액": -9806500.0, "편차율": -1.0}, {"단품코드": "HVSFS0123H", "색상": "IV", "품목명": "슬라이딩책장 몸통 선반류", "품목군": "(일룸)키즈", "매출계획": 9130400.0, "매출실적": 0, "편차금액": -9130400.0, "편차율": -1.0}, {"단품코드": "IVBB11BH00A", "색상": "GYM", "품목명": "침대 바닥판류", "품목군": "(일룸)키즈", "매출계획": 8998400.0, "매출실적": 0, "편차금액": -8998400.0, "편차율": -1.0}, {"단품코드": "HVSOD1012R", "색상": "SP", "품목명": "상판 1160폭", "품목군": "(일룸)스터디", "매출계획": 8570100.0, "매출실적": 0, "편차금액": -8570100.0, "편차율": -1.0}, {"단품코드": "HVSOD1012TR", "색상": "WW", "품목명": "상판 1160폭 D600", "품목군": "(일룸)스터디", "매출계획": 8047500.0, "매출실적": 0, "편차금액": -8047500.0, "편차율": -1.0}, {"단품코드": "HVSSE2800SA", "색상": "SP", "품목명": "수납형침대 풋보드,중측판", "품목군": "(일룸)스터디", "매출계획": 7926500.0, "매출실적": 0, "편차금액": -7926500.0, "편차율": -1.0}, {"단품코드": "IVBB16AW00A", "색상": "IV", "품목명": "바닥판(K)", "품목군": "(일룸)침실", "매출계획": 7738640.0, "매출실적": 0, "편차금액": -7738640.0, "편차율": -1.0}, {"단품코드": "HVSKD0514FN", "색상": "IVTSS", "품목명": "스마트데스크 1400폭 상판", "품목군": "(일룸)스터디", "매출계획": 7399000.0, "매출실적": 0, "편차금액": -7399000.0, "편차율": -1.0}, {"단품코드": "HVSKD0500", "색상": "IV", "품목명": "측판형책상 측판", "품목군": "(일룸)스터디", "매출계획": 7007700.0, "매출실적": 0, "편차금액": -7007700.0, "편차율": -1.0}, {"단품코드": "HVSKC0204SV", "색상": "IV", "품목명": "4단 적층장 측판", "품목군": "(일룸)스터디", "매출계획": 6839200.0, "매출실적": 0, "편차금액": -6839200.0, "편차율": -1.0}, {"단품코드": "HVSOD1014TR", "색상": "WW", "품목명": "상판 1400폭 D600", "품목군": "(일룸)스터디", "매출계획": 6688000.0, "매출실적": 0, "편차금액": -6688000.0, "편차율": -1.0}, {"단품코드": "HVSLD1012N", "색상": "IVTSS", "품목명": "피넛형 책상상판 1200폭(포밍범퍼)", "품목군": "(일룸)키즈", "매출계획": 6358800.0, "매출실적": 0, "편차금액": -6358800.0, "편차율": -1.0}, {"단품코드": "HVSSE2800B", "색상": "OS", "품목명": "수납형침대 바닥판", "품목군": "(일룸)스터디", "매출계획": 6157800.0, "매출실적": 0, "편차금액": -6157800.0, "편차율": -1.0}, {"단품코드": "HVSLD1012A", "색상": "IVTSS", "품목명": "직사각라운드형 책상 상판 1200폭(포밍범퍼)", "품목군": "(일룸)키즈", "매출계획": 5980300.0, "매출실적": 0, "편차금액": -5980300.0, "편차율": -1.0}], "VN목제__total": 163, "안성내작": [{"단품코드": "HB72F11EEUN", "색상": "TS", "품목명": "25.05 변경 철재 침대 프레임(SS)", "품목군": "(일룸)침실", "매출계획": 198968400.0, "매출실적": 0, "편차금액": -198968400.0, "편차율": -1.0}, {"단품코드": "IBM00DR00A", "색상": "BKM", "품목명": "모션 매트리스 일체형 매커니즘 SS", "품목군": "(일룸)침실", "매출계획": 55605000.0, "매출실적": 0, "편차금액": -55605000.0, "편차율": -1.0}, {"단품코드": "IBM00AA00B", "색상": "MM", "품목명": "모션베드 메커니즘(LA18,HC10) 1100폭", "품목군": "(일룸)스터디", "매출계획": 48920900.0, "매출실적": 0, "편차금액": -48920900.0, "편차율": -1.0}, {"단품코드": "HSOD0000R", "색상": "WW", "품목명": "책상다리", "품목군": "(일룸)스터디", "매출계획": 42610900.0, "매출실적": 0, "편차금액": -42610900.0, "편차율": -1.0}, {"단품코드": "HB01U11EHUN", "색상": "MM", "품목명": "모션베드메커니즘 1100폭(2모터)", "품목군": "(일룸)침실", "매출계획": 25947900.0, "매출실적": 0, "편차금액": -25947900.0, "편차율": -1.0}, {"단품코드": "HB72F15EEUN", "색상": "TS", "품목명": "25.05 변경 철재 침대 프레임(Q)", "품목군": "(일룸)침실", "매출계획": 19684600.0, "매출실적": 0, "편차금액": -19684600.0, "편차율": -1.0}, {"단품코드": "IDF14CP02A", "색상": "PW", "품목명": "뉴트 모션데스크 프레임 1400폭(D700)", "품목군": "(일룸)스터디", "매출계획": 16465600.0, "매출실적": 0, "편차금액": -16465600.0, "편차율": -1.0}, {"단품코드": "IDB70CP00A", "색상": "PW", "품목명": "뉴트 모션데스크 베이스 (D700용)", "품목군": "(일룸)스터디", "매출계획": 13829400.0, "매출실적": 0, "편차금액": -13829400.0, "편차율": -1.0}, {"단품코드": "IDX14CP00A", "색상": "WW", "품목명": "레이어드 메커니즘부 (1400폭용)", "품목군": "(일룸)스터디", "매출계획": 10351200.0, "매출실적": 0, "편차금액": -10351200.0, "편차율": -1.0}, {"단품코드": "ICN14DD00A", "색상": "WW", "품목명": "1400폭 1단 적층장 악세서리패널", "품목군": "(일룸)스터디", "매출계획": 9254700.0, "매출실적": 0, "편차금액": -9254700.0, "편차율": -1.0}, {"단품코드": "HSOA0113BN", "색상": "GY", "품목명": "책상장 액세서리패널 1130폭", "품목군": "(일룸)스터디", "매출계획": 8149300.0, "매출실적": 0, "편차금액": -8149300.0, "편차율": -1.0}, {"단품코드": "HSOD1012XR", "색상": "WW", "품목명": "보강프레임 (1160폭 책상용)", "품목군": "(일룸)스터디", "매출계획": 7260000.0, "매출실적": 0, "편차금액": -7260000.0, "편차율": -1.0}, {"단품코드": "IDF12CP02A", "색상": "PW", "품목명": "뉴트 모션데스크 프레임 1200폭(D700)", "품목군": "(일룸)스터디", "매출계획": 6619800.0, "매출실적": 0, "편차금액": -6619800.0, "편차율": -1.0}, {"단품코드": "IDX12CP00A", "색상": "WW", "품목명": "레이어드 메커니즘부 (1200폭용)", "품목군": "(일룸)스터디", "매출계획": 6606600.0, "매출실적": 0, "편차금액": -6606600.0, "편차율": -1.0}, {"단품코드": "IBF12DR00A", "색상": "BK", "품목명": "다리형 침대 철재프레임 SS", "품목군": "(일룸)침실", "매출계획": 6567000.0, "매출실적": 0, "편차금액": -6567000.0, "편차율": -1.0}, {"단품코드": "IBX00AA00A", "색상": "XX", "품목명": "모션베드 프레임 철물류 D", "품목군": "(일룸)침실", "매출계획": 5875100.0, "매출실적": 0, "편차금액": -5875100.0, "편차율": -1.0}, {"단품코드": "IDF16AZ00C", "색상": "SP", "품목명": "업 모션 상판 프레임 1600폭", "품목군": "(일룸)다이닝", "매출계획": 5611800.0, "매출실적": 0, "편차금액": -5611800.0, "편차율": -1.0}, {"단품코드": "HB72F16EEU", "색상": "TS", "품목명": "철재 침대 프레임(K)", "품목군": "(일룸)침실", "매출계획": 5610640.0, "매출실적": 0, "편차금액": -5610640.0, "편차율": -1.0}, {"단품코드": "HSOD1014XR", "색상": "WW", "품목명": "보강프레임 (1400폭 책상용)", "품목군": "(일룸)스터디", "매출계획": 5561000.0, "매출실적": 0, "편차금액": -5561000.0, "편차율": -1.0}, {"단품코드": "IDB60DD00A", "색상": "PW", "품목명": "멘디 모션데스크 베이스", "품목군": "(일룸)스터디", "매출계획": 5495400.0, "매출실적": 0, "편차금액": -5495400.0, "편차율": -1.0}, {"단품코드": "HSWD0000B", "색상": "GY", "품목명": "다리베이스", "품목군": "(일룸)스터디", "매출계획": 5411400.0, "매출실적": 0, "편차금액": -5411400.0, "편차율": -1.0}, {"단품코드": "HSOD0214XN", "색상": "PW", "품목명": "철제프레임 1400폭", "품목군": "(일룸)스터디", "매출계획": 5304000.0, "매출실적": 0, "편차금액": -5304000.0, "편차율": -1.0}, {"단품코드": "IDU00AA10A", "색상": "PW", "품목명": "배선트레이(W620)", "품목군": "(일룸)스터디", "매출계획": 5294700.0, "매출실적": 0, "편차금액": -5294700.0, "편차율": -1.0}, {"단품코드": "HSOA0884BN", "색상": "GY", "품목명": "책상장 액세서리패널 884폭", "품목군": "(일룸)스터디", "매출계획": 5197500.0, "매출실적": 0, "편차금액": -5197500.0, "편차율": -1.0}, {"단품코드": "IDF14CP01A", "색상": "PW", "품목명": "뉴트 모션데스크 프레임 1400폭(D600)", "품목군": "(일룸)스터디", "매출계획": 5197200.0, "매출실적": 0, "편차금액": -5197200.0, "편차율": -1.0}, {"단품코드": "IDB60CP00A", "색상": "PW", "품목명": "뉴트 모션데스크 베이스 (D600용)", "품목군": "(일룸)스터디", "매출계획": 4806800.0, "매출실적": 0, "편차금액": -4806800.0, "편차율": -1.0}, {"단품코드": "HB72F10EEUN", "색상": "TS", "품목명": "25.05 변경 철재 침대 프레임(S)", "품목군": "(일룸)침실", "매출계획": 4434000.0, "매출실적": 0, "편차금액": -4434000.0, "편차율": -1.0}, {"단품코드": "IDF00DD01A", "색상": "PW", "품목명": "멘디 모션데스크 컨틸레버", "품목군": "(일룸)스터디", "매출계획": 4018600.0, "매출실적": 0, "편차금액": -4018600.0, "편차율": -1.0}, {"단품코드": "IDF18AZ00C", "색상": "SP", "품목명": "업 모션 상판 프레임 1800폭", "품목군": "(일룸)다이닝", "매출계획": 3956400.0, "매출실적": 0, "편차금액": -3956400.0, "편차율": -1.0}, {"단품코드": "IDF12CP01A", "색상": "PW", "품목명": "뉴트 모션데스크 프레임 1200폭(D600)", "품목군": "(일룸)스터디", "매출계획": 3666900.0, "매출실적": 0, "편차금액": -3666900.0, "편차율": -1.0}], "안성내작__total": 87, "소파외작": [{"단품코드": "ILY30CM00A", "색상": "L841L", "품목명": "스노즈 컴팩트 3인(가죽)", "품목군": "(일룸)거실", "매출계획": 12714800.0, "매출실적": 0, "편차금액": -12714800.0, "편차율": -1.0}, {"단품코드": "ISL10BD10A", "색상": "4U0", "품목명": "멜버른 1인 좌(패브릭,전동)", "품목군": "(일룸)거실", "매출계획": 9293000.0, "매출실적": 0, "편차금액": -9293000.0, "편차율": -1.0}, {"단품코드": "ILY30AK10B", "색상": "L841L", "품목명": "어라운드 3인(콘센트,가죽)", "품목군": "(일룸)거실", "매출계획": 8892000.0, "매출실적": 0, "편차금액": -8892000.0, "편차율": -1.0}, {"단품코드": "ISR10BD10A", "색상": "4U0", "품목명": "멜버른 1인 우(패브릭,전동)", "품목군": "(일룸)거실", "매출계획": 8363700.0, "매출실적": 0, "편차금액": -8363700.0, "편차율": -1.0}, {"단품코드": "HCS8011", "색상": "L845", "품목명": "볼케R(가죽,전동)", "품목군": "(일룸)거실", "매출계획": 8249400.0, "매출실적": 0, "편차금액": -8249400.0, "편차율": -1.0}, {"단품코드": "ILL15CM00A", "색상": "L841L", "품목명": "스노즈 컴팩트 1.5인 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 6589200.0, "매출실적": 0, "편차금액": -6589200.0, "편차율": -1.0}, {"단품코드": "ILR15CM00A", "색상": "L841L", "품목명": "스노즈 컴팩트 1.5인 우(가죽)", "품목군": "(일룸)거실", "매출계획": 6589200.0, "매출실적": 0, "편차금액": -6589200.0, "편차율": -1.0}, {"단품코드": "ILL30CM00A", "색상": "L841L", "품목명": "스노즈 컴팩트 3인 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 6216800.0, "매출실적": 0, "편차금액": -6216800.0, "편차율": -1.0}, {"단품코드": "ISY30CJ00A", "색상": "4U0", "품목명": "코모 3인 베이스(패브릭)", "품목군": "(일룸)거실", "매출계획": 5658900.0, "매출실적": 0, "편차금액": -5658900.0, "편차율": -1.0}, {"단품코드": "ILL15CM00A", "색상": "L842", "품목명": "스노즈 컴팩트 1.5인 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 5491000.0, "매출실적": 0, "편차금액": -5491000.0, "편차율": -1.0}, {"단품코드": "ILR15CM00A", "색상": "L842", "품목명": "스노즈 컴팩트 1.5인 우(가죽)", "품목군": "(일룸)거실", "매출계획": 5491000.0, "매출실적": 0, "편차금액": -5491000.0, "편차율": -1.0}, {"단품코드": "ILY30CM00A", "색상": "L842", "품목명": "스노즈 컴팩트 3인(가죽)", "품목군": "(일룸)거실", "매출계획": 5449200.0, "매출실적": 0, "편차금액": -5449200.0, "편차율": -1.0}, {"단품코드": "ILY30CM00A", "색상": "L849L", "품목명": "스노즈 컴팩트 3인(가죽)", "품목군": "(일룸)거실", "매출계획": 5449200.0, "매출실적": 0, "편차금액": -5449200.0, "편차율": -1.0}, {"단품코드": "ISL20AJ00A", "색상": "4U0", "품목명": "무브 2인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 5223600.0, "매출실적": 0, "편차금액": -5223600.0, "편차율": -1.0}, {"단품코드": "ISC00CJ00A", "색상": "4U0", "품목명": "코모 등받이 쿠션(패브릭)", "품목군": "(일룸)거실", "매출계획": 5120700.0, "매출실적": 0, "편차금액": -5120700.0, "편차율": -1.0}, {"단품코드": "ISY30AK10B", "색상": "4U0", "품목명": "어라운드 3인(콘센트,패브릭)", "품목군": "(일룸)거실", "매출계획": 4594500.0, "매출실적": 0, "편차금액": -4594500.0, "편차율": -1.0}, {"단품코드": "ISL20AK00A", "색상": "4U0", "품목명": "어라운드 2인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 4352500.0, "매출실적": 0, "편차금액": -4352500.0, "편차율": -1.0}, {"단품코드": "HCS8011", "색상": "L840", "품목명": "볼케R(가죽,전동)", "품목군": "(일룸)거실", "매출계획": 4124700.0, "매출실적": 0, "편차금액": -4124700.0, "편차율": -1.0}, {"단품코드": "ISY10AJ00A", "색상": "4U0", "품목명": "무브 1인(패브릭)", "품목군": "(일룸)거실", "매출계획": 3813600.0, "매출실적": 0, "편차금액": -3813600.0, "편차율": -1.0}, {"단품코드": "ILR10CM00A", "색상": "L841L", "품목명": "스노즈 컴팩트 1인 우(가죽)", "품목군": "(일룸)거실", "매출계획": 3784800.0, "매출실적": 0, "편차금액": -3784800.0, "편차율": -1.0}, {"단품코드": "ISJ10BD00A", "색상": "4U0", "품목명": "멜버른 1인 연결형(패브릭,비전동)", "품목군": "(일룸)거실", "매출계획": 3316800.0, "매출실적": 0, "편차금액": -3316800.0, "편차율": -1.0}, {"단품코드": "ISY30CJ01A", "색상": "5T6", "품목명": "코모 3인 베이스(패브릭)", "품목군": "(일룸)거실", "매출계획": 3274800.0, "매출실적": 0, "편차금액": -3274800.0, "편차율": -1.0}, {"단품코드": "HCS8702L", "색상": "L842", "품목명": "오클랜드 1.5인 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 3247200.0, "매출실적": 0, "편차금액": -3247200.0, "편차율": -1.0}, {"단품코드": "HCS8702R", "색상": "L842", "품목명": "오클랜드 1.5인 우(가죽)", "품목군": "(일룸)거실", "매출계획": 3247200.0, "매출실적": 0, "편차금액": -3247200.0, "편차율": -1.0}, {"단품코드": "HCS8902LF", "색상": "3T2", "품목명": "스노즈 1.5인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 3164400.0, "매출실적": 0, "편차금액": -3164400.0, "편차율": -1.0}, {"단품코드": "HCS8902RF", "색상": "3T2", "품목명": "스노즈 1.5인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 3164400.0, "매출실적": 0, "편차금액": -3164400.0, "편차율": -1.0}, {"단품코드": "ILL30CM00A", "색상": "L842", "품목명": "스노즈 컴팩트 3인 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 3108400.0, "매출실적": 0, "편차금액": -3108400.0, "편차율": -1.0}, {"단품코드": "ISY30CJ00A", "색상": "4U1", "품목명": "코모 3인 베이스(패브릭)", "품목군": "(일룸)거실", "매출계획": 3047100.0, "매출실적": 0, "편차금액": -3047100.0, "편차율": -1.0}, {"단품코드": "ILL10AG10A", "색상": "L849L", "품목명": "카이로R 1인 좌(가죽,전동)", "품목군": "(일룸)거실", "매출계획": 2995200.0, "매출실적": 0, "편차금액": -2995200.0, "편차율": -1.0}, {"단품코드": "ILR10AG10A", "색상": "L849L", "품목명": "카이로R 1인 우(가죽,전동)", "품목군": "(일룸)거실", "매출계획": 2995200.0, "매출실적": 0, "편차금액": -2995200.0, "편차율": -1.0}], "소파외작__total": 253, "VN의자": [{"단품코드": "HVB72Y11EAA", "색상": "A4810", "품목명": "침대 헤드보드 1100폭", "품목군": "(일룸)침실", "매출계획": 87738600.0, "매출실적": 0, "편차금액": -87738600.0, "편차율": -1.0}, {"단품코드": "HVCH3501HLN", "색상": "456", "품목명": "아이핏 (헤드레스트,럼버서포트)", "품목군": "(일룸)스터디", "매출계획": 32085400.0, "매출실적": 0, "편차금액": -32085400.0, "편차율": -1.0}, {"단품코드": "HVCH3510HLN", "색상": "2D1", "품목명": "아이핏 에어(헤드레스트,럼버서포트)", "품목군": "(일룸)스터디", "매출계획": 29974400.0, "매출실적": 0, "편차금액": -29974400.0, "편차율": -1.0}, {"단품코드": "HVCH2810FC", "색상": "A441D", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 27356100.0, "매출실적": 0, "편차금액": -27356100.0, "편차율": -1.0}, {"단품코드": "HVCH3900H", "색상": "451A", "품목명": "알렉스 의자", "품목군": "(일룸)스터디", "매출계획": 18425000.0, "매출실적": 0, "편차금액": -18425000.0, "편차율": -1.0}, {"단품코드": "HVCH2810FC", "색상": "A443D", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 18101300.0, "매출실적": 0, "편차금액": -18101300.0, "편차율": -1.0}, {"단품코드": "HVCH2810FC", "색상": "A444D", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 14426600.0, "매출실적": 0, "편차금액": -14426600.0, "편차율": -1.0}, {"단품코드": "HVCH2810FC", "색상": "A449PN", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 13473900.0, "매출실적": 0, "편차금액": -13473900.0, "편차율": -1.0}, {"단품코드": "HVCS4002A", "색상": "A440P", "품목명": "버니아코(인조)", "품목군": "(일룸)키즈", "매출계획": 12517200.0, "매출실적": 0, "편차금액": -12517200.0, "편차율": -1.0}, {"단품코드": "HVCH0014R", "색상": "A491C", "품목명": "세타플러스", "품목군": "(일룸)다이닝", "매출계획": 11485800.0, "매출실적": 0, "편차금액": -11485800.0, "편차율": -1.0}, {"단품코드": "HVCH2810FSC", "색상": "A441D", "품목명": "링고아이 (고정중심봉,회전캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 11024100.0, "매출실적": 0, "편차금액": -11024100.0, "편차율": -1.0}, {"단품코드": "HVCH3501HLN", "색상": "455", "품목명": "아이핏 (헤드레스트,럼버서포트)", "품목군": "(일룸)스터디", "매출계획": 9836400.0, "매출실적": 0, "편차금액": -9836400.0, "편차율": -1.0}, {"단품코드": "HVCH2810FSC", "색상": "A443D", "품목명": "링고아이 (고정중심봉,회전캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 8846500.0, "매출실적": 0, "편차금액": -8846500.0, "편차율": -1.0}, {"단품코드": "HVCH2810FSC", "색상": "A449PN", "품목명": "링고아이 (고정중심봉,회전캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 7757700.0, "매출실적": 0, "편차금액": -7757700.0, "편차율": -1.0}, {"단품코드": "HVCH3501KHLN", "색상": "456", "품목명": "아이핏 (헤드레스트,럼버서포트,BK)", "품목군": "(일룸)스터디", "매출계획": 7500900.0, "매출실적": 0, "편차금액": -7500900.0, "편차율": -1.0}, {"단품코드": "HVCH3501HLN", "색상": "454A", "품목명": "아이핏 (헤드레스트,럼버서포트)", "품목군": "(일룸)스터디", "매출계획": 7026000.0, "매출실적": 0, "편차금액": -7026000.0, "편차율": -1.0}, {"단품코드": "HVCH2810FSC", "색상": "A444D", "품목명": "링고아이 (고정중심봉,회전캐스터,발걸이)", "품목군": "(일룸)스터디", "매출계획": 6532800.0, "매출실적": 0, "편차금액": -6532800.0, "편차율": -1.0}, {"단품코드": "HVCS4003A", "색상": "A440P", "품목명": "디노아코(인조)", "품목군": "(일룸)기타", "매출계획": 5950800.0, "매출실적": 0, "편차금액": -5950800.0, "편차율": -1.0}, {"단품코드": "HVCH3510KHLN", "색상": "2D6", "품목명": "아이핏 에어(헤드레스트,럼버서포트,BK)", "품목군": "(일룸)스터디", "매출계획": 5533000.0, "매출실적": 0, "편차금액": -5533000.0, "편차율": -1.0}, {"단품코드": "HVCH0014R", "색상": "A491L", "품목명": "세타플러스", "품목군": "(일룸)다이닝", "매출계획": 4254000.0, "매출실적": 0, "편차금액": -4254000.0, "편차율": -1.0}, {"단품코드": "HVCH3900H", "색상": "457L", "품목명": "알렉스 의자", "품목군": "(일룸)스터디", "매출계획": 3987500.0, "매출실적": 0, "편차금액": -3987500.0, "편차율": -1.0}, {"단품코드": "HVCH0018A", "색상": "A490LA", "품목명": "비비체어 인조가죽", "품목군": "(일룸)다이닝", "매출계획": 3610000.0, "매출실적": 0, "편차금액": -3610000.0, "편차율": -1.0}, {"단품코드": "HVCS4002A", "색상": "A443D", "품목명": "버니아코(인조)", "품목군": "(일룸)키즈", "매출계획": 3078000.0, "매출실적": 0, "편차금액": -3078000.0, "편차율": -1.0}, {"단품코드": "HVCH0018S", "색상": "A490LW", "품목명": "비비 솔리드(인조)", "품목군": "(일룸)다이닝", "매출계획": 1959000.0, "매출실적": 0, "편차금액": -1959000.0, "편차율": -1.0}, {"단품코드": "HVCH2810F", "색상": "A441D", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터)", "품목군": "(일룸)스터디", "매출계획": 1731800.0, "매출실적": 0, "편차금액": -1731800.0, "편차율": -1.0}, {"단품코드": "HVCS4003A", "색상": "A444P", "품목명": "디노아코(인조)", "품목군": "(일룸)기타", "매출계획": 1436400.0, "매출실적": 0, "편차금액": -1436400.0, "편차율": -1.0}, {"단품코드": "HVCH0018A", "색상": "A494BA", "품목명": "비비체어 인조가죽", "품목군": "(일룸)다이닝", "매출계획": 866400.0, "매출실적": 0, "편차금액": -866400.0, "편차율": -1.0}, {"단품코드": "HVCH0018F", "색상": "161AA", "품목명": "비비체어 패브릭", "품목군": "(일룸)다이닝", "매출계획": 866400.0, "매출실적": 0, "편차금액": -866400.0, "편차율": -1.0}, {"단품코드": "HVCH2810F", "색상": "A444D", "품목명": "링고아이 (고정중심봉,싯브레이크캐스터)", "품목군": "(일룸)스터디", "매출계획": 742200.0, "매출실적": 0, "편차금액": -742200.0, "편차율": -1.0}, {"단품코드": "HVCH2810FS", "색상": "A441D", "품목명": "링고아이 (고정중심봉,회전캐스터)", "품목군": "(일룸)스터디", "매출계획": 742200.0, "매출실적": 0, "편차금액": -742200.0, "편차율": -1.0}], "VN의자__total": 38, "의자내작": [{"단품코드": "HCH2900WRA", "색상": "451M", "품목명": "올리버 MESH등판(WH) 몸통", "품목군": "(일룸)스터디", "매출계획": 32985700.0, "매출실적": 0, "편차금액": -32985700.0, "편차율": -1.0}, {"단품코드": "ITY00BT00A", "색상": "451L", "품목명": "비토 스터디", "품목군": "(일룸)스터디", "매출계획": 11256700.0, "매출실적": 0, "편차금액": -11256700.0, "편차율": -1.0}, {"단품코드": "HCH0009", "색상": "A490L", "품목명": "콘", "품목군": "(일룸)다이닝", "매출계획": 10044800.0, "매출실적": 0, "편차금액": -10044800.0, "편차율": -1.0}, {"단품코드": "ITY00BT00A", "색상": "452M", "품목명": "비토 스터디", "품목군": "(일룸)스터디", "매출계획": 9524900.0, "매출실적": 0, "편차금액": -9524900.0, "편차율": -1.0}, {"단품코드": "HCH3001A", "색상": "A491CT", "품목명": "앤(인조가죽)", "품목군": "(일룸)다이닝", "매출계획": 8064000.0, "매출실적": 0, "편차금액": -8064000.0, "편차율": -1.0}, {"단품코드": "HCH2900WRA", "색상": "454A", "품목명": "올리버 MESH등판(WH) 몸통", "품목군": "(일룸)스터디", "매출계획": 7080700.0, "매출실적": 0, "편차금액": -7080700.0, "편차율": -1.0}, {"단품코드": "HCH2900WRA", "색상": "454D", "품목명": "올리버 MESH등판(WH) 몸통", "품목군": "(일룸)스터디", "매출계획": 6735300.0, "매출실적": 0, "편차금액": -6735300.0, "편차율": -1.0}, {"단품코드": "HCH2900WRA", "색상": "459", "품목명": "올리버 MESH등판(WH) 몸통", "품목군": "(일룸)스터디", "매출계획": 6044500.0, "매출실적": 0, "편차금액": -6044500.0, "편차율": -1.0}, {"단품코드": "HCH3601L", "색상": "L846", "품목명": "지엘 천연가죽", "품목군": "(일룸)서재", "매출계획": 5692500.0, "매출실적": 0, "편차금액": -5692500.0, "편차율": -1.0}, {"단품코드": "HCH3801H", "색상": "2H1", "품목명": "비토(헤드레스트)", "품목군": "(일룸)스터디", "매출계획": 5371600.0, "매출실적": 0, "편차금액": -5371600.0, "편차율": -1.0}, {"단품코드": "HCH3601L", "색상": "L845L", "품목명": "지엘 천연가죽", "품목군": "(일룸)서재", "매출계획": 5175000.0, "매출실적": 0, "편차금액": -5175000.0, "편차율": -1.0}, {"단품코드": "HCH2711A", "색상": "A472L", "품목명": "윙 인조가죽", "품목군": "(일룸)키즈", "매출계획": 4321600.0, "매출실적": 0, "편차금액": -4321600.0, "편차율": -1.0}, {"단품코드": "HCH2000AN", "색상": "A440P", "품목명": "아띠아이R 의자", "품목군": "(일룸)키즈", "매출계획": 3569500.0, "매출실적": 0, "편차금액": -3569500.0, "편차율": -1.0}, {"단품코드": "HCH1008W", "색상": "451L", "품목명": "펑거스", "품목군": "(일룸)스터디", "매출계획": 3123600.0, "매출실적": 0, "편차금액": -3123600.0, "편차율": -1.0}, {"단품코드": "HCH1007", "색상": "IV", "품목명": "미엘갤러리 원목스툴", "품목군": "(일룸)침실", "매출계획": 3087000.0, "매출실적": 0, "편차금액": -3087000.0, "편차율": -1.0}, {"단품코드": "HCH0009", "색상": "A491CH", "품목명": "콘", "품목군": "(일룸)다이닝", "매출계획": 2920000.0, "매출실적": 0, "편차금액": -2920000.0, "편차율": -1.0}, {"단품코드": "HCH2711A", "색상": "A441D", "품목명": "윙 인조가죽", "품목군": "(일룸)키즈", "매출계획": 2803200.0, "매출실적": 0, "편차금액": -2803200.0, "편차율": -1.0}, {"단품코드": "HCH2711A", "색상": "A443D", "품목명": "윙 인조가죽", "품목군": "(일룸)키즈", "매출계획": 2686400.0, "매출실적": 0, "편차금액": -2686400.0, "편차율": -1.0}, {"단품코드": "HCX0001RB", "색상": "SG", "품목명": "일반 캐스터(5EA,50_27U,올리버)", "품목군": "(일룸)스터디", "매출계획": 2453100.0, "매출실적": 0, "편차금액": -2453100.0, "편차율": -1.0}, {"단품코드": "HCH0014RP", "색상": "WW", "품목명": "세타플러스 플라스틱", "품목군": "(일룸)다이닝", "매출계획": 2404800.0, "매출실적": 0, "편차금액": -2404800.0, "편차율": -1.0}, {"단품코드": "HCH1008W", "색상": "459", "품목명": "펑거스", "품목군": "(일룸)스터디", "매출계획": 2301600.0, "매출실적": 0, "편차금액": -2301600.0, "편차율": -1.0}, {"단품코드": "IUX2511001", "색상": "A472L", "품목명": "쿠팡전용) 일룸 윙 인조가죽 라이트베이지(HCH2711A)", "품목군": "(일룸)키즈", "매출계획": 2102400.0, "매출실적": 0, "편차금액": -2102400.0, "편차율": -1.0}, {"단품코드": "HCH6000", "색상": "451WW", "품목명": "폴 바스툴(패브릭)", "품목군": "(일룸)다이닝", "매출계획": 2016000.0, "매출실적": 0, "편차금액": -2016000.0, "편차율": -1.0}, {"단품코드": "HCH0000FNB", "색상": "WW", "품목명": "100G_EX 고정중심봉", "품목군": "(일룸)스터디", "매출계획": 1810400.0, "매출실적": 0, "편차금액": -1810400.0, "편차율": -1.0}, {"단품코드": "HCX0001BB", "색상": "SG", "품목명": "싯브레이크 캐스터(5EA,50_30U,올리버)", "품목군": "(일룸)스터디", "매출계획": 1776000.0, "매출실적": 0, "편차금액": -1776000.0, "편차율": -1.0}, {"단품코드": "HCH0020WN", "색상": "451MWW", "품목명": "버튼 스위블(캐스터,좌판패딩)", "품목군": "(일룸)스터디", "매출계획": 1752000.0, "매출실적": 0, "편차금액": -1752000.0, "편차율": -1.0}, {"단품코드": "HCH2711A", "색상": "A449PN", "품목명": "윙 인조가죽", "품목군": "(일룸)키즈", "매출계획": 1752000.0, "매출실적": 0, "편차금액": -1752000.0, "편차율": -1.0}, {"단품코드": "HCH3001A", "색상": "A492WG", "품목명": "앤(인조가죽)", "품목군": "(일룸)다이닝", "매출계획": 1728000.0, "매출실적": 0, "편차금액": -1728000.0, "편차율": -1.0}, {"단품코드": "HCH2711A", "색상": "A444D", "품목명": "윙 인조가죽", "품목군": "(일룸)키즈", "매출계획": 1518400.0, "매출실적": 0, "편차금액": -1518400.0, "편차율": -1.0}, {"단품코드": "HCH0000SN", "색상": "WW", "품목명": "100G_EX 회전중심봉(올리버)", "품목군": "(일룸)스터디", "매출계획": 1458000.0, "매출실적": 0, "편차금액": -1458000.0, "편차율": -1.0}], "의자내작__total": 59, "VN소파": [{"단품코드": "HVCS8813F", "색상": "4R2", "품목명": "밴쿠버 3인 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 14302500.0, "매출실적": 0, "편차금액": -14302500.0, "편차율": -1.0}, {"단품코드": "HVCS8812L", "색상": "L845", "품목명": "밴쿠버 1.5인 몸통 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 13017900.0, "매출실적": 0, "편차금액": -13017900.0, "편차율": -1.0}, {"단품코드": "HVCS8812R", "색상": "L845", "품목명": "밴쿠버 1.5인 몸통 우(가죽)", "품목군": "(일룸)거실", "매출계획": 13017900.0, "매출실적": 0, "편차금액": -13017900.0, "편차율": -1.0}, {"단품코드": "HVCS8813", "색상": "L845", "품목명": "밴쿠버 3인 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 11307400.0, "매출실적": 0, "편차금액": -11307400.0, "편차율": -1.0}, {"단품코드": "HVCS8812LFA", "색상": "4U0", "품목명": "밴쿠버 1.5인 좌 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 10716200.0, "매출실적": 0, "편차금액": -10716200.0, "편차율": -1.0}, {"단품코드": "HVCS8812RFA", "색상": "4U0", "품목명": "밴쿠버 1.5인 우 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 10716200.0, "매출실적": 0, "편차금액": -10716200.0, "편차율": -1.0}, {"단품코드": "HVCS8812RF", "색상": "4R2", "품목명": "밴쿠버 1.5인 몸통 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 10041900.0, "매출실적": 0, "편차금액": -10041900.0, "편차율": -1.0}, {"단품코드": "HVCS8813FA", "색상": "4U0", "품목명": "밴쿠버 3인 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 9782400.0, "매출실적": 0, "편차금액": -9782400.0, "편차율": -1.0}, {"단품코드": "HVCS8812LF", "색상": "4R2", "품목명": "밴쿠버 1.5인 몸통 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 8860500.0, "매출실적": 0, "편차금액": -8860500.0, "편차율": -1.0}, {"단품코드": "HVCS8813LF", "색상": "4R2", "품목명": "밴쿠버 3인 좌 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 6577600.0, "매출실적": 0, "편차금액": -6577600.0, "편차율": -1.0}, {"단품코드": "HVCS8813LFA", "색상": "4U0", "품목명": "밴쿠버 3인 좌 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 4311000.0, "매출실적": 0, "편차금액": -4311000.0, "편차율": -1.0}, {"단품코드": "HVCS7121LF", "색상": "2Z2", "품목명": "코펜하겐 1인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 3437500.0, "매출실적": 0, "편차금액": -3437500.0, "편차율": -1.0}, {"단품코드": "HVCS8811RF", "색상": "4R2", "품목명": "밴쿠버 1인 우 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 3427200.0, "매출실적": 0, "편차금액": -3427200.0, "편차율": -1.0}, {"단품코드": "HVCS8702LF", "색상": "2Z2", "품목명": "오클랜드 1.5인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 3247200.0, "매출실적": 0, "편차금액": -3247200.0, "편차율": -1.0}, {"단품코드": "HVCS8702RF", "색상": "2Z2", "품목명": "오클랜드 1.5인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 3247200.0, "매출실적": 0, "편차금액": -3247200.0, "편차율": -1.0}, {"단품코드": "HVCS7121RF", "색상": "2Z2", "품목명": "코펜하겐 1인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 2750000.0, "매출실적": 0, "편차금액": -2750000.0, "편차율": -1.0}, {"단품코드": "HVCS8800F", "색상": "4R2", "품목명": "밴쿠버 스툴(패브릭)", "품목군": "(일룸)거실", "매출계획": 2695000.0, "매출실적": 0, "편차금액": -2695000.0, "편차율": -1.0}, {"단품코드": "HVCS8703F", "색상": "2Z2", "품목명": "오클랜드 3인(패브릭)", "품목군": "(일룸)거실", "매출계획": 2653000.0, "매출실적": 0, "편차금액": -2653000.0, "편차율": -1.0}, {"단품코드": "IVSY10DB00A", "색상": "4R2", "품목명": "플로코 등판,팔걸이 모듈 (패브릭,와이드)", "품목군": "(일룸)거실", "매출계획": 2591000.0, "매출실적": 0, "편차금액": -2591000.0, "편차율": -1.0}, {"단품코드": "HVCS8811RFA", "색상": "4U0", "품목명": "밴쿠버 1인 우 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 2362800.0, "매출실적": 0, "편차금액": -2362800.0, "편차율": -1.0}, {"단품코드": "HVCS7121LFA", "색상": "4L0", "품목명": "코펜하겐 1인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 2062500.0, "매출실적": 0, "편차금액": -2062500.0, "편차율": -1.0}, {"단품코드": "HVCS7121RFA", "색상": "4L0", "품목명": "코펜하겐 1인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 2062500.0, "매출실적": 0, "편차금액": -2062500.0, "편차율": -1.0}, {"단품코드": "HVCS8813F", "색상": "4R8", "품목명": "밴쿠버 3인 몸통(패브릭)", "품목군": "(일룸)거실", "매출계획": 1907000.0, "매출실적": 0, "편차금액": -1907000.0, "편차율": -1.0}, {"단품코드": "HVCS8812LF", "색상": "4R8", "품목명": "밴쿠버 1.5인 몸통 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 1772100.0, "매출실적": 0, "편차금액": -1772100.0, "편차율": -1.0}, {"단품코드": "HVCS8812RF", "색상": "4R8", "품목명": "밴쿠버 1.5인 몸통 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 1772100.0, "매출실적": 0, "편차금액": -1772100.0, "편차율": -1.0}, {"단품코드": "IVSY07DB01A", "색상": "4R2", "품목명": "플로코 좌판 모듈 (패브릭,베이직)", "품목군": "(일룸)거실", "매출계획": 1468000.0, "매출실적": 0, "편차금액": -1468000.0, "편차율": -1.0}, {"단품코드": "HVCS8800FA", "색상": "4U0", "품목명": "밴쿠버 스툴(패브릭)", "품목군": "(일룸)거실", "매출계획": 1368000.0, "매출실적": 0, "편차금액": -1368000.0, "편차율": -1.0}, {"단품코드": "HVCS8703F", "색상": "2Z1", "품목명": "오클랜드 3인(패브릭)", "품목군": "(일룸)거실", "매출계획": 1326500.0, "매출실적": 0, "편차금액": -1326500.0, "편차율": -1.0}, {"단품코드": "HVCS8703LF", "색상": "2Z2", "품목명": "오클랜드 3인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 1243600.0, "매출실적": 0, "편차금액": -1243600.0, "편차율": -1.0}, {"단품코드": "IVSY07DB00A", "색상": "4R2", "품목명": "플로코 등판 모듈 (패브릭,베이직)", "품목군": "(일룸)거실", "매출계획": 1209000.0, "매출실적": 0, "편차금액": -1209000.0, "편차율": -1.0}], "VN소파__total": 45, "소파내작": [{"단품코드": "HCS8818U", "색상": "BK", "품목명": "밴쿠버 3.5인 철제다리", "품목군": "(일룸)거실", "매출계획": 8583600.0, "매출실적": 0, "편차금액": -8583600.0, "편차율": -1.0}, {"단품코드": "HCS8813L", "색상": "L845", "품목명": "밴쿠버 3인 좌 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 7683200.0, "매출실적": 0, "편차금액": -7683200.0, "편차율": -1.0}, {"단품코드": "HCS8812R", "색상": "L841L", "품목명": "밴쿠버 1.5인 몸통 우(가죽)", "품목군": "(일룸)거실", "매출계획": 6818900.0, "매출실적": 0, "편차금액": -6818900.0, "편차율": -1.0}, {"단품코드": "HCS8812L", "색상": "L841L", "품목명": "밴쿠버 1.5인 몸통 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 6199000.0, "매출실적": 0, "편차금액": -6199000.0, "편차율": -1.0}, {"단품코드": "HCS8101N", "색상": "L734", "품목명": "볼케S(P가죽,전동)", "품목군": "(일룸)거실", "매출계획": 5499600.0, "매출실적": 0, "편차금액": -5499600.0, "편차율": -1.0}, {"단품코드": "HCS8813U", "색상": "BK", "품목명": "밴쿠버 3인 철제다리", "품목군": "(일룸)거실", "매출계획": 4788000.0, "매출실적": 0, "편차금액": -4788000.0, "편차율": -1.0}, {"단품코드": "HCS8814U", "색상": "BK", "품목명": "밴쿠버 4인 철제다리", "품목군": "(일룸)거실", "매출계획": 4354000.0, "매출실적": 0, "편차금액": -4354000.0, "편차율": -1.0}, {"단품코드": "HCS8813", "색상": "L841L", "품목명": "밴쿠버 3인 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 4349000.0, "매출실적": 0, "편차금액": -4349000.0, "편차율": -1.0}, {"단품코드": "HCS8811R", "색상": "L845", "품목명": "밴쿠버 1인 우 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 3965500.0, "매출실적": 0, "편차금액": -3965500.0, "편차율": -1.0}, {"단품코드": "HCS8101", "색상": "L847L", "품목명": "볼케S(가죽,전동)", "품목군": "(일룸)거실", "매출계획": 3710100.0, "매출실적": 0, "편차금액": -3710100.0, "편차율": -1.0}, {"단품코드": "ISY25CX01A", "색상": "4U0", "품목명": "오브 플레인 2.5인(패브릭)", "품목군": "(일룸)거실", "매출계획": 3212700.0, "매출실적": 0, "편차금액": -3212700.0, "편차율": -1.0}, {"단품코드": "ISM18DA00A", "색상": "4U0", "품목명": "닛 데이베드 매트(패브릭)", "품목군": "(일룸)거실", "매출계획": 3109000.0, "매출실적": 0, "편차금액": -3109000.0, "편차율": -1.0}, {"단품코드": "ISM18DA01A", "색상": "5T6", "품목명": "닛 데이베드 매트(패브릭)", "품목군": "(일룸)거실", "매출계획": 3040000.0, "매출실적": 0, "편차금액": -3040000.0, "편차율": -1.0}, {"단품코드": "ISL15CX00A", "색상": "4R1L", "품목명": "오브 1.5인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 2373300.0, "매출실적": 0, "편차금액": -2373300.0, "편차율": -1.0}, {"단품코드": "ISL15CX00A", "색상": "4R2", "품목명": "오브 1.5인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 2373300.0, "매출실적": 0, "편차금액": -2373300.0, "편차율": -1.0}, {"단품코드": "ISR15CX00A", "색상": "4R1L", "품목명": "오브 1.5인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 2373300.0, "매출실적": 0, "편차금액": -2373300.0, "편차율": -1.0}, {"단품코드": "ISR15CX00A", "색상": "4R2", "품목명": "오브 1.5인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 2373300.0, "매출실적": 0, "편차금액": -2373300.0, "편차율": -1.0}, {"단품코드": "HCS8800NF", "색상": "4R2", "품목명": "밴쿠버 헤드레스트(패브릭)", "품목군": "(일룸)거실", "매출계획": 2334300.0, "매출실적": 0, "편차금액": -2334300.0, "편차율": -1.0}, {"단품코드": "ISM18DA01A", "색상": "5T0", "품목명": "닛 데이베드 매트(패브릭)", "품목군": "(일룸)거실", "매출계획": 2280000.0, "매출실적": 0, "편차금액": -2280000.0, "편차율": -1.0}, {"단품코드": "ISY25CX00A", "색상": "4R1L", "품목명": "오브 2.5인(패브릭)", "품목군": "(일룸)거실", "매출계획": 2197000.0, "매출실적": 0, "편차금액": -2197000.0, "편차율": -1.0}, {"단품코드": "HCS8800U", "색상": "BK", "품목명": "밴쿠버 스툴 철제다리", "품목군": "(일룸)거실", "매출계획": 1935500.0, "매출실적": 0, "편차금액": -1935500.0, "편차율": -1.0}, {"단품코드": "HCS7121CL", "색상": "L840", "품목명": "코펜하겐 1인 카우치형 좌(가죽)", "품목군": "(일룸)거실", "매출계획": 1927600.0, "매출실적": 0, "편차금액": -1927600.0, "편차율": -1.0}, {"단품코드": "HCS8813L", "색상": "L841L", "품목명": "밴쿠버 3인 좌 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 1920800.0, "매출실적": 0, "편차금액": -1920800.0, "편차율": -1.0}, {"단품코드": "ISC00DA01A", "색상": "5T6", "품목명": "닛 데이베드 등쿠션(패브릭)", "품목군": "(일룸)거실", "매출계획": 1824000.0, "매출실적": 0, "편차금액": -1824000.0, "편차율": -1.0}, {"단품코드": "HCS8800N", "색상": "L845", "품목명": "밴쿠버 헤드레스트(가죽)", "품목군": "(일룸)거실", "매출계획": 1782000.0, "매출실적": 0, "편차금액": -1782000.0, "편차율": -1.0}, {"단품코드": "HCS8813", "색상": "L846", "품목명": "밴쿠버 3인 몸통(가죽)", "품목군": "(일룸)거실", "매출계획": 1739600.0, "매출실적": 0, "편차금액": -1739600.0, "편차율": -1.0}, {"단품코드": "ISY10CX02A", "색상": "5M0", "품목명": "오브 1인(부클)", "품목군": "(일룸)거실", "매출계획": 1713400.0, "매출실적": 0, "편차금액": -1713400.0, "편차율": -1.0}, {"단품코드": "ISY10CX01A", "색상": "4U0", "품목명": "오브 플레인 1인(패브릭)", "품목군": "(일룸)거실", "매출계획": 1589000.0, "매출실적": 0, "편차금액": -1589000.0, "편차율": -1.0}, {"단품코드": "ISL15CX01A", "색상": "4U0", "품목명": "오브 플레인 1.5인 좌(패브릭)", "품목군": "(일룸)거실", "매출계획": 1485400.0, "매출실적": 0, "편차금액": -1485400.0, "편차율": -1.0}, {"단품코드": "ISR15CX01A", "색상": "4U0", "품목명": "오브 플레인 1.5인 우(패브릭)", "품목군": "(일룸)거실", "매출계획": 1485400.0, "매출실적": 0, "편차금액": -1485400.0, "편차율": -1.0}], "소파내작__total": 117, "의자외작": [{"단품코드": "ITY00BS00A", "색상": "452M", "품목명": "에가 스위블(캐스터)", "품목군": "(일룸)스터디", "매출계획": 5342800.0, "매출실적": 0, "편차금액": -5342800.0, "편차율": -1.0}, {"단품코드": "ITY00BS00A", "색상": "451L", "품목명": "에가 스위블(캐스터)", "품목군": "(일룸)스터디", "매출계획": 2743600.0, "매출실적": 0, "편차금액": -2743600.0, "편차율": -1.0}, {"단품코드": "ITY00BS01A", "색상": "452M", "품목명": "에가 스위블(글라이드)", "품목군": "(일룸)스터디", "매출계획": 1299600.0, "매출실적": 0, "편차금액": -1299600.0, "편차율": -1.0}, {"단품코드": "ITY00BS01A", "색상": "451L", "품목명": "에가 스위블(글라이드)", "품목군": "(일룸)스터디", "매출계획": 1010800.0, "매출실적": 0, "편차금액": -1010800.0, "편차율": -1.0}, {"단품코드": "HCH3510C", "색상": "456", "품목명": "아이핏 에어 좌판커버", "품목군": "(일룸)스터디", "매출계획": 570900.0, "매출실적": 0, "편차금액": -570900.0, "편차율": -1.0}, {"단품코드": "HCH3510C", "색상": "455", "품목명": "아이핏 에어 좌판커버", "품목군": "(일룸)스터디", "매출계획": 190300.0, "매출실적": 0, "편차금액": -190300.0, "편차율": -1.0}, {"단품코드": "HCH3510C", "색상": "454A", "품목명": "아이핏 에어 좌판커버", "품목군": "(일룸)스터디", "매출계획": 173000.0, "매출실적": 0, "편차금액": -173000.0, "편차율": -1.0}], "의자외작__total": 7}, "this_ym": "202606", "loaded_at": "2026-06-17 14:54:36"};</script>
+<script>
+// 정적 모드 — fetch API 호출을 인메모리 데이터로 치환
+window.__SCP_OPEN_CONTRIB_STATIC__ = function(group) {
+  const data = window.__SCP_STATIC__.contributions || {};
+  const items = data[group] || [];
+  const total = data[group + "__total"] || items.length;
+  return Promise.resolve({ok: true, json: () => ({items, total_count: total, group})});
+};
+// fetch를 인메모리 응답으로 가로채기
+const __origFetch = window.fetch;
+window.fetch = function(url, ...rest) {
+  const m = String(url).match(/\/scp\/api\/contribution\/([^?]+)/);
+  if (m) {
+    const group = decodeURIComponent(m[1]);
+    const data = window.__SCP_STATIC__.contributions || {};
+    const items = data[group] || [];
+    const total = data[group + "__total"] || items.length;
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({items, total_count: total, group})
+    });
+  }
+  return __origFetch.call(this, url, ...rest);
+};
+</script>
+</head>
+<body>
+
+<style>
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;line-height:1;display:inline-flex;align-items:center}
+.iloom-nav-logo .iloom-nav-divider{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .iloom-nav-sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333;letter-spacing:0}
+.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.iloom-tab.placeholder{color:#bbb;cursor:not-allowed}
+.iloom-tab.placeholder:hover{color:#bbb}
+.iloom-tab .badge-soon{font-size:9px;background:#F8F8F8;color:#999;padding:1px 5px;margin-left:4px;border-radius:0;font-weight:500;letter-spacing:0.3px}
+@media(max-width:700px){
+  .iloom-nav-inner{gap:0}
+  .iloom-nav-logo{padding:10px 0;font-size:18px}
+  .iloom-tab{padding:10px 10px;font-size:12px}
+}
+</style>
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <div class="iloom-nav-tabs">
+<a class="iloom-tab" href="../spec-change/">사양변경</a>
+<a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+<a class="iloom-tab" href="../new-product/">신제품 분석</a>
+<a class="iloom-tab" href="../cumulative/">누적재고관리</a>
+<a class="iloom-tab" href="../supply/">공급량 관리</a>
+<a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
+<a class="iloom-tab active" href="../scp/">SCP 실적현황</a>
+    </div>
+  </div>
+</nav>
+
+
+<div class="main">
+  
+<div class="scp-header">
+  <div>
+    <div class="scp-title">SCP 실적현황</div>
+    <div class="scp-meta" style="margin-top:6px;">
+      <span>기준월 <b id="ref-ym">202606</b></span>
+      <span>로딩 <b id="loaded-at">2026-06-17 14:54:36</b></span>
+    </div>
+  </div>
+</div>
+
+<div id="scp-body">
+  
+    <!-- KPI 도넛 3개 -->
+    
+    
+    
+    
+    
+    
+
+    <div class="kpi-grid">
+      
+        
+        
+        
+        
+        
+        
+          
+          
+        
+        <div class="kpi-card">
+          <div class="kpi-donut-wrap">
+            <canvas id="kpi-donut-1"
+                    data-pct="0.0"
+                    data-color="red"></canvas>
+            <div class="kpi-donut-center">
+              <div class="kpi-donut-pct red">0%</div>
+              <div class="kpi-donut-label">달성률</div>
+            </div>
+          </div>
+          <div class="kpi-info">
+            <div class="kpi-title">매출 진행률</div>
+            <div class="kpi-value-main">0<span style="font-size:12px;color:#999;font-weight:500;"> / 11,935 M</span></div>
+            <div class="kpi-value-sub">실적 vs 계획 (백만원)</div>
+            <span class="kpi-dev neg">
+              -100.0%
+            </span>
+            
+              
+              
+              <div class="kpi-pace">
+                오늘 페이스 <b>56.7%</b> · 격차
+                <span class="gap-neg">
+                  -56.7%p
+                </span>
+                <br><span style="color:#999;">캘린더일 17/30일</span>
+              </div>
+            
+          </div>
+        </div>
+      
+        
+        
+        
+        
+        
+        
+          
+          
+        
+        <div class="kpi-card">
+          <div class="kpi-donut-wrap">
+            <canvas id="kpi-donut-2"
+                    data-pct="0.0"
+                    data-color="red"></canvas>
+            <div class="kpi-donut-center">
+              <div class="kpi-donut-pct red">0%</div>
+              <div class="kpi-donut-label">달성률</div>
+            </div>
+          </div>
+          <div class="kpi-info">
+            <div class="kpi-title">공급 진행률</div>
+            <div class="kpi-value-main">0<span style="font-size:12px;color:#999;font-weight:500;"> / 10,756 M</span></div>
+            <div class="kpi-value-sub">실적 vs 계획 (백만원)</div>
+            <span class="kpi-dev neg">
+              -100.0%
+            </span>
+            
+              
+              
+              <div class="kpi-pace">
+                오늘 페이스 <b>59.1%</b> · 격차
+                <span class="gap-neg">
+                  -59.1%p
+                </span>
+                <br><span style="color:#999;">영업일 13/22일</span>
+              </div>
+            
+          </div>
+        </div>
+      
+        
+        
+        
+        
+        
+        
+          
+          
+        
+        <div class="kpi-card">
+          <div class="kpi-donut-wrap">
+            <canvas id="kpi-donut-3"
+                    data-pct="129.69562556233188"
+                    data-color="red"></canvas>
+            <div class="kpi-donut-center">
+              <div class="kpi-donut-pct red">130%</div>
+              <div class="kpi-donut-label">달성률</div>
+            </div>
+          </div>
+          <div class="kpi-info">
+            <div class="kpi-title">재고 진행률</div>
+            <div class="kpi-value-main">18,318<span style="font-size:12px;color:#999;font-weight:500;"> / 14,124 M</span></div>
+            <div class="kpi-value-sub">실적 vs 계획 (백만원)</div>
+            <span class="kpi-dev pos">
+              +29.7%
+            </span>
+            
+              <div class="kpi-pace" style="color:#bbb;">기말 스냅샷 (페이스 N/A)</div>
+            
+          </div>
+        </div>
+      
+    </div>
+
+    <!-- 임원용 메인 진단 -->
+    <div class="overall-card">
+      <div class="overall-summary">
+        <div class="overall-label">전체 매출 진행률</div>
+        <div class="overall-headline red">
+          
+          -100.0%
+        </div>
+        <div class="overall-dev">
+          실적 <b>0</b>M /
+          계획 11,935M
+        </div>
+        <div class="overall-dev">전체 매출 -100.0% — 계획 미달</div>
+      </div>
+
+      <div class="overall-issues">
+        <div class="ov-title">우선 확인 항목 (11 경고 · 0 주의 · 0 정상)</div>
+        
+          
+            <div class="issue-row red" onclick="openContribution('일룸상품(통합)')">
+              <span class="ig-group">일룸상품(통합)</span>
+              <span class="ig-label">대규모 축소</span>
+              <span class="ig-cap">매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요</span>
+              <span class="ig-dev">
+                
+                -100.0%
+              </span>
+            </div>
+          
+            <div class="issue-row red" onclick="openContribution('매트리스')">
+              <span class="ig-group">매트리스</span>
+              <span class="ig-label">대규모 축소</span>
+              <span class="ig-cap">매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요</span>
+              <span class="ig-dev">
+                
+                -100.0%
+              </span>
+            </div>
+          
+            <div class="issue-row red" onclick="openContribution('충주내작')">
+              <span class="ig-group">충주내작</span>
+              <span class="ig-label">대규모 축소</span>
+              <span class="ig-cap">매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요</span>
+              <span class="ig-dev">
+                
+                -100.0%
+              </span>
+            </div>
+          
+        
+      </div>
+    </div>
+
+    <!-- 공급처별 3패널 불릿 차트 (매출/공급/재고 동시 표시) -->
+    
+    
+    
+    
+    
+
+    
+    
+    <div class="bullet-card">
+      <div class="bullet-header">
+        <div class="bullet-title">공급처별 진행 현황 · 매출 / 공급 / 재고</div>
+        <div class="bullet-legend">
+          <span><span class="legend-swatch legend-bar"></span>실적 막대 (신호등 색)</span>
+          <span><span class="legend-swatch legend-pace"></span>오늘 페이스</span>
+          <span><span class="legend-swatch legend-plan"></span>계획 100%</span>
+          
+          <span style="margin-left:auto;">
+            매출 페이스 <b>56.7%</b>
+            (캘린더 17/30일) ·
+            공급 페이스 <b>59.1%</b>
+            (영업일 13/22일)
+          </span>
+          
+        </div>
+      </div>
+
+      <div class="bullet-grid">
+        <div class="bullet-row bullet-head">
+          <div class="bullet-group">공급처그룹</div>
+          <div class="bullet-cell-head">매출 진행률 <small>(캘린더 페이스)</small></div>
+          <div class="bullet-cell-head">공급 진행률 <small>(영업일 페이스)</small></div>
+          <div class="bullet-cell-head">재고 수준 <small>(월말계획=100%)</small></div>
+          <div class="bullet-cell-head" style="text-align:center;">진단</div>
+        </div>
+
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('일룸상품(통합)')">
+            <div class="bullet-group">일룸상품(통합)</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar over" style="width: 100.00%;">
+              <span class="bar-label inside">10,930M · 137%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('매트리스')">
+            <div class="bullet-group">매트리스</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar green" style="width: 82.11%;">
+              <span class="bar-label inside">1,124M · 99%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('충주내작')">
+            <div class="bullet-group">충주내작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar yellow" style="width: 92.40%;">
+              <span class="bar-label inside">1,382M · 111%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('VN목제')">
+            <div class="bullet-group">VN목제</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar over" style="width: 100.00%;">
+              <span class="bar-label inside">2,592M · 150%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('안성내작')">
+            <div class="bullet-group">안성내작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar green" style="width: 80.42%;">
+              <span class="bar-label inside">407M · 97%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('소파외작')">
+            <div class="bullet-group">소파외작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar over" style="width: 100.00%;">
+              <span class="bar-label inside">87M · 484%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('VN의자')">
+            <div class="bullet-group">VN의자</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar yellow" style="width: 95.96%;">
+              <span class="bar-label inside">887M · 115%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('의자내작')">
+            <div class="bullet-group">의자내작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar green" style="width: 78.92%;">
+              <span class="bar-label inside">151M · 95%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('VN소파')">
+            <div class="bullet-group">VN소파</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar green" style="width: 91.04%;">
+              <span class="bar-label inside">687M · 109%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('소파내작')">
+            <div class="bullet-group">소파내작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar over" style="width: 100.00%;">
+              <span class="bar-label inside">63M · 183%</span>
+            </div>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          
+          
+          
+
+          <div class="bullet-row" onclick="openContribution('의자외작')">
+            <div class="bullet-group">의자외작</div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 47.22%;" title="오늘 페이스 56.7%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 0.00%;"></div>
+            <span class="bar-label outside" style="left: 0.00%;">0M · 0%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+            <div class="bullet-pace" style="left: 49.24%;" title="오늘 페이스 59.1%"></div>
+          
+        </div>
+      </div>
+
+            
+            
+      
+      <div class="bullet-cell">
+        <div class="bullet-bar-wrap">
+          
+            <div class="bullet-bar red" style="width: 26.81%;"></div>
+            <span class="bar-label outside" style="left: 26.81%;">7M · 32%</span>
+          
+          <div class="bullet-plan" style="left: 83.333%;"></div>
+          
+        </div>
+      </div>
+
+            
+            <div class="bullet-diag">
+              <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+                대규모 축소
+              </span>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+
+    <!-- 공급처 상세 표 -->
+    <div class="section-label">공급처 11분류 · 매출 / 공급 / 재고</div>
+    <table class="supplier-table">
+      <thead>
+        <tr>
+          <th rowspan="2">공급처그룹</th>
+          <th rowspan="2">단품수</th>
+          <th colspan="3">매출 (M)</th>
+          <th colspan="3">공급 (M)</th>
+          <th colspan="3">재고 (M)</th>
+          <th rowspan="2">진단</th>
+        </tr>
+        <tr>
+          <th>계획</th><th>실적</th><th>편차%</th>
+          <th>계획</th><th>실적</th><th>편차%</th>
+          <th>계획</th><th>실적</th><th>편차%</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr onclick="openContribution('일룸상품(통합)')">
+          <td class="txt"><span class="group-name">일룸상품(통합)</span></td>
+          <td>4,049</td>
+
+          <td>6,569</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>5,468</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>7,957</td>
+          <td>10,930</td>
+          <td class="dev-cell pos">
+            
+            +37.4
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('매트리스')">
+          <td class="txt"><span class="group-name">매트리스</span></td>
+          <td>127</td>
+
+          <td>1,638</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>1,736</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>1,141</td>
+          <td>1,124</td>
+          <td class="dev-cell flat">
+            
+            -1.5
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('충주내작')">
+          <td class="txt"><span class="group-name">충주내작</span></td>
+          <td>598</td>
+
+          <td>1,105</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>955</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>1,246</td>
+          <td>1,382</td>
+          <td class="dev-cell pos">
+            
+            +10.9
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('VN목제')">
+          <td class="txt"><span class="group-name">VN목제</span></td>
+          <td>173</td>
+
+          <td>773</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>684</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>1,725</td>
+          <td>2,592</td>
+          <td class="dev-cell pos">
+            
+            +50.3
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('안성내작')">
+          <td class="txt"><span class="group-name">안성내작</span></td>
+          <td>101</td>
+
+          <td>609</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>585</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>421</td>
+          <td>407</td>
+          <td class="dev-cell flat">
+            
+            -3.5
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('소파외작')">
+          <td class="txt"><span class="group-name">소파외작</span></td>
+          <td>527</td>
+
+          <td>391</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>350</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>18</td>
+          <td>87</td>
+          <td class="dev-cell pos">
+            
+            +383.9
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('VN의자')">
+          <td class="txt"><span class="group-name">VN의자</span></td>
+          <td>44</td>
+
+          <td>362</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>433</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>770</td>
+          <td>887</td>
+          <td class="dev-cell pos">
+            
+            +15.2
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('의자내작')">
+          <td class="txt"><span class="group-name">의자내작</span></td>
+          <td>77</td>
+
+          <td>167</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>169</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>160</td>
+          <td>151</td>
+          <td class="dev-cell flat">
+            
+            -5.3
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('VN소파')">
+          <td class="txt"><span class="group-name">VN소파</span></td>
+          <td>95</td>
+
+          <td>164</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>203</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>629</td>
+          <td>687</td>
+          <td class="dev-cell flat">
+            
+            +9.2
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('소파내작')">
+          <td class="txt"><span class="group-name">소파내작</span></td>
+          <td>233</td>
+
+          <td>145</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>150</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>34</td>
+          <td>63</td>
+          <td class="dev-cell pos">
+            
+            +83.0
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+        <tr onclick="openContribution('의자외작')">
+          <td class="txt"><span class="group-name">의자외작</span></td>
+          <td>9</td>
+
+          <td>11</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>22</td>
+          <td>0</td>
+          <td class="dev-cell neg">
+            
+            -100.0
+          </td>
+
+          <td>22</td>
+          <td>7</td>
+          <td class="dev-cell neg">
+            
+            -67.8
+          </td>
+
+          <td>
+            <span class="diag-cell red" title="매출 -100% · 공급 -100% — 사업 위축 우려, 검토 필요">
+              대규모 축소
+            </span>
+          </td>
+        </tr>
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+        <tr class="total-row" onclick="event.stopPropagation()">
+          <td class="txt">총합</td>
+          <td>6,033</td>
+          <td>11,935</td>
+          <td>0</td>
+          <td>
+            
+            -100.0
+          </td>
+          <td>10,756</td>
+          <td>0</td>
+          <td>
+            
+            -100.0
+          </td>
+          <td>14,124</td>
+          <td>18,318</td>
+          <td>
+            
+            +29.7
+          </td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:11px;color:#999;margin-top:12px;">
+      💡 행 클릭 → 해당 공급처그룹의 단품별 기여도 분해 (매출 편차 큰 순) ·
+      매트릭스: 매출 × 공급 × 재고 ±10% 임계치 신호등
+    </p>
+  
+</div>
+
+<!-- 드릴다운 모달 -->
+<div class="iloom-modal-overlay" id="contribModal" onclick="if(event.target===this) closeContribution()">
+  <div class="iloom-modal-box" style="min-width:900px;max-width:1200px;">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="contribTitle">단품별 매출 기여도</span>
+      <div class="iloom-modal-actions">
+        <button type="button" class="iloom-modal-close" onclick="closeContribution()">×</button>
+      </div>
+    </div>
+    <div class="iloom-modal-content" id="contribContent">
+      <div class="iloom-modal-empty">로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// KPI 도넛 3개 렌더
+document.addEventListener('DOMContentLoaded', function() {
+  const colorMap = { green: '#2E7D32', yellow: '#FFA000', red: '#c80a1e' };
+  document.querySelectorAll('canvas[id^="kpi-donut-"]').forEach(canvas => {
+    const pct = parseFloat(canvas.dataset.pct);
+    const color = canvas.dataset.color;
+    const filled = Math.min(Math.max(pct, 0), 200);
+    const ringColor = colorMap[color];
+    let segValue, segMax;
+    if (filled <= 100) {
+      segValue = filled; segMax = 100 - filled;
+    } else {
+      segValue = filled; segMax = 0;
+    }
+    new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [segValue, segMax],
+          backgroundColor: [ringColor, '#F0F0F0'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        cutout: '72%',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        animation: { duration: 600 },
+      }
+    });
+  });
+});
+
+
+function fmt(n, decimals=0) {
+  if (n == null) return '-';
+  return Number(n).toLocaleString('ko-KR', {maximumFractionDigits: decimals});
+}
+function fmtPct(v) {
+  if (v == null) return '-';
+  const p = v * 100;
+  return (p >= 0 ? '+' : '') + p.toFixed(1) + '%';
+}
+
+async function openContribution(group) {
+  const modal = document.getElementById('contribModal');
+  const title = document.getElementById('contribTitle');
+  const content = document.getElementById('contribContent');
+  title.textContent = group + ' · 단품별 매출 기여도 (편차 큰 순 TOP 30)';
+  content.innerHTML = '<div class="iloom-modal-empty">로딩 중...</div>';
+  modal.classList.add('show');
+
+  try {
+    const res = await fetch('/scp/api/contribution/' + encodeURIComponent(group) + '?limit=30');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.items || data.items.length === 0) {
+      content.innerHTML = '<div class="iloom-modal-empty">해당 그룹의 단품 데이터가 없습니다</div>';
+      return;
+    }
+    const rows = data.items.map(it => {
+      const cls = it['편차금액'] >= 0 ? 'pos' : 'neg';
+      const combo = it['단품코드'] + '-' + it['색상'];
+      return `
+        <tr>
+          <td class="txt">
+            <a class="iloom-code" data-iloom-code="${combo}" data-iloom-type="item">${it['단품코드']}</a>
+          </td>
+          <td class="txt">${it['색상'] || ''}</td>
+          <td class="txt">${it['품목명'] || ''}</td>
+          <td class="txt">${it['품목군'] || ''}</td>
+          <td>${fmt(it['매출계획']/1000000)}</td>
+          <td>${fmt(it['매출실적']/1000000)}</td>
+          <td class="${cls}">${it['편차금액']>=0?'+':''}${fmt(it['편차금액']/1000000)}</td>
+          <td class="${cls}">${fmtPct(it['편차율'])}</td>
+        </tr>`;
+    }).join('');
+    content.innerHTML = `
+      <p style="font-size:11px;color:#999;margin-bottom:10px;">
+        전체 단품: ${data.total_count}개 · 상위 ${data.items.length}개 표시 (편차금액 절대값 큰 순) · 금액 단위: 백만원
+      </p>
+      <table class="contrib-table">
+        <thead><tr>
+          <th>단품코드</th><th>색상</th><th>품목명</th><th>품목군</th>
+          <th>매출계획</th><th>매출실적</th><th>편차금액</th><th>편차율</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } catch (e) {
+    content.innerHTML = '<div class="iloom-modal-empty" style="color:#c80a1e">조회 실패: ' + e.message + '</div>';
+  }
+}
+
+function closeContribution() {
+  document.getElementById('contribModal').classList.remove('show');
+}
+
+// 로딩 중이면 자동 재조회
+
+</script>
+
+</div>
+
+<!-- 공통: 세트 구성단품 모달 (어떤 페이지에서든 IloomCode.handle/openSetComponents 호출 시 사용) -->
+<div class="iloom-modal-overlay" id="iloomSetModal" onclick="if(event.target===this) IloomCode.closeModal()">
+  <div class="iloom-modal-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomSetModalTitle">세트 구성단품</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomSetModalGoLink" href="#" class="iloom-modal-go" onclick="event.preventDefault(); IloomCode.openItem(this.dataset.code)">iloom 홈페이지 보기</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closeModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-modal-content" id="iloomSetModalContent">
+      <div class="iloom-modal-empty">로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 공통: 단품 → 포함 세트 리스트 모달 -->
+<div class="iloom-modal-overlay" id="iloomItemSetsModal" onclick="if(event.target===this) IloomCode.closeItemSetsModal()">
+  <div class="iloom-modal-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomItemSetsModalTitle">포함 세트</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomItemSetsModalGoLink" href="#" class="iloom-modal-go" onclick="event.preventDefault(); IloomCode.openItem(this.dataset.code)">iloom 홈페이지 보기</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closeItemSetsModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-modal-content" id="iloomItemSetsModalContent">
+      <div class="iloom-modal-empty">로딩 중...</div>
+    </div>
+  </div>
+</div>
+
+<!-- 공통: 일룸 홈페이지 iframe 팝업 -->
+<div class="iloom-modal-overlay" id="iloomPageModal" onclick="if(event.target===this) IloomCode.closePageModal()">
+  <div class="iloom-modal-box iloom-page-box">
+    <div class="iloom-modal-header">
+      <span class="iloom-modal-title" id="iloomPageModalTitle">iloom 홈페이지</span>
+      <div class="iloom-modal-actions">
+        <a id="iloomPageModalNewTab" href="#" target="_blank" rel="noopener" class="iloom-modal-go">새 탭으로 열기 ↗</a>
+        <button type="button" class="iloom-modal-close" onclick="IloomCode.closePageModal()">×</button>
+      </div>
+    </div>
+    <div class="iloom-page-frame-wrap">
+      <iframe id="iloomPageModalFrame" src="about:blank" referrerpolicy="no-referrer"></iframe>
+      <div class="iloom-page-fallback" id="iloomPageModalFallback">
+        <div>일룸 홈페이지가 팝업 안에 표시되지 않을 수 있습니다.</div>
+        <div style="font-size:11px;color:#999">상대 사이트의 보안 정책(X-Frame-Options) 때문일 수 있어요.</div>
+        <a id="iloomPageModalFallbackLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:6px;">새 탭으로 열기 ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ────────── 공통: 일룸 코드 핸들러 (어떤 대시보드에서든 사용) ──────────
+ * 마크업:
+ *   <a class="iloom-code" data-iloom-code="IUX25028" data-iloom-type="set">IUX25028</a>
+ *   - data-iloom-type: 'set' | 'item' | 'auto' (기본 auto: 구성단품 있으면 모달, 없으면 새 탭)
+ *   <a class="iloom-code-go" data-iloom-go="IUX25028">iloom ↗</a>  (← 항상 새 탭으로 일룸 홈페이지)
+ * 헬퍼 (JS 렌더링용):
+ *   IloomCode.cell(code, type)  → '<a class=...>코드</a><a class="iloom-code-go" ...>iloom ↗</a>'
+ *   IloomCode.handle(code, type) / openItem(code) / openSetComponents(code)
+ */
+window.IloomCode = (function() {
+  const PRODUCT_URL = 'https://www.iloom.com/product/detail.do?productCd=';
+  const SET_COMPONENTS_ENDPOINT = '/new-product/set-components/';
+  const SETS_BY_ITEM_ENDPOINT   = '/new-product/sets-by-item/';
+
+  function baseCode(code) { return (code || '').toString().split('-')[0]; }
+  function fmtNum(v) {
+    if (v == null || v === '') return '-';
+    const n = Number(v);
+    if (!isFinite(n)) return '-';
+    return n.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
+  }
+  function escHtml(s) {
+    return (s == null ? '' : String(s))
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function openItem(code) {
+    if (!code) return;
+    const url = PRODUCT_URL + encodeURIComponent(baseCode(code));
+    const modal    = document.getElementById('iloomPageModal');
+    const frame    = document.getElementById('iloomPageModalFrame');
+    const title    = document.getElementById('iloomPageModalTitle');
+    const newTab   = document.getElementById('iloomPageModalNewTab');
+    const fallback = document.getElementById('iloomPageModalFallback');
+    const fbLink   = document.getElementById('iloomPageModalFallbackLink');
+    if (!modal || !frame) {
+      // 모달이 없으면 새 탭으로 폴백
+      window.open(url, '_blank', 'noopener');
+      return;
+    }
+    title.textContent = baseCode(code) + ' · iloom 홈페이지';
+    newTab.href = url;
+    if (fbLink) fbLink.href = url;
+    fallback.classList.remove('show');
+    frame.src = url;
+    modal.classList.add('show');
+
+    // X-Frame-Options 등으로 iframe 로드가 막히면 일정 시간 후 폴백 안내 노출
+    clearTimeout(window._iloomPageFallbackTimer);
+    window._iloomPageFallbackTimer = setTimeout(() => {
+      try {
+        // 동일 오리진이면 contentDocument 접근 가능, 아니면 throw
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        if (!doc || !doc.body || doc.body.children.length === 0) {
+          fallback.classList.add('show');
+        }
+      } catch (e) {
+        // cross-origin 접근 차단 = iframe이 정상 로드되었거나 차단된 경우 둘 다 가능.
+        // 차단 여부를 정확히 알 수 없어 폴백 링크는 헤더에 항상 노출됨.
+      }
+    }, 2500);
+  }
+
+  function openItemNewTab(code) {
+    if (!code) return;
+    window.open(PRODUCT_URL + encodeURIComponent(baseCode(code)), '_blank', 'noopener');
+  }
+
+  function closePageModal() {
+    const modal = document.getElementById('iloomPageModal');
+    const frame = document.getElementById('iloomPageModalFrame');
+    if (frame) frame.src = 'about:blank';
+    if (modal) modal.classList.remove('show');
+    clearTimeout(window._iloomPageFallbackTimer);
+  }
+
+  async function openSetComponents(code) {
+    if (!code) return;
+    const modal     = document.getElementById('iloomSetModal');
+    const titleEl   = document.getElementById('iloomSetModalTitle');
+    const goEl      = document.getElementById('iloomSetModalGoLink');
+    const contentEl = document.getElementById('iloomSetModalContent');
+    if (!modal) return;
+    titleEl.textContent = code + ' · 구성단품';
+    goEl.href = PRODUCT_URL + encodeURIComponent(baseCode(code));
+    goEl.dataset.code = code;  // 헤더 링크 클릭 시 iframe 팝업으로 사용
+    contentEl.innerHTML = '<div class="iloom-modal-empty">로딩 중...</div>';
+    modal.classList.add('show');
+    try {
+      const res = await fetch(SET_COMPONENTS_ENDPOINT + encodeURIComponent(code));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const comps = data.components || [];
+      if (comps.length === 0) {
+        contentEl.innerHTML = '<div class="iloom-modal-empty">구성단품이 없습니다 (단품일 가능성)</div>';
+        return;
+      }
+      const note = data.shipment_status && data.shipment_status !== 'ready'
+        ? `<div style="font-size:11px;color:#999;margin-bottom:8px">⚠ shipment 캐시 ${escHtml(data.shipment_status)} — 단품 월평균출고량 미표시</div>`
+        : '';
+      const rows = comps.map(c => `
+        <tr>
+          <td><a class="iloom-code" data-iloom-code="${escHtml(c.단품코드 + (c.단품색상 ? '-' + c.단품색상 : ''))}" data-iloom-type="item">${escHtml(c.단품코드)}</a></td>
+          <td>${escHtml(c.단품색상 || '')}</td>
+          <td>${escHtml(c.단품명칭 || '')}</td>
+          <td class="num">${fmtNum(c.구성수량)}</td>
+          <td>${escHtml(c.사용구분 || '')}</td>
+          <td class="num">${fmtNum(c.가용재고)}</td>
+          <td class="num">${fmtNum(c.월평균출고량)}</td>
+        </tr>`).join('');
+      contentEl.innerHTML = note + `
+        <table>
+          <thead>
+            <tr>
+              <th>단품코드</th><th>색상</th><th>단품명칭</th>
+              <th class="num">구성수량</th><th>사용구분</th>
+              <th class="num">가용재고</th><th class="num">단품 월평균출고량</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } catch (e) {
+      contentEl.innerHTML =
+        '<div class="iloom-modal-empty" style="color:#c80a1e">조회 실패: ' +
+        escHtml(e.message || String(e)) + '</div>';
+    }
+  }
+
+  function closeModal() {
+    const m = document.getElementById('iloomSetModal');
+    if (m) m.classList.remove('show');
+  }
+
+  async function openItemSets(combo) {
+    if (!combo) return;
+    const modal     = document.getElementById('iloomItemSetsModal');
+    const titleEl   = document.getElementById('iloomItemSetsModalTitle');
+    const goEl      = document.getElementById('iloomItemSetsModalGoLink');
+    const contentEl = document.getElementById('iloomItemSetsModalContent');
+    if (!modal) return openItem(combo);  // 폴백: 모달 없으면 홈페이지 팝업
+    titleEl.textContent = combo + ' · 포함 세트';
+    goEl.dataset.code = combo;
+    contentEl.innerHTML = '<div class="iloom-modal-empty">로딩 중...</div>';
+    modal.classList.add('show');
+    try {
+      const res = await fetch(SETS_BY_ITEM_ENDPOINT + encodeURIComponent(combo));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const sets = data.sets || [];
+      if (sets.length === 0) {
+        contentEl.innerHTML = '<div class="iloom-modal-empty">해당 단품을 포함한 세트가 없습니다</div>';
+        return;
+      }
+      const note = data.shipment_status && data.shipment_status !== 'ready'
+        ? `<div style="font-size:11px;color:#999;margin-bottom:8px">⚠ shipment 캐시 ${escHtml(data.shipment_status)} — 월 평출량 미표시</div>`
+        : '';
+      const rows = sets.map(s => {
+        const setCombo = s.세트색상 ? `${s.세트코드}-${s.세트색상}` : s.세트코드;
+        return `
+          <tr>
+            <td>
+              <a class="iloom-code" data-iloom-code="${escHtml(setCombo)}" data-iloom-type="set" title="구성단품 보기">${escHtml(s.세트코드)}</a>
+              <a class="iloom-code-go" data-iloom-go="${escHtml(setCombo)}" title="일룸 홈페이지 팝업">iloom ↗</a>
+            </td>
+            <td>${escHtml(s.세트색상 || '')}</td>
+            <td>${escHtml(s.세트명칭 || '')}</td>
+            <td class="num">${fmtNum(s.월평출량_최근1년)}</td>
+          </tr>`;
+      }).join('');
+      contentEl.innerHTML = note + `
+        <table>
+          <thead>
+            <tr>
+              <th>세트코드</th><th>색상</th><th>세트명칭</th>
+              <th class="num">월 평출량 (최근1년)</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    } catch (e) {
+      contentEl.innerHTML =
+        '<div class="iloom-modal-empty" style="color:#c80a1e">조회 실패: ' +
+        escHtml(e.message || String(e)) + '</div>';
+    }
+  }
+
+  function closeItemSetsModal() {
+    const m = document.getElementById('iloomItemSetsModal');
+    if (m) m.classList.remove('show');
+  }
+
+  // type: 'set' | 'item' | 'auto'
+  //   set  → 구성단품 모달
+  //   item → 포함 세트 모달 (해당 단품을 포함한 세트 목록)
+  //   auto → 구성단품 조회 시도 → 있으면 set 모달, 없으면 item 모달, 둘 다 없으면 홈페이지
+  async function handle(code, type) {
+    if (!code) return;
+    if (type === 'item') return openItemSets(code);
+    if (type === 'set')  return openSetComponents(code);
+    try {
+      const res = await fetch(SET_COMPONENTS_ENDPOINT + encodeURIComponent(code));
+      const data = res.ok ? await res.json() : { components: [] };
+      if ((data.components || []).length > 0) return openSetComponents(code);
+    } catch (e) { /* fall through */ }
+    return openItemSets(code);
+  }
+
+  // JS 렌더링용 셀 HTML (코드 + iloom ↗ 버튼)
+  function cell(code, type) {
+    if (code == null || code === '') return '';
+    const safeCode = escHtml(code);
+    const safeType = (type === 'set' || type === 'item') ? type : 'auto';
+    return `<a class="iloom-code" data-iloom-code="${safeCode}" data-iloom-type="${safeType}" title="클릭: ${
+              safeType === 'set' ? '구성단품 보기' : safeType === 'item' ? '포함 세트 보기' : '자동 판별'
+            }">${safeCode}</a>` +
+           `<a class="iloom-code-go" data-iloom-go="${safeCode}" title="일룸 홈페이지 팝업">iloom ↗</a>`;
+  }
+
+  // 클릭 위임 (모든 페이지에서 자동 동작)
+  document.addEventListener('click', function(e) {
+    const goEl = e.target.closest('[data-iloom-go]');
+    if (goEl) {
+      e.preventDefault();
+      openItem(goEl.getAttribute('data-iloom-go'));
+      return;
+    }
+    const codeEl = e.target.closest('[data-iloom-code]');
+    if (codeEl) {
+      e.preventDefault();
+      handle(codeEl.getAttribute('data-iloom-code'),
+             codeEl.getAttribute('data-iloom-type') || 'auto');
+    }
+  });
+
+  // ESC로 공통 모달 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeItemSetsModal();
+      closePageModal();
+    }
+  });
+
+  return {
+    openItem, openItemNewTab, openSetComponents, openItemSets,
+    closeModal, closeItemSetsModal, closePageModal,
+    handle, cell, baseCode, fmtNum
+  };
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+ * IloomColFilter — 모든 페이지의 모든 테이블에 적용되는 글로벌 모듈
+ *   • 테이블 헤더(thead th)를 우클릭하면 컬럼별 검색 popover 표시
+ *   • 다중 컬럼 필터 AND 조합 (각 컬럼 contains, case-insensitive)
+ *   • DataTables 사용 테이블은 본인의 contextmenu 핸들러가 우선 처리하므로
+ *     이 모듈은 .dataTables_wrapper 안의 헤더는 무시 (충돌 방지)
+ *   • 보호된 셀(.no-filter, target-cell 등)은 그대로 동작
+ * ══════════════════════════════════════════════════════════════════ */
+(function() {
+  // table 요소별 필터 상태: tableEl → { colIdx: query, ... }
+  const _filters = new WeakMap();
+  let _active = null;  // { tableEl, colIdx }
+
+  function _ensurePopover() {
+    let pop = document.getElementById('iloomColFilterPopover');
+    if (pop) return pop;
+    pop = document.createElement('div');
+    pop.id = 'iloomColFilterPopover';
+    pop.className = 'iloom-col-filter-popover';
+    pop.style.display = 'none';
+    pop.innerHTML = `
+      <div class="icfp-title" id="icfp-title"></div>
+      <input type="text" class="icfp-input" id="icfp-input" placeholder="검색어 입력" />
+      <div class="icfp-hint">Enter: 적용 · Esc: 닫기 · 빈 값으로 적용 시 해제</div>
+      <div class="icfp-actions">
+        <button type="button" class="icfp-btn icfp-clear">지우기</button>
+        <button type="button" class="icfp-btn icfp-apply">적용</button>
+      </div>`;
+    document.body.appendChild(pop);
+
+    pop.querySelector('.icfp-apply').addEventListener('click', _apply);
+    pop.querySelector('.icfp-clear').addEventListener('click', _clear);
+
+    document.addEventListener('mousedown', e => {
+      if (pop.style.display !== 'none' && !pop.contains(e.target)) _hide();
+    });
+    document.addEventListener('keydown', e => {
+      if (pop.style.display === 'none') return;
+      if (e.key === 'Escape') _hide();
+      else if (e.key === 'Enter' && document.activeElement.id === 'icfp-input') _apply();
+    });
+    return pop;
+  }
+
+  function _show(tableEl, colIdx, headerEl) {
+    const pop = _ensurePopover();
+    _active = { tableEl, colIdx };
+    const title = (headerEl.cloneNode(true).childNodes[0]?.textContent || headerEl.textContent || '').trim();
+    document.getElementById('icfp-title').textContent = `${title || '컬럼'} 검색`;
+    const current = (_filters.get(tableEl) || {})[colIdx] || '';
+    const input = document.getElementById('icfp-input');
+    input.value = current;
+    const rect = headerEl.getBoundingClientRect();
+    pop.style.display = 'block';
+    pop.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+    pop.style.left = (rect.left + window.scrollX) + 'px';
+    setTimeout(() => {
+      const r = pop.getBoundingClientRect();
+      if (r.right > window.innerWidth - 10) {
+        pop.style.left = (window.innerWidth - r.width - 10 + window.scrollX) + 'px';
+      }
+      input.focus(); input.select();
+    }, 30);
+  }
+
+  function _hide() {
+    const pop = document.getElementById('iloomColFilterPopover');
+    if (pop) pop.style.display = 'none';
+    _active = null;
+  }
+
+  function _apply() {
+    if (!_active) return;
+    const { tableEl, colIdx } = _active;
+    const v = (document.getElementById('icfp-input').value || '').trim();
+    const f = _filters.get(tableEl) || {};
+    if (v) f[colIdx] = v; else delete f[colIdx];
+    _filters.set(tableEl, f);
+    _applyTableFilters(tableEl);
+    _markHeader(tableEl, colIdx, !!v);
+    _hide();
+  }
+
+  function _clear() {
+    if (!_active) return;
+    const { tableEl, colIdx } = _active;
+    const f = _filters.get(tableEl) || {};
+    delete f[colIdx];
+    _filters.set(tableEl, f);
+    document.getElementById('icfp-input').value = '';
+    _applyTableFilters(tableEl);
+    _markHeader(tableEl, colIdx, false);
+    _hide();
+  }
+
+  function _applyTableFilters(tableEl) {
+    const f = _filters.get(tableEl) || {};
+    const entries = Object.entries(f).map(([k, v]) => [parseInt(k), v.toUpperCase()]);
+    const tbody = tableEl.tBodies[0];
+    if (!tbody) return;
+    [...tbody.rows].forEach(row => {
+      // 펼침/상세 행이나 보조 행은 건너뜀 (data-no-filter 또는 colspan)
+      if (row.dataset.noFilter !== undefined) return;
+      const firstCellSpan = row.cells[0] ? parseInt(row.cells[0].getAttribute('colspan') || '1') : 1;
+      if (firstCellSpan > 1) return;
+      let match = true;
+      for (const [colIdx, q] of entries) {
+        const cell = row.cells[colIdx];
+        const text = (cell ? (cell.textContent || '') : '').toUpperCase();
+        if (!text.includes(q)) { match = false; break; }
+      }
+      row.style.display = match ? '' : 'none';
+    });
+  }
+
+  function _markHeader(tableEl, colIdx, on) {
+    const ths = tableEl.tHead ? tableEl.tHead.rows[0]?.cells : null;
+    if (!ths || !ths[colIdx]) return;
+    ths[colIdx].classList.toggle('iloom-col-filter-active', on);
+  }
+
+  // contextmenu 핸들러 (글로벌)
+  document.addEventListener('contextmenu', e => {
+    const th = e.target.closest('thead th');
+    if (!th) return;
+    // DataTables 컴포넌트는 별도 처리 → 충돌 방지
+    if (th.closest('.dataTables_wrapper')) return;
+    const tableEl = th.closest('table');
+    if (!tableEl) return;
+    // opt-out: 테이블에 data-no-col-filter 속성 있으면 무시
+    if (tableEl.dataset.noColFilter !== undefined) return;
+    // 컬럼 인덱스 계산 (rowspan/colspan 무시한 단순 인덱스)
+    const headerRow = th.parentElement;
+    const colIdx = [...headerRow.cells].indexOf(th);
+    if (colIdx < 0) return;
+    e.preventDefault();
+    _show(tableEl, colIdx, th);
+  });
+
+  // 페이지 전역: 헤더에 우클릭 가능 안내 (visual hint via cursor)
+  const style = document.createElement('style');
+  style.textContent = `
+    table thead th:not(.no-filter) { cursor: context-menu; }
+    .dataTables_wrapper table thead th { cursor: pointer; }
+  `;
+  document.head.appendChild(style);
+
+  // 외부 API
+  window.IloomColFilter = {
+    reset(tableEl) {
+      _filters.set(tableEl, {});
+      tableEl.tHead && [...tableEl.tHead.rows[0].cells].forEach(th => th.classList.remove('iloom-col-filter-active'));
+      _applyTableFilters(tableEl);
+    },
+  };
+})();
+</script>
+
+
+</body>
+</html>
