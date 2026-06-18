@@ -296,7 +296,7 @@ th.iloom-col-filter-active::after {
 
   table.pivot { border-collapse:collapse; width:100%; font-size:12.5px; font-variant-numeric:tabular-nums; }
   table.pivot th, table.pivot td { border:1px solid #E0E0E0; padding:6px 8px; white-space:nowrap; }
-  table.pivot thead th { background:#F8F8F8; color:#333; font-weight:700; text-align:center; }
+  table.pivot thead th { background:#F8F8F8; color:#333; font-weight:700; text-align:center; position:sticky; top:0; z-index:3; }
   table.pivot tbody td { text-align:right; }
   table.pivot tbody td.lbl { text-align:center; font-weight:500; background:#FCFCFC; }
   table.pivot tbody td.grp { text-align:center; font-weight:700; background:#F4F4F4; }
@@ -306,7 +306,7 @@ th.iloom-col-filter-active::after {
   table.pivot .pos { color:#c80a1e; }
   table.pivot .neg { color:#1d4ed8; }
   table.pivot .zero { color:#bbb; }
-  .ss-wrap { overflow-x:auto; }
+  .ss-wrap { overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 260px); }
   .badge-prev { font-size:11px; color:#999; background:#F8F8F8; border:1px solid #E0E0E0; padding:2px 8px; }
 
   table.pivot tr.prevcmp td { background:#F4F7FB; color:#555; font-size:11.5px; }

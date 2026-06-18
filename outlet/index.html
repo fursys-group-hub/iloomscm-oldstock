@@ -30,9 +30,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .sort-btn{padding:5px 10px;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:12px;cursor:pointer;color:#374151}
 .sort-btn.active{background:#c80a1e;border-color:#c80a1e;color:#fff}
 #resultCount{font-size:12px;color:#6B7280;margin-left:auto}
-.result-wrap{padding:24px;overflow-x:auto}
-.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-wrap{padding:24px;overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 260px)}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:clip;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:3}
 .result-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
 .main-row:hover{background:#FFFBEB}
 .main-row.row-zero td{color:#9ca3af}

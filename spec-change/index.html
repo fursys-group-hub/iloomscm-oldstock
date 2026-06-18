@@ -28,9 +28,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:260px;outline:none}
 .search-box:focus{border-color:#c80a1e}
 #resultCount{font-size:12px;color:#6B7280;margin-left:auto}
-.result-wrap{padding:20px 24px;overflow-x:auto}
-.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);min-width:1100px}
-.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:8px 10px;font-size:11px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-wrap{padding:20px 24px;overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 240px)}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:clip;box-shadow:0 1px 3px rgba(0,0,0,.08);min-width:1100px}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:8px 10px;font-size:11px;font-weight:600;color:#374151;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:3}
+.result-table thead tr:nth-child(2) th{top:29px}
 .result-table td{padding:8px 10px;font-size:12px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
 .th-group-old{background:#FEF9EC;border-bottom-color:#FDE68A}
 .th-group-new{background:#EFF6FF;border-bottom-color:#BFDBFE}
