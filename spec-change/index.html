@@ -2,295 +2,210 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>사양변경 관리 | iloom SCM 대시보드</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>사양변경 현황 | iloom SCM 대시보드</title>
 <style>
-:root {
-  --brand:#c80a1e; --text:#333; --text-sub:#999;
-  --border:#E0E0E0; --bg:#fff; --bg-alt:#F8F8F8;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:var(--bg-alt);color:var(--text);font-size:14px;letter-spacing:-0.2px;line-height:1.6}
-.page-wrap{max-width:1400px;margin:0 auto;padding:24px 16px}
-
-/* 헤더 */
-.header{background:var(--bg);border:1px solid var(--border);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.header-logo{font-family:Montserrat,sans-serif;font-weight:700;font-size:24px;color:var(--brand)}
-.header-logo .divider{display:inline-block;width:1px;height:16px;background:var(--border);margin:0 10px;vertical-align:middle}
-.header-logo .sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:14px;color:var(--text)}
-.header-meta{font-size:12px;color:var(--text-sub);text-align:right;line-height:1.6;font-family:Montserrat,sans-serif}
-.header-meta strong{color:var(--text);font-weight:600}
-.notice{font-size:11.5px;color:var(--brand);background:#fdf2f3;border:1px solid #fad1d5;padding:6px 10px;margin-bottom:14px}
-
-/* 요약 그리드 */
-.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
-@media (max-width:1100px){.summary-grid{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:600px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
-.kpi-card{background:#fff;border:1px solid var(--border);padding:14px 16px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:transform .15s}
-.kpi-card:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.kpi-value{font-family:Montserrat,sans-serif;font-size:26px;font-weight:700;color:#333;line-height:1.1;letter-spacing:-.5px}
-.kpi-label{font-size:12px;color:#999;font-weight:500}
-.kpi-sub{font-size:10px;color:#bbb;margin-top:2px}
-.kpi-card.urgent{border-left:3px solid var(--brand)}
-.kpi-card.urgent .kpi-value,.kpi-card.urgent .kpi-label{color:var(--brand)}
-.kpi-card.monitor{border-left:3px solid #f59e0b}
-.kpi-card.monitor .kpi-value,.kpi-card.monitor .kpi-label{color:#d97706}
-.kpi-card.ready{border-left:3px solid #059669}
-.kpi-card.ready .kpi-value,.kpi-card.ready .kpi-label{color:#059669}
-.kpi-card.selected{box-shadow:0 0 0 2px var(--brand)}
-.kpi-card.urgent.selected{box-shadow:0 0 0 2px var(--brand);background:#fef2f2}
-.kpi-card.monitor.selected{box-shadow:0 0 0 2px #f59e0b;background:#fffbeb}
-.kpi-card.ready.selected{box-shadow:0 0 0 2px #059669;background:#f0fdf4}
-
-/* 빠른 목록 */
-.quick-panel{background:#fff;border:1px solid var(--border);margin-bottom:20px}
-.quick-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.quick-title{font-size:14px;font-weight:600}
-.quick-count{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;background:#f3f4f6;color:#333;padding:2px 9px;border-radius:10px}
-.btn{padding:6px 14px;border:1px solid var(--border);background:#fff;color:#333;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
-.btn:hover{background:var(--bg-alt)}
-.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
-.btn-primary:hover{opacity:.85;background:var(--brand)}
-.quick-list{padding:2px 0}
-.quick-item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid #f0f0f0;text-decoration:none;color:#333;transition:background .1s}
-.quick-item:last-child{border-bottom:none}
-.quick-item:hover{background:#fafafa;color:var(--brand)}
-.q-badge{width:22px;text-align:center;font-size:14px;flex-shrink:0}
-.q-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.q-title{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.q-sub{font-size:11px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.q-meta{font-size:11px;color:#999;white-space:nowrap;flex-shrink:0;display:flex;gap:6px;align-items:center}
-.q-meta .dot{color:#d1d5db}
-.q-status-done{color:#059669;font-weight:600}
-.quick-empty{padding:36px 16px;text-align:center;color:#bbb;font-size:13px}
-
-/* 상세 그룹 */
-.group-wrap{margin-bottom:18px;background:#fff;border:1px solid var(--border)}
-.group-wrap[data-status="완료"]{opacity:.8}
-.group-header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#1a1a2e;color:white;flex-wrap:wrap}
-.group-wrap[data-status="완료"] .group-header{background:#064e3b}
-.group-title{font-size:13px;font-weight:700}
-.group-sub{font-size:11px;opacity:.65}
-.group-date{font-size:11px;opacity:.5;margin-left:auto}
-.badge-done{display:inline-flex;align-items:center;gap:3px;background:#10b981;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
-
-.tbl-wrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;white-space:nowrap;background:#fff}
-thead th{background:#2d2d4e;color:#fff;padding:7px 10px;font-size:11px;font-weight:600;text-align:center;border-right:1px solid #3d3d5e}
-thead th:last-child{border-right:none}
-tbody tr{border-bottom:1px solid #f0f0f0}
-td{padding:7px 10px;text-align:right;border-right:1px solid #f0f0f0;font-size:12px}
-td:last-child{border-right:none}
-td.tl{text-align:left}
-td.tc{text-align:center}
-tr.old-row{background:#fff5f5}
-tr.old-row:hover{background:#ffe4e4}
-tr.new-row{background:#f0fdf4}
-tr.new-row:hover{background:#dcfce7}
-tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
-.badge-old{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626}
-.badge-new{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#d1fae5;color:#059669}
-.chk-danger{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#fee2e2;color:#dc2626}
-.chk-ok{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669}
-.chk-none{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#f3f4f6;color:#9ca3af}
-
-/* 스크롤 하이라이트 */
-@keyframes groupFlash{
-  0%{box-shadow:0 0 0 3px rgba(200,10,30,0)}
-  30%{box-shadow:0 0 0 3px rgba(200,10,30,.45)}
-  100%{box-shadow:0 0 0 3px rgba(200,10,30,0)}
-}
-.group-wrap.flash{animation:groupFlash 1.4s ease-out}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F5F7;color:#1F2937}
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;display:inline-flex;align-items:center}
+.iloom-nav-logo .dv{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333}
+.iloom-nav-tabs{display:flex;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.page-header{background:#fff;border-bottom:1px solid #E5E7EB;padding:20px 24px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.page-header h1{font-size:20px;font-weight:700}
+.page-meta{font-size:12px;color:#6B7280;margin-left:auto}
+.summary-bar{display:flex;gap:24px;align-items:center;padding:14px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.sum-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.sum-num{font-size:22px;font-weight:700;line-height:1}
+.sum-lbl{font-size:11px;color:#6B7280}
+.sum-sep{width:1px;height:40px;background:#E5E7EB;margin:0 8px}
+.toolbar{display:flex;align-items:center;gap:10px;padding:12px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:240px;outline:none}
+.search-box:focus{border-color:#c80a1e}
+#resultCount{font-size:12px;color:#6B7280;margin-left:auto}
+.result-wrap{padding:24px;overflow-x:auto}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+.group-row td{background:#F3F4F6;font-weight:700;font-size:13px;color:#374151;padding:8px 12px;border-top:2px solid #E5E7EB}
+.group-meta{font-size:11px;font-weight:400;color:#6B7280;margin-left:8px}
+.item-row:hover{background:#FFFBEB}
+.code{font-family:Montserrat,ui-monospace,monospace;font-size:12px}
+.qty-pos{color:#059669;font-weight:700}
+.qty-zero{color:#c80a1e;font-weight:700}
+.qty-neg{color:#c80a1e;font-weight:700}
+.loading{text-align:center;padding:60px;color:#6B7280;font-size:14px}
+.error-msg{text-align:center;padding:40px;color:#c80a1e;font-size:13px}
+@media(max-width:700px){.iloom-nav-inner{gap:0}.iloom-tab{padding:10px;font-size:12px}}
 </style>
 </head>
 <body>
 
-<style>
-.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
-.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
-.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;line-height:1;display:inline-flex;align-items:center}
-.iloom-nav-logo .iloom-nav-divider{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
-.iloom-nav-logo .iloom-nav-sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333;letter-spacing:0}
-.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
-.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
-.iloom-tab:hover{color:#333}
-.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
-.iloom-tab.placeholder{color:#bbb;cursor:not-allowed}
-.iloom-tab.placeholder:hover{color:#bbb}
-.iloom-tab .badge-soon{font-size:9px;background:#F8F8F8;color:#999;padding:1px 5px;margin-left:4px;border-radius:0;font-weight:500;letter-spacing:0.3px}
-@media(max-width:700px){
-  .iloom-nav-inner{gap:0}
-  .iloom-nav-logo{padding:10px 0;font-size:18px}
-  .iloom-tab{padding:10px 10px;font-size:12px}
-}
-</style>
 <nav class="iloom-nav">
   <div class="iloom-nav-inner">
-    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <a class="iloom-nav-logo" href="../">iloom<span class="dv"></span><span class="sub">SCM 대시보드</span></a>
     <div class="iloom-nav-tabs">
-<a class="iloom-tab active" href="../spec-change/">사양변경</a>
-<a class="iloom-tab" href="../outlet/">아울렛 재고</a>
-<a class="iloom-tab" href="../new-product/">신제품 분석</a>
-<a class="iloom-tab" href="../cumulative/">누적재고관리</a>
-<a class="iloom-tab" href="../supply/">공급량 관리</a>
-<a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
-<a class="iloom-tab" href="../scp/">SCP 실적현황</a>
+      <a class="iloom-tab active" href="../spec-change/">사양변경</a>
+      <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+      <a class="iloom-tab" href="../discontinued-sku/">단종(단품)</a>
+      <a class="iloom-tab" href="../new-product/">신제품 분석</a>
+      <a class="iloom-tab" href="../cumulative/">누적재고관리</a>
+      <a class="iloom-tab" href="../supply/">공급량 관리</a>
+      <a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
+      <a class="iloom-tab" href="../scp/">SCP 실적현황</a>
     </div>
   </div>
 </nav>
-<div class="page-wrap">
-  <div class="header">
-    <div>
-      <div class="header-logo">iloom<span class="divider"></span><span class="sub">사양변경 관리</span></div>
-    </div>
-    <div class="header-meta">
-      재고 기준일자: <strong>2026-06-17</strong><br>
-      생성시각: <strong>2026-06-17 14:50</strong>
-    </div>
-  </div>
-  <div class="notice">※ 이 페이지는 2026-06-17 14:50 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
 
-  <!-- 상단 요약 -->
-  <div class="summary-grid">
-    <div class="kpi-card" id="kpi-active" onclick="setView('active')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">진행중</div>
-    </div>
-    <div class="kpi-card" id="kpi-done" onclick="setView('done')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">완료</div>
-    </div>
-    <div class="kpi-card" id="kpi-this_month" onclick="setView('this_month')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">이번 달 등록</div>
-    </div>
-    <div class="kpi-card urgent" id="kpi-urgent" onclick="setView('urgent')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">🔴 긴급</div>
-      <div class="kpi-sub">구재고 소진 임박 + 신사양 미입고</div>
-    </div>
-    <div class="kpi-card monitor" id="kpi-monitor" onclick="setView('monitor')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">🟡 모니터링</div>
-      <div class="kpi-sub">구재고 여유 + 신사양 미입고</div>
-    </div>
-    <div class="kpi-card ready" id="kpi-ready" onclick="setView('ready')">
-      <div class="kpi-value">0</div>
-      <div class="kpi-label">🟢 전환 가능</div>
-      <div class="kpi-sub">신사양 입고 완료</div>
-    </div>
-  </div>
+<div class="page-header">
+  <h1>사양변경 현황</h1>
+  <span class="page-meta" id="pageMeta">로딩 중...</span>
+</div>
 
-  <!-- 필터링된 목록 -->
-  <div class="quick-panel">
-    <div class="quick-header">
-      <span class="quick-title" id="quickTitle">진행중 사양변경</span>
-      <span class="quick-count" id="quickCount">0건</span>
-      <button class="btn" onclick="setView('all')" style="margin-left:auto;">전체 보기</button>
-      <button class="btn btn-primary" onclick="downloadXlsx()">⬇ 엑셀</button>
-    </div>
-    <div class="quick-list" id="quickList">
+<div class="summary-bar">
+  <div class="sum-item"><span class="sum-num" id="sumGroups">-</span><span class="sum-lbl">변경 건</span></div>
+  <div class="sum-sep"></div>
+  <div class="sum-item"><span class="sum-num" id="sumPairs">-</span><span class="sum-lbl">코드쌍</span></div>
+  <div class="sum-item"><span class="sum-num" id="sumHasStock" style="color:#059669">-</span><span class="sum-lbl">구코드 재고있음</span></div>
+</div>
 
-    </div>
-    <div class="quick-empty" id="quickEmpty" style="display:none;">해당 조건의 사양변경이 없습니다</div>
-  </div>
+<div class="toolbar">
+  <input class="search-box" id="searchBox" type="text" placeholder="사양변경내용 / 코드 검색..." oninput="filterTable()">
+  <span id="resultCount"></span>
+</div>
 
-  <!-- 상세 그룹 -->
-  <div id="group-list">
-
-  </div>
+<div class="result-wrap">
+  <table class="result-table">
+    <thead><tr>
+      <th>구사양코드</th><th>색상</th><th></th><th>신사양코드</th>
+      <th style="text-align:right">구 현재고</th>
+      <th style="text-align:right">구 입고예정</th>
+      <th style="text-align:right">구 가용재고</th>
+      <th style="text-align:right">신 현재고</th>
+      <th style="text-align:right">신 입고예정</th>
+      <th style="text-align:right">신 가용재고</th>
+    </tr></thead>
+    <tbody id="tableBody">
+      <tr><td colspan="10" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <script>
-const EXPORT_ROWS = [];
-const VIEW_TITLES = {
-  active:'진행중 사양변경', done:'완료된 사양변경', this_month:'이번 달 등록된 사양변경',
-  urgent:'🔴 긴급 대응 필요', monitor:'🟡 모니터링', ready:'🟢 전환 가능 (완료처리 대기)',
-  all:'전체 사양변경'
-};
+const SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
 
-function _matchesView(el, mode) {
-  const status = el.dataset.status;
-  const risk = el.dataset.risk;
-  const tm = el.dataset.thisMonth === '1';
-  switch(mode) {
-    case 'active': return status === '진행중';
-    case 'done': return status === '완료';
-    case 'this_month': return tm;
-    case 'urgent': return status === '진행중' && risk === 'urgent';
-    case 'monitor': return status === '진행중' && risk === 'monitor';
-    case 'ready': return status === '진행중' && risk === 'ready';
-    case 'all': return true;
-  }
-  return true;
-}
-
-function setView(mode) {
-  ['active','done','this_month','urgent','monitor','ready'].forEach(m => {
-    const el = document.getElementById('kpi-' + m);
-    if (el) el.classList.toggle('selected', m === mode);
+async function fetchSheet(name) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const text = await resp.text();
+  const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
+  if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
+  const cols = json.table.cols.map(c => c.label);
+  return (json.table.rows || []).map(row => {
+    const obj = {};
+    (row.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
+    return obj;
   });
-  let visible = 0;
-  document.querySelectorAll('.quick-item').forEach(el => {
-    const show = _matchesView(el, mode);
-    el.style.display = show ? '' : 'none';
-    const gid = el.getAttribute('href').replace('#','');
-    const g = document.getElementById(gid);
-    if (g) g.style.display = show ? '' : 'none';
-    if (show) visible++;
-  });
-  document.getElementById('quickTitle').textContent = VIEW_TITLES[mode] || '사양변경';
-  document.getElementById('quickCount').textContent = visible + '건';
-  document.getElementById('quickEmpty').style.display = visible === 0 ? '' : 'none';
-  location.hash = mode === 'active' ? '' : mode;
 }
 
-function goTo(e, id) {
-  e.preventDefault();
-  setView('all');
-  setTimeout(() => {
-    const el = document.getElementById('group-' + id);
-    if (!el) return;
-    el.scrollIntoView({behavior:'smooth', block:'start'});
-    el.classList.remove('flash');
-    void el.offsetWidth;
-    el.classList.add('flash');
-  }, 60);
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(v) { const n = parseInt(v); return isNaN(n) ? '-' : n.toLocaleString('ko-KR'); }
+function qtyHtml(v) {
+  const n = parseInt(v);
+  if (isNaN(n) || String(v) === '') return '<span style="color:#d1d5db">-</span>';
+  if (n > 0) return `<span class="qty-pos">${n.toLocaleString()}</span>`;
+  if (n < 0) return `<span class="qty-neg">${n.toLocaleString()}</span>`;
+  return `<span class="qty-zero">0</span>`;
 }
 
-function downloadXlsx() {
-  // 현재 필터 상태에서 보이는 quick-item에 해당하는 그룹만 내보냄
-  const visibleIds = new Set();
-  document.querySelectorAll('.quick-item').forEach(el => {
-    if (el.style.display !== 'none') {
-      const gid = el.getAttribute('href').replace('#group-','');
-      visibleIds.add(gid);
+let allRows = [];
+
+async function loadData() {
+  try {
+    let rows, enriched = true;
+    try {
+      rows = await fetchSheet('사양변경현황');
+      if (!rows.length) throw new Error('empty');
+    } catch {
+      enriched = false;
+      rows = await fetchSheet('사양변경');
     }
-  });
-  // EXPORT_ROWS는 그룹 id가 없으므로 현재 모드와 동일한 전체 export (필터 무시).
-  // 간단히 지금 보이는 그룹에 속한 행을 내보내는 건 데이터 링크가 필요 — 현재는 전체 내보냄.
-  if (!EXPORT_ROWS.length) { alert('내보낼 데이터가 없습니다.'); return; }
-  const today = new Date();
-  const ds = today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0');
-  const header = Object.keys(EXPORT_ROWS[0]);
-  const aoa = [header, ...EXPORT_ROWS.map(r => header.map(h => r[h]))];
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols'] = header.map((h, i) => ({wch: Math.max(h.length, i < 10 ? 12 : 10) + 2}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '사양변경관리');
-  XLSX.writeFile(wb, `일룸_사양변경관리_${ds}.xlsx`);
+    allRows = rows.filter(r => r['사양변경내용'] || r['구사양코드']);
+    const ts = enriched && rows[0]?.['기준일자'] ? `재고기준: ${rows[0]['기준일자']}` : 'Google Sheets 실시간';
+    document.getElementById('pageMeta').textContent = ts;
+
+    const groups = new Set(allRows.map(r => r['사양변경내용'] || '').filter(Boolean));
+    const hasStock = allRows.filter(r => parseInt(r['구가용재고'] ?? 0) > 0).length;
+    document.getElementById('sumGroups').textContent = groups.size;
+    document.getElementById('sumPairs').textContent = allRows.length;
+    document.getElementById('sumHasStock').textContent = hasStock;
+    renderTable(allRows);
+  } catch(e) {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="10" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
+    document.getElementById('pageMeta').textContent = '로딩 실패';
+  }
 }
 
-// 초기 뷰 — hash 유지
-document.addEventListener('DOMContentLoaded', () => {
-  const hash = location.hash.replace('#','');
-  const valid = ['done','this_month','urgent','monitor','ready','all'];
-  setView(valid.includes(hash) ? hash : 'active');
-});
+function renderTable(rows) {
+  const groups = {}, order = [];
+  rows.forEach(r => {
+    const g = r['사양변경내용'] || '(미분류)';
+    if (!groups[g]) { groups[g] = []; order.push(g); }
+    groups[g].push(r);
+  });
+  const parts = [];
+  order.forEach(g => {
+    const items = groups[g];
+    parts.push(`<tr class="group-row" data-group="${esc(g)}">
+      <td colspan="10">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+    items.forEach(r => {
+      const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '', color = r['색상'] || '';
+      parts.push(`<tr class="item-row" data-content="${esc(g)}" data-oldcode="${esc(oc)}" data-newcode="${esc(nc)}">
+        <td><span class="code">${esc(oc)}</span></td>
+        <td style="text-align:center">${esc(color)}</td>
+        <td style="text-align:center;color:#9ca3af;font-size:16px">→</td>
+        <td><span class="code">${esc(nc)}</span></td>
+        <td style="text-align:right">${fmt(r['구현재고'])}</td>
+        <td style="text-align:right">${fmt(r['구입고예정'])}</td>
+        <td style="text-align:right">${qtyHtml(r['구가용재고'])}</td>
+        <td style="text-align:right">${fmt(r['신현재고'])}</td>
+        <td style="text-align:right">${fmt(r['신입고예정'])}</td>
+        <td style="text-align:right">${qtyHtml(r['신가용재고'])}</td>
+      </tr>`);
+    });
+  });
+  document.getElementById('tableBody').innerHTML = parts.join('');
+  filterTable();
+}
+
+function filterTable() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  let vis = 0;
+  document.querySelectorAll('#tableBody .item-row').forEach(row => {
+    const m = !q || [row.dataset.content, row.dataset.oldcode, row.dataset.newcode]
+      .some(s => (s || '').toLowerCase().includes(q));
+    row.style.display = m ? '' : 'none';
+    if (m) vis++;
+  });
+  document.querySelectorAll('#tableBody .group-row').forEach(gh => {
+    let next = gh.nextElementSibling, hasVis = false;
+    while (next && !next.classList.contains('group-row')) {
+      if (next.style.display !== 'none') { hasVis = true; break; }
+      next = next.nextElementSibling;
+    }
+    gh.style.display = hasVis ? '' : 'none';
+  });
+  document.getElementById('resultCount').textContent = q ? `${vis} / ${allRows.length} 건` : '';
+}
+
+loadData();
 </script>
 </body>
 </html>
