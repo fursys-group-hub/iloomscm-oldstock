@@ -103,6 +103,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <th>단품코드</th>
       <th>색상</th>
       <th>사용구분</th>
+      <th>용도구분</th>
       <th style="text-align:right">현재고수량</th>
       <th style="text-align:right">입고예정량</th>
       <th style="text-align:right">출고예정량</th>
@@ -110,7 +111,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <th style="text-align:right">3개월평균출고</th>
     </tr></thead>
     <tbody id="tableBody">
-      <tr><td colspan="8" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="9" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -182,7 +183,7 @@ async function loadData() {
     renderTable(hasInventory);
   } catch(e) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="8" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
+      `<tr><td colspan="9" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
     document.getElementById('pageMeta').textContent = '로딩 실패';
   }
 }
@@ -212,7 +213,7 @@ function renderTable(hasInventory) {
 
   if (!order.length) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="8" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">검색 결과 없음</td></tr>`;
+      `<tr><td colspan="9" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">검색 결과 없음</td></tr>`;
     document.getElementById('resultCount').textContent = `0 / ${allItems.length} 건`;
     return;
   }
@@ -222,7 +223,7 @@ function renderTable(hasInventory) {
   order.forEach(g => {
     const items = groups[g];
     const gAvail = items.reduce((a,r) => a + Math.max(0, toInt(r['가용재고'])), 0);
-    parts.push(`<tr class="group-row"><td colspan="8">${esc(g)}<span class="group-meta">${items.length}개${hasInventory ? ` &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}` : ''}</span></td></tr>`);
+    parts.push(`<tr class="group-row"><td colspan="9">${esc(g)}<span class="group-meta">${items.length}개${hasInventory ? ` &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}` : ''}</span></td></tr>`);
     items.forEach(r => {
       const avail = toInt(r['가용재고']);
       vis++;
@@ -231,6 +232,7 @@ function renderTable(hasInventory) {
         <td class="code">${esc(r['단품코드'])}</td>
         <td style="text-align:center">${esc(r['색상'])}</td>
         <td>${usageBadge(r['사용구분'])}</td>
+        <td style="font-size:11px;color:#6B7280">${esc(r['용도구분'] || '')}</td>
         <td style="text-align:right">${hasInventory ? fmt(r['현재고수량']) : '<span style="color:#d1d5db">-</span>'}</td>
         <td style="text-align:right">${hasInventory ? fmt(r['입고예정량']) : '<span style="color:#d1d5db">-</span>'}</td>
         <td style="text-align:right">${hasInventory ? fmt(r['출고예정량']) : '<span style="color:#d1d5db">-</span>'}</td>
