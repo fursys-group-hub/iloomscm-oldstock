@@ -144,11 +144,13 @@ let allItems = [], currentFilter = 'all';
 async function loadData() {
   try {
     const rows = await fetchSheet('단종재고현황');
-    if (!rows.length) {
+    // GViz는 없는 시트명이면 첫 번째 시트를 반환 → 컬럼 유효성 검사
+    const hasValidCols = rows.length && '가용재고' in rows[0];
+    if (!hasValidCols) {
       document.getElementById('tableBody').innerHTML =
         `<tr><td colspan="8" class="empty-note">
           아직 재고 데이터가 없습니다.<br>
-          <b>재고업데이트.bat</b>를 실행하면 데이터가 채워집니다.
+          <b>SCM대시보드_재고갱신.bat</b>를 실행하면 데이터가 채워집니다.
         </td></tr>`;
       document.getElementById('pageMeta').textContent = '데이터 없음';
       return;

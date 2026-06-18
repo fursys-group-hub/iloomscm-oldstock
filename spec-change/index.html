@@ -128,14 +128,16 @@ let allRows = [];
 
 async function loadData() {
   try {
-    let rows, enriched = true;
-    try {
-      rows = await fetchSheet('사양변경현황');
-      if (!rows.length) throw new Error('empty');
-    } catch {
-      enriched = false;
+    // '사양변경현황' (Python 재고 포함본) 우선 시도 — 컬럼 유효성으로 판별
+    let rows, enriched = false;
+    const enrichedRows = await fetchSheet('사양변경현황');
+    if (enrichedRows.length && '구현재고' in enrichedRows[0]) {
+      rows = enrichedRows;
+      enriched = true;
+    } else {
       rows = await fetchSheet('사양변경');
     }
+
     allRows = rows.filter(r => r['사양변경내용'] || r['구사양코드']);
     const ts = enriched && rows[0]?.['기준일자'] ? `재고기준: ${rows[0]['기준일자']}` : 'Google Sheets 실시간';
     document.getElementById('pageMeta').textContent = ts;
