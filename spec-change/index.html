@@ -98,6 +98,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th colspan="4" class="th-group-old" style="text-align:center">구사양</th>
         <th colspan="4" class="th-group-new" style="text-align:center">신사양</th>
         <th rowspan="2" style="text-align:center">문서</th>
+        <th rowspan="2" style="text-align:center">완료</th>
       </tr>
       <tr>
         <th class="th-group-old">사용구분</th>
@@ -111,7 +112,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="14" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="15" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -119,14 +120,25 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <script>
 const SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
 
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxknzO-E5TjzI105nvC51pITLEB_nWpwtzVlW6AGMSRAjrCjXhN6TNu07IlK65nAEPSA/exec';
+
 // P열까지가 고정 컬럼 — Q열 이후 사용자 정의 컬럼(전자문서 등) 동적 감지
 const FIXED_COLS = new Set(['구사양코드','신사양코드','색상','사양변경내용',
   '단품명칭','구사양사용구분','신사양사용구분',
   '구현재고','구입고예정','구출고예정','구가용재고',
-  '신현재고','신입고예정','신출고예정','신가용재고','기준일자']);
+  '신현재고','신입고예정','신출고예정','신가용재고','기준일자','완료여부']);
 
 function findDocCol(row) {
   return Object.keys(row).find(k => !FIXED_COLS.has(k) && k.trim() !== '') || '전자문서';
+}
+
+function handleDone_spec(btn) {
+  const oc = btn.dataset.oc, nc = btn.dataset.nc, color = btn.dataset.color;
+  if (!confirm(`완료 처리하시겠습니까?\n\n${oc} → ${nc} (${color})\n\n구글시트에 기록되고 목록에서 사라집니다.`)) return;
+  allRows = allRows.filter(r => !(r['구사양코드']===oc && r['신사양코드']===nc && r['색상']===color));
+  renderTable(allRows);
+  fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors',
+    body: JSON.stringify({sheet:'사양변경', keys:[{col:'구사양코드',val:oc},{col:'신사양코드',val:nc},{col:'색상',val:color}]})});
 }
 
 async function fetchSheet(name) {
@@ -168,7 +180,7 @@ let allRows = [];
 async function loadData() {
   try {
     const rows = await fetchSheet('사양변경');
-    allRows = rows.filter(r => r['구사양코드'] || r['신사양코드']);
+    allRows = rows.filter(r => (r['구사양코드'] || r['신사양코드']) && r['완료여부'] !== '완료');
 
     const hasInventory = allRows.length && '구현재고' in allRows[0];
     const refDate = hasInventory && allRows[0]['기준일자'] ? allRows[0]['기준일자'] : '';
@@ -204,7 +216,7 @@ function renderTable(rows) {
   order.forEach(g => {
     const items = groups[g];
     parts.push(`<tr class="group-row" data-group="${esc(g)}">
-      <td colspan="14">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+      <td colspan="15">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
     const docCol = allRows.length ? findDocCol(allRows[0]) : '전자문서';
     items.forEach(r => {
       const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '';
@@ -228,6 +240,7 @@ function renderTable(rows) {
         <td style="text-align:right">${fmt(r['신입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['신가용재고'])}</td>
         <td style="text-align:center">${docUrl ? `<a href="${esc(docUrl)}" target="_blank" rel="noopener" style="display:inline-block;padding:2px 8px;background:#EFF6FF;color:#2563eb;border-radius:4px;font-size:11px;text-decoration:none;white-space:nowrap">문서 ↗</a>` : ''}</td>
+        <td style="text-align:center"><button data-oc="${esc(oc)}" data-nc="${esc(nc)}" data-color="${esc(r['색상']||'')}" onclick="handleDone_spec(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
       </tr>`);
     });
   });

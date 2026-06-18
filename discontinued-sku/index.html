@@ -109,15 +109,26 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <th style="text-align:right">출고예정량</th>
       <th style="text-align:right">가용재고</th>
       <th style="text-align:right">3개월평균출고</th>
+      <th style="text-align:center">완료</th>
     </tr></thead>
     <tbody id="tableBody">
-      <tr><td colspan="9" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="10" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
 
 <script>
 const SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxknzO-E5TjzI105nvC51pITLEB_nWpwtzVlW6AGMSRAjrCjXhN6TNu07IlK65nAEPSA/exec';
+
+function handleDone_disc(btn) {
+  const code = btn.dataset.code, color = btn.dataset.color;
+  if (!confirm(`완료 처리하시겠습니까?\n\n${code} (${color})\n\n구글시트에 기록되고 목록에서 사라집니다.`)) return;
+  allItems = allItems.filter(r => !(r['단품코드']===code && r['색상']===color));
+  filterTable();
+  fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors',
+    body: JSON.stringify({sheet:'단종(단품)', keys:[{col:'단품코드',val:code},{col:'색상',val:color}]})});
+}
 
 async function fetchSheet(name) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
@@ -162,7 +173,7 @@ async function loadData() {
 
     // 단품코드 컬럼이 있는 행만 필터
     const codeKey = Object.keys(rows[0] || {}).find(k => k === '단품코드') || '단품코드';
-    allItems = rows.filter(r => r[codeKey]);
+    allItems = rows.filter(r => r[codeKey] && r['완료여부'] !== '완료');
 
     document.getElementById('pageMeta').textContent = hasInventory
       ? 'Google Sheets 실시간'
@@ -183,14 +194,14 @@ async function loadData() {
     renderTable(hasInventory);
   } catch(e) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="9" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
+      `<tr><td colspan="10" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
     document.getElementById('pageMeta').textContent = '로딩 실패';
   }
 }
 
 // A,B,C 컬럼명을 동적으로 파악: '단품코드','색상' 외 첫 번째 컬럼이 그룹(구분) 컬럼
 function getGroupKey(row) {
-  const fixed = new Set(['단품코드','색상','사용구분','현재고수량','입고예정량','출고예정량','가용재고','3개월평균출고']);
+  const fixed = new Set(['단품코드','색상','사용구분','용도구분','현재고수량','입고예정량','출고예정량','가용재고','3개월평균출고','완료여부']);
   return Object.keys(row).find(k => !fixed.has(k)) || '';
 }
 
@@ -213,7 +224,7 @@ function renderTable(hasInventory) {
 
   if (!order.length) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="9" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">검색 결과 없음</td></tr>`;
+      `<tr><td colspan="10" style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">검색 결과 없음</td></tr>`;
     document.getElementById('resultCount').textContent = `0 / ${allItems.length} 건`;
     return;
   }
@@ -223,7 +234,7 @@ function renderTable(hasInventory) {
   order.forEach(g => {
     const items = groups[g];
     const gAvail = items.reduce((a,r) => a + Math.max(0, toInt(r['가용재고'])), 0);
-    parts.push(`<tr class="group-row"><td colspan="9">${esc(g)}<span class="group-meta">${items.length}개${hasInventory ? ` &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}` : ''}</span></td></tr>`);
+    parts.push(`<tr class="group-row"><td colspan="10">${esc(g)}<span class="group-meta">${items.length}개${hasInventory ? ` &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}` : ''}</span></td></tr>`);
     items.forEach(r => {
       const avail = toInt(r['가용재고']);
       vis++;
@@ -238,6 +249,7 @@ function renderTable(hasInventory) {
         <td style="text-align:right">${hasInventory ? fmt(r['출고예정량']) : '<span style="color:#d1d5db">-</span>'}</td>
         <td style="text-align:right">${hasInventory ? availHtml(avail) : '<span style="color:#d1d5db">-</span>'}</td>
         <td style="text-align:right;color:#6B7280">${r['3개월평균출고'] ? fmt(r['3개월평균출고']) : '<span style="color:#d1d5db">-</span>'}</td>
+        <td style="text-align:center"><button data-code="${esc(r['단품코드'])}" data-color="${esc(r['색상'])}" onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
       </tr>`);
     });
   });
