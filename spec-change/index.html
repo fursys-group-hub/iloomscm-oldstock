@@ -95,8 +95,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th rowspan="2" style="text-align:center">→</th>
         <th rowspan="2">신사양코드</th>
         <th rowspan="2">색상</th>
-        <th colspan="4" class="th-group-old" style="text-align:center">구사양</th>
-        <th colspan="4" class="th-group-new" style="text-align:center">신사양</th>
+        <th colspan="5" class="th-group-old" style="text-align:center">구사양</th>
+        <th colspan="5" class="th-group-new" style="text-align:center">신사양</th>
         <th rowspan="2" style="text-align:center">문서</th>
         <th rowspan="2" style="text-align:center">완료</th>
       </tr>
@@ -105,14 +105,16 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th class="th-group-old" style="text-align:right">현재고</th>
         <th class="th-group-old" style="text-align:right">입고예정</th>
         <th class="th-group-old" style="text-align:right">가용재고</th>
+        <th class="th-group-old" style="text-align:right">사업장가용</th>
         <th class="th-group-new">사용구분</th>
         <th class="th-group-new" style="text-align:right">현재고</th>
         <th class="th-group-new" style="text-align:right">입고예정</th>
         <th class="th-group-new" style="text-align:right">가용재고</th>
+        <th class="th-group-new" style="text-align:right">사업장가용</th>
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="15" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="17" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -125,8 +127,9 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxknzO-E5TjzI1
 // P열까지가 고정 컬럼 — Q열 이후 사용자 정의 컬럼(전자문서 등) 동적 감지
 const FIXED_COLS = new Set(['구사양코드','신사양코드','색상','사양변경내용',
   '단품명칭','구사양사용구분','신사양사용구분',
-  '구현재고','구입고예정','구출고예정','구가용재고',
-  '신현재고','신입고예정','신출고예정','신가용재고','기준일자','완료여부']);
+  '구현재고','구입고예정','구출고예정','구가용재고','구사양사업장가용재고',
+  '신현재고','신입고예정','신출고예정','신가용재고','신사양사업장가용재고',
+  '기준일자','완료여부']);
 
 function findDocCol(row) {
   return Object.keys(row).find(k => !FIXED_COLS.has(k) && k.trim() !== '') || '전자문서';
@@ -216,7 +219,7 @@ function renderTable(rows) {
   order.forEach(g => {
     const items = groups[g];
     parts.push(`<tr class="group-row" data-group="${esc(g)}">
-      <td colspan="15">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+      <td colspan="17">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
     const docCol = allRows.length ? findDocCol(allRows[0]) : '전자문서';
     items.forEach(r => {
       const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '';
@@ -235,10 +238,12 @@ function renderTable(rows) {
         <td style="text-align:right">${fmt(r['구현재고'])}</td>
         <td style="text-align:right">${fmt(r['구입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['구가용재고'])}</td>
+        <td style="text-align:right">${qtyHtml(r['구사양사업장가용재고'])}</td>
         <td>${usageBadge(r['신사양사용구분'])}</td>
         <td style="text-align:right">${fmt(r['신현재고'])}</td>
         <td style="text-align:right">${fmt(r['신입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['신가용재고'])}</td>
+        <td style="text-align:right">${qtyHtml(r['신사양사업장가용재고'])}</td>
         <td style="text-align:center">${docUrl ? `<a href="${esc(docUrl)}" target="_blank" rel="noopener" style="display:inline-block;padding:2px 8px;background:#EFF6FF;color:#2563eb;border-radius:4px;font-size:11px;text-decoration:none;white-space:nowrap">문서 ↗</a>` : ''}</td>
         <td style="text-align:center"><button data-oc="${esc(oc)}" data-nc="${esc(nc)}" data-color="${esc(r['색상']||'')}" onclick="handleDone_spec(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
       </tr>`);
