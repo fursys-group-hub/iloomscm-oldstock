@@ -100,7 +100,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 const SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
 
 async function fetchSheet(name) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const text = await resp.text();
