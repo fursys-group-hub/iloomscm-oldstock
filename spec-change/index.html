@@ -16,29 +16,35 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;font-weight:500;white-space:nowrap}
 .iloom-tab:hover{color:#333}
 .iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
-.page-header{background:#fff;border-bottom:1px solid #E5E7EB;padding:20px 24px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.page-header{background:#fff;border-bottom:1px solid #E5E7EB;padding:18px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .page-header h1{font-size:20px;font-weight:700}
 .page-meta{font-size:12px;color:#6B7280;margin-left:auto}
-.summary-bar{display:flex;gap:24px;align-items:center;padding:14px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.summary-bar{display:flex;gap:20px;align-items:center;padding:12px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
 .sum-item{display:flex;flex-direction:column;align-items:center;gap:2px}
-.sum-num{font-size:22px;font-weight:700;line-height:1}
+.sum-num{font-size:20px;font-weight:700;line-height:1}
 .sum-lbl{font-size:11px;color:#6B7280}
-.sum-sep{width:1px;height:40px;background:#E5E7EB;margin:0 8px}
-.toolbar{display:flex;align-items:center;gap:10px;padding:12px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
-.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:240px;outline:none}
+.sum-sep{width:1px;height:36px;background:#E5E7EB;margin:0 4px}
+.toolbar{display:flex;align-items:center;gap:10px;padding:10px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:260px;outline:none}
 .search-box:focus{border-color:#c80a1e}
 #resultCount{font-size:12px;color:#6B7280;margin-left:auto}
-.result-wrap{padding:24px;overflow-x:auto}
-.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
-.result-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
-.group-row td{background:#F3F4F6;font-weight:700;font-size:13px;color:#374151;padding:8px 12px;border-top:2px solid #E5E7EB}
+.result-wrap{padding:20px 24px;overflow-x:auto}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);min-width:1100px}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:8px 10px;font-size:11px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-table td{padding:8px 10px;font-size:12px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+.th-group-old{background:#FEF9EC;border-bottom-color:#FDE68A}
+.th-group-new{background:#EFF6FF;border-bottom-color:#BFDBFE}
+.group-row td{background:#F3F4F6;font-weight:700;font-size:13px;color:#1F2937;padding:8px 12px;border-top:2px solid #E5E7EB}
 .group-meta{font-size:11px;font-weight:400;color:#6B7280;margin-left:8px}
 .item-row:hover{background:#FFFBEB}
-.code{font-family:Montserrat,ui-monospace,monospace;font-size:12px}
+.code{font-family:Montserrat,ui-monospace,monospace;font-size:11px}
+.badge-use{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;background:#d1fae5;color:#065f46}
+.badge-disc{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;background:#fde2e4;color:#c80a1e}
+.badge-etc{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;color:#6B7280}
 .qty-pos{color:#059669;font-weight:700}
 .qty-zero{color:#c80a1e;font-weight:700}
 .qty-neg{color:#c80a1e;font-weight:700}
+.divider-col{background:#F3F4F6;width:28px;text-align:center;color:#9ca3af;font-size:16px;padding:0 2px}
 .loading{text-align:center;padding:60px;color:#6B7280;font-size:14px}
 .error-msg{text-align:center;padding:40px;color:#c80a1e;font-size:13px}
 @media(max-width:700px){.iloom-nav-inner{gap:0}.iloom-tab{padding:10px;font-size:12px}}
@@ -71,27 +77,40 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <div class="sum-item"><span class="sum-num" id="sumGroups">-</span><span class="sum-lbl">변경 건</span></div>
   <div class="sum-sep"></div>
   <div class="sum-item"><span class="sum-num" id="sumPairs">-</span><span class="sum-lbl">코드쌍</span></div>
-  <div class="sum-item"><span class="sum-num" id="sumHasStock" style="color:#059669">-</span><span class="sum-lbl">구코드 재고있음</span></div>
+  <div class="sum-item"><span class="sum-num" id="sumOldStock" style="color:#d97706">-</span><span class="sum-lbl">구사양 재고있음</span></div>
+  <div class="sum-item"><span class="sum-num" id="sumNewStock" style="color:#2563eb">-</span><span class="sum-lbl">신사양 재고있음</span></div>
 </div>
 
 <div class="toolbar">
-  <input class="search-box" id="searchBox" type="text" placeholder="사양변경내용 / 코드 검색..." oninput="filterTable()">
+  <input class="search-box" id="searchBox" type="text" placeholder="사양변경내용 / 코드 / 단품명 검색..." oninput="filterTable()">
   <span id="resultCount"></span>
 </div>
 
 <div class="result-wrap">
   <table class="result-table">
-    <thead><tr>
-      <th>구사양코드</th><th>색상</th><th></th><th>신사양코드</th>
-      <th style="text-align:right">구 현재고</th>
-      <th style="text-align:right">구 입고예정</th>
-      <th style="text-align:right">구 가용재고</th>
-      <th style="text-align:right">신 현재고</th>
-      <th style="text-align:right">신 입고예정</th>
-      <th style="text-align:right">신 가용재고</th>
-    </tr></thead>
+    <thead>
+      <tr>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2">색상</th>
+        <th rowspan="2" style="text-align:center">→</th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">단품명칭</th>
+        <th colspan="4" class="th-group-old" style="text-align:center">구사양</th>
+        <th colspan="4" class="th-group-new" style="text-align:center">신사양</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th>
+        <th class="th-group-old" style="text-align:right">현재고</th>
+        <th class="th-group-old" style="text-align:right">입고예정</th>
+        <th class="th-group-old" style="text-align:right">가용재고</th>
+        <th class="th-group-new">사용구분</th>
+        <th class="th-group-new" style="text-align:right">현재고</th>
+        <th class="th-group-new" style="text-align:right">입고예정</th>
+        <th class="th-group-new" style="text-align:right">가용재고</th>
+      </tr>
+    </thead>
     <tbody id="tableBody">
-      <tr><td colspan="10" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="13" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -115,42 +134,49 @@ async function fetchSheet(name) {
 }
 
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmt(v) { const n = parseInt(v); return isNaN(n) ? '-' : n.toLocaleString('ko-KR'); }
+function fmt(v) { const n = parseInt(v); return (isNaN(n) || v === '') ? '-' : n.toLocaleString('ko-KR'); }
+
 function qtyHtml(v) {
+  if (v === '' || v === null || v === undefined) return '<span style="color:#d1d5db">-</span>';
   const n = parseInt(v);
-  if (isNaN(n) || String(v) === '') return '<span style="color:#d1d5db">-</span>';
+  if (isNaN(n)) return '<span style="color:#d1d5db">-</span>';
   if (n > 0) return `<span class="qty-pos">${n.toLocaleString()}</span>`;
   if (n < 0) return `<span class="qty-neg">${n.toLocaleString()}</span>`;
   return `<span class="qty-zero">0</span>`;
+}
+
+function usageBadge(v) {
+  if (!v) return '<span style="color:#d1d5db">-</span>';
+  if (v === '사용') return `<span class="badge-use">사용</span>`;
+  if (v.includes('단종')) return `<span class="badge-disc">${esc(v)}</span>`;
+  return `<span class="badge-etc">${esc(v)}</span>`;
 }
 
 let allRows = [];
 
 async function loadData() {
   try {
-    // '사양변경현황' (Python 재고 포함본) 우선 시도 — 컬럼 유효성으로 판별
-    let rows, enriched = false;
-    const enrichedRows = await fetchSheet('사양변경현황');
-    if (enrichedRows.length && '구현재고' in enrichedRows[0]) {
-      rows = enrichedRows;
-      enriched = true;
-    } else {
-      rows = await fetchSheet('사양변경');
-    }
+    const rows = await fetchSheet('사양변경');
+    allRows = rows.filter(r => r['구사양코드'] || r['신사양코드']);
 
-    allRows = rows.filter(r => r['사양변경내용'] || r['구사양코드']);
-    const ts = enriched && rows[0]?.['기준일자'] ? `재고기준: ${rows[0]['기준일자']}` : 'Google Sheets 실시간';
-    document.getElementById('pageMeta').textContent = ts;
+    const hasInventory = allRows.length && '구현재고' in allRows[0];
+    const refDate = hasInventory && allRows[0]['기준일자'] ? allRows[0]['기준일자'] : '';
+    document.getElementById('pageMeta').textContent = refDate
+      ? `재고기준: ${refDate}`
+      : hasInventory ? '재고기준: 최신' : 'Google Sheets 실시간 (재고 미갱신)';
 
     const groups = new Set(allRows.map(r => r['사양변경내용'] || '').filter(Boolean));
-    const hasStock = allRows.filter(r => parseInt(r['구가용재고'] ?? 0) > 0).length;
+    const oldStk = allRows.filter(r => parseInt(r['구가용재고'] ?? 0) > 0).length;
+    const newStk = allRows.filter(r => parseInt(r['신가용재고'] ?? 0) > 0).length;
     document.getElementById('sumGroups').textContent = groups.size;
     document.getElementById('sumPairs').textContent = allRows.length;
-    document.getElementById('sumHasStock').textContent = hasStock;
+    document.getElementById('sumOldStock').textContent = oldStk;
+    document.getElementById('sumNewStock').textContent = newStk;
+
     renderTable(allRows);
   } catch(e) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="10" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
+      `<tr><td colspan="13" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
     document.getElementById('pageMeta').textContent = '로딩 실패';
   }
 }
@@ -162,21 +188,29 @@ function renderTable(rows) {
     if (!groups[g]) { groups[g] = []; order.push(g); }
     groups[g].push(r);
   });
+
   const parts = [];
   order.forEach(g => {
     const items = groups[g];
     parts.push(`<tr class="group-row" data-group="${esc(g)}">
-      <td colspan="10">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+      <td colspan="13">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
     items.forEach(r => {
-      const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '', color = r['색상'] || '';
-      parts.push(`<tr class="item-row" data-content="${esc(g)}" data-oldcode="${esc(oc)}" data-newcode="${esc(nc)}">
+      const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '';
+      parts.push(`<tr class="item-row"
+          data-content="${esc(g)}"
+          data-oldcode="${esc(oc)}"
+          data-newcode="${esc(nc)}"
+          data-name="${esc(r['단품명칭'] || '')}">
         <td><span class="code">${esc(oc)}</span></td>
-        <td style="text-align:center">${esc(color)}</td>
-        <td style="text-align:center;color:#9ca3af;font-size:16px">→</td>
+        <td style="text-align:center">${esc(r['색상'] || '')}</td>
+        <td style="text-align:center;color:#9ca3af">→</td>
         <td><span class="code">${esc(nc)}</span></td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r['단품명칭'] || '')}">${esc(r['단품명칭'] || '')}</td>
+        <td>${usageBadge(r['구사양사용구분'])}</td>
         <td style="text-align:right">${fmt(r['구현재고'])}</td>
         <td style="text-align:right">${fmt(r['구입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['구가용재고'])}</td>
+        <td>${usageBadge(r['신사양사용구분'])}</td>
         <td style="text-align:right">${fmt(r['신현재고'])}</td>
         <td style="text-align:right">${fmt(r['신입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['신가용재고'])}</td>
@@ -191,7 +225,7 @@ function filterTable() {
   const q = document.getElementById('searchBox').value.toLowerCase();
   let vis = 0;
   document.querySelectorAll('#tableBody .item-row').forEach(row => {
-    const m = !q || [row.dataset.content, row.dataset.oldcode, row.dataset.newcode]
+    const m = !q || [row.dataset.content, row.dataset.oldcode, row.dataset.newcode, row.dataset.name]
       .some(s => (s || '').toLowerCase().includes(q));
     row.style.display = m ? '' : 'none';
     if (m) vis++;
