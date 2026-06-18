@@ -97,6 +97,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th rowspan="2">단품명칭</th>
         <th colspan="4" class="th-group-old" style="text-align:center">구사양</th>
         <th colspan="4" class="th-group-new" style="text-align:center">신사양</th>
+        <th rowspan="2" style="text-align:center">문서</th>
       </tr>
       <tr>
         <th class="th-group-old">사용구분</th>
@@ -110,13 +111,23 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="13" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
+      <tr><td colspan="14" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
 
 <script>
 const SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
+
+// P열까지가 고정 컬럼 — Q열 이후 사용자 정의 컬럼(전자문서 등) 동적 감지
+const FIXED_COLS = new Set(['구사양코드','신사양코드','색상','사양변경내용',
+  '단품명칭','구사양사용구분','신사양사용구분',
+  '구현재고','구입고예정','구출고예정','구가용재고',
+  '신현재고','신입고예정','신출고예정','신가용재고','기준일자']);
+
+function findDocCol(row) {
+  return Object.keys(row).find(k => !FIXED_COLS.has(k) && k.trim() !== '') || '전자문서';
+}
 
 async function fetchSheet(name) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
@@ -193,9 +204,11 @@ function renderTable(rows) {
   order.forEach(g => {
     const items = groups[g];
     parts.push(`<tr class="group-row" data-group="${esc(g)}">
-      <td colspan="13">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+      <td colspan="14">${esc(g)}<span class="group-meta">${items.length}건</span></td></tr>`);
+    const docCol = allRows.length ? findDocCol(allRows[0]) : '전자문서';
     items.forEach(r => {
       const oc = r['구사양코드'] || '', nc = r['신사양코드'] || '';
+      const docUrl = (r[docCol] || '').trim();
       parts.push(`<tr class="item-row"
           data-content="${esc(g)}"
           data-oldcode="${esc(oc)}"
@@ -214,6 +227,7 @@ function renderTable(rows) {
         <td style="text-align:right">${fmt(r['신현재고'])}</td>
         <td style="text-align:right">${fmt(r['신입고예정'])}</td>
         <td style="text-align:right">${qtyHtml(r['신가용재고'])}</td>
+        <td style="text-align:center">${docUrl ? `<a href="${esc(docUrl)}" target="_blank" rel="noopener" style="display:inline-block;padding:2px 8px;background:#EFF6FF;color:#2563eb;border-radius:4px;font-size:11px;text-decoration:none;white-space:nowrap">문서 ↗</a>` : ''}</td>
       </tr>`);
     });
   });
