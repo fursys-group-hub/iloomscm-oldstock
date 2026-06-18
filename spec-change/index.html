@@ -90,11 +90,11 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <table class="result-table">
     <thead>
       <tr>
+        <th rowspan="2">단품명칭</th>
         <th rowspan="2">구사양코드</th>
-        <th rowspan="2">색상</th>
         <th rowspan="2" style="text-align:center">→</th>
         <th rowspan="2">신사양코드</th>
-        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">색상</th>
         <th colspan="4" class="th-group-old" style="text-align:center">구사양</th>
         <th colspan="4" class="th-group-new" style="text-align:center">신사양</th>
         <th rowspan="2" style="text-align:center">문서</th>
@@ -214,11 +214,11 @@ function renderTable(rows) {
           data-oldcode="${esc(oc)}"
           data-newcode="${esc(nc)}"
           data-name="${esc(r['단품명칭'] || '')}">
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r['단품명칭'] || '')}">${esc(r['단품명칭'] || '')}</td>
         <td><span class="code">${esc(oc)}</span></td>
-        <td style="text-align:center">${esc(r['색상'] || '')}</td>
         <td style="text-align:center;color:#9ca3af">→</td>
         <td><span class="code">${esc(nc)}</span></td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r['단품명칭'] || '')}">${esc(r['단품명칭'] || '')}</td>
+        <td style="text-align:center">${esc(r['색상'] || '')}</td>
         <td>${usageBadge(r['구사양사용구분'])}</td>
         <td style="text-align:right">${fmt(r['구현재고'])}</td>
         <td style="text-align:right">${fmt(r['구입고예정'])}</td>
