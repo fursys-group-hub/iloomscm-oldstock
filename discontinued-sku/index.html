@@ -41,6 +41,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .item-row:hover{background:#FFFBEB}
 .item-row.row-zero td{color:#9ca3af}
 .code{font-family:Montserrat,ui-monospace,monospace;font-size:12px}
+.badge-use{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;background:#d1fae5;color:#065f46}
+.badge-disc{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600;background:#fde2e4;color:#c80a1e}
+.badge-etc{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;color:#6B7280}
 .qty-pos-hi{color:#059669;font-weight:700}
 .qty-pos-lo{color:#d97706;font-weight:700}
 .qty-zero{color:#c80a1e;font-weight:700}
@@ -88,7 +91,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </div>
 
 <div class="toolbar">
-  <input class="search-box" id="searchBox" type="text" placeholder="단품코드 / 단품명 검색..." oninput="filterTable()">
+  <input class="search-box" id="searchBox" type="text" placeholder="단품코드 / 색상 검색..." oninput="filterTable()">
   <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">전체</button>
   <button class="filter-btn" id="filterHas" onclick="setFilter('has')">재고있음만</button>
   <span id="resultCount"></span>
@@ -97,12 +100,14 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="result-wrap">
   <table class="result-table">
     <thead><tr>
-      <th>단품코드</th><th>색상</th><th>단품명칭</th>
+      <th>단품코드</th>
+      <th>색상</th>
+      <th>사용구분</th>
       <th style="text-align:right">현재고수량</th>
       <th style="text-align:right">입고예정량</th>
       <th style="text-align:right">출고예정량</th>
       <th style="text-align:right">가용재고</th>
-      <th style="text-align:right">사업장재고</th>
+      <th style="text-align:right">3개월평균출고</th>
     </tr></thead>
     <tbody id="tableBody">
       <tr><td colspan="8" class="loading">Google Sheets에서 데이터 로딩 중...</td></tr>
@@ -129,8 +134,15 @@ async function fetchSheet(name) {
 }
 
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmt(v) { const n = parseInt(v); return isNaN(n) ? '-' : n.toLocaleString('ko-KR'); }
+function fmt(v) { const n = parseInt(v); return (isNaN(n) || v === '') ? '-' : n.toLocaleString('ko-KR'); }
 function toInt(v) { const n = parseInt(v); return isNaN(n) ? 0 : n; }
+
+function usageBadge(v) {
+  if (!v) return '<span style="color:#d1d5db">-</span>';
+  if (v === '사용') return `<span class="badge-use">사용</span>`;
+  if (v.includes('단종')) return `<span class="badge-disc">${esc(v)}</span>`;
+  return `<span class="badge-etc">${esc(v)}</span>`;
+}
 
 function availHtml(n) {
   if (n > 10) return `<span class="qty-pos-hi">${n.toLocaleString()}</span>`;
@@ -143,36 +155,31 @@ let allItems = [], currentFilter = 'all';
 
 async function loadData() {
   try {
-    const rows = await fetchSheet('단종재고현황');
-    // GViz는 없는 시트명이면 첫 번째 시트를 반환 → 컬럼 유효성 검사
-    const hasValidCols = rows.length && '가용재고' in rows[0];
-    if (!hasValidCols) {
-      document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="8" class="empty-note">
-          아직 재고 데이터가 없습니다.<br>
-          <b>SCM대시보드_재고갱신.bat</b>를 실행하면 데이터가 채워집니다.
-        </td></tr>`;
-      document.getElementById('pageMeta').textContent = '데이터 없음';
-      return;
-    }
+    const rows = await fetchSheet('단종(단품)');
+    // 컬럼 유효성: Python이 갱신한 '사용구분' 컬럼이 있어야 재고 데이터가 있는 것
+    const hasInventory = rows.length && '사용구분' in rows[0];
 
-    allItems = rows.filter(r => r['단품코드']);
-    const ts = rows[0]?.['기준일자'] || '';
-    document.getElementById('pageMeta').textContent = ts ? `재고기준: ${ts}` : '로드 완료';
+    // 단품코드 컬럼이 있는 행만 필터
+    const codeKey = Object.keys(rows[0] || {}).find(k => k === '단품코드') || '단품코드';
+    allItems = rows.filter(r => r[codeKey]);
+
+    document.getElementById('pageMeta').textContent = hasInventory
+      ? 'Google Sheets 실시간'
+      : 'Google Sheets 실시간 (재고 미갱신)';
 
     const total  = allItems.length;
-    const hasStk = allItems.filter(r => toInt(r['가용재고']) > 0).length;
-    const zero   = total - hasStk;
-    const sumAvl = allItems.reduce((a,r) => a + Math.max(0, toInt(r['가용재고'])), 0);
-    const groups = new Set(allItems.map(r => r['구분'] || '').filter(Boolean));
+    const hasStk = hasInventory ? allItems.filter(r => toInt(r['가용재고']) > 0).length : 0;
+    const sumAvl = hasInventory ? allItems.reduce((a,r) => a + Math.max(0, toInt(r['가용재고'])), 0) : 0;
+    const groupKey = Object.keys(rows[0] || {}).find(k => k !== '단품코드' && k !== '색상' && k !== '사용구분' && k !== '현재고수량' && k !== '입고예정량' && k !== '출고예정량' && k !== '가용재고' && k !== '3개월평균출고') || '';
+    const groups = new Set(allItems.map(r => r[groupKey] || '').filter(Boolean));
 
     document.getElementById('sumTotal').textContent  = total;
     document.getElementById('sumHas').textContent    = hasStk;
-    document.getElementById('sumZero').textContent   = zero;
+    document.getElementById('sumZero').textContent   = total - hasStk;
     document.getElementById('sumAvail').textContent  = sumAvl.toLocaleString();
     document.getElementById('sumGroups').textContent = groups.size;
 
-    renderTable();
+    renderTable(hasInventory);
   } catch(e) {
     document.getElementById('tableBody').innerHTML =
       `<tr><td colspan="8" class="error-msg">로딩 실패: ${esc(e.message)}</td></tr>`;
@@ -180,15 +187,25 @@ async function loadData() {
   }
 }
 
-function renderTable() {
+// A,B,C 컬럼명을 동적으로 파악: '단품코드','색상' 외 첫 번째 컬럼이 그룹(구분) 컬럼
+function getGroupKey(row) {
+  const fixed = new Set(['단품코드','색상','사용구분','현재고수량','입고예정량','출고예정량','가용재고','3개월평균출고']);
+  return Object.keys(row).find(k => !fixed.has(k)) || '';
+}
+
+function renderTable(hasInventory) {
   const q = document.getElementById('searchBox').value.toLowerCase();
+  const groupKey = allItems.length ? getGroupKey(allItems[0]) : '';
+
   const groups = {}, order = [];
   allItems.forEach(r => {
-    const g = r['구분'] || '기타';
+    const code  = r['단품코드'] || '';
+    const color = r['색상'] || '';
     const avail = toInt(r['가용재고']);
-    const matchQ = !q || (r['단품코드']||'').toLowerCase().includes(q) || (r['단품명칭']||'').toLowerCase().includes(q);
+    const matchQ = !q || code.toLowerCase().includes(q) || color.toLowerCase().includes(q);
     const matchF = currentFilter === 'all' || avail > 0;
     if (!matchQ || !matchF) return;
+    const g = (groupKey ? r[groupKey] : '') || '기타';
     if (!groups[g]) { groups[g] = []; order.push(g); }
     groups[g].push(r);
   });
@@ -205,22 +222,20 @@ function renderTable() {
   order.forEach(g => {
     const items = groups[g];
     const gAvail = items.reduce((a,r) => a + Math.max(0, toInt(r['가용재고'])), 0);
-    parts.push(`<tr class="group-row" data-group="${esc(g)}">
-      <td colspan="8">${esc(g)}<span class="group-meta">${items.length}개 &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}</span></td>
-    </tr>`);
+    parts.push(`<tr class="group-row"><td colspan="8">${esc(g)}<span class="group-meta">${items.length}개${hasInventory ? ` &nbsp;|&nbsp; 가용 합계 ${gAvail.toLocaleString()}` : ''}</span></td></tr>`);
     items.forEach(r => {
       const avail = toInt(r['가용재고']);
       vis++;
-      parts.push(`<tr class="item-row${avail <= 0 ? ' row-zero' : ''}"
-          data-code="${esc(r['단품코드'])}" data-name="${esc(r['단품명칭'])}" data-group="${esc(g)}" data-avail="${avail}">
+      parts.push(`<tr class="item-row${avail <= 0 && hasInventory ? ' row-zero' : ''}"
+          data-code="${esc(r['단품코드'])}" data-color="${esc(r['색상'])}">
         <td class="code">${esc(r['단품코드'])}</td>
         <td style="text-align:center">${esc(r['색상'])}</td>
-        <td>${esc(r['단품명칭'])}</td>
-        <td style="text-align:right">${fmt(r['현재고수량'])}</td>
-        <td style="text-align:right">${fmt(r['입고예정량'])}</td>
-        <td style="text-align:right">${fmt(r['출고예정량'])}</td>
-        <td style="text-align:right">${availHtml(avail)}</td>
-        <td style="text-align:right;color:#9ca3af">${fmt(r['사업장재고'])}</td>
+        <td>${usageBadge(r['사용구분'])}</td>
+        <td style="text-align:right">${hasInventory ? fmt(r['현재고수량']) : '<span style="color:#d1d5db">-</span>'}</td>
+        <td style="text-align:right">${hasInventory ? fmt(r['입고예정량']) : '<span style="color:#d1d5db">-</span>'}</td>
+        <td style="text-align:right">${hasInventory ? fmt(r['출고예정량']) : '<span style="color:#d1d5db">-</span>'}</td>
+        <td style="text-align:right">${hasInventory ? availHtml(avail) : '<span style="color:#d1d5db">-</span>'}</td>
+        <td style="text-align:right;color:#6B7280">${r['3개월평균출고'] ? fmt(r['3개월평균출고']) : '<span style="color:#d1d5db">-</span>'}</td>
       </tr>`);
     });
   });
@@ -229,13 +244,13 @@ function renderTable() {
   document.getElementById('resultCount').textContent = (q || currentFilter !== 'all') ? `${vis} / ${total} 건` : '';
 }
 
-function filterTable() { renderTable(); }
+function filterTable() { renderTable('사용구분' in (allItems[0] || {})); }
 
 function setFilter(f) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('filter' + f.charAt(0).toUpperCase() + f.slice(1)).classList.add('active');
-  renderTable();
+  filterTable();
 }
 
 loadData();
