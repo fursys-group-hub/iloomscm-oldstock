@@ -180,7 +180,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <tr>
         <th>세트조합</th><th>세트명칭</th><th>단품조합</th><th>단품명칭</th>
         <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th>
-        <th>가용<br>재고</th><th>안분<br>재고</th><th id="thForecast">10개월<br>예상판매</th>
+        <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매</th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
         <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
@@ -394,6 +394,21 @@ function renderTable(rows) {
     return;
   }
 
+  // 세트별 구성 가능 수량 사전 계산: min_i( floor(재고_i / 구성수량_i) )
+  const setStats = {};
+  filtered.forEach(r => {
+    const sc = r[COL.세트조합];
+    if (!sc) return;
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고])  || 0;
+    const alloc = parseFloat(r[COL.안분재고])  || 0;
+    if (!setStats[sc]) setStats[sc] = { 가용: Infinity, 안분: Infinity };
+    setStats[sc].가용 = Math.min(setStats[sc].가용, Math.floor(avail / qty));
+    setStats[sc].안분 = Math.min(setStats[sc].안분, Math.floor(alloc / qty));
+  });
+
+  const fmtSets = n => (isFinite(n) && n !== Infinity) ? n.toLocaleString('ko-KR') : '-';
+
   let html = '';
   let lastSet = null;
 
@@ -411,14 +426,17 @@ function renderTable(rows) {
         : 강제 === 'Y'
           ? '<span class="badge badge-gy">강제중단</span>'
           : '<span class="badge badge-pn">중단</span>';
+      const ss = setStats[sc] || { 가용: 0, 안분: 0 };
       html += `<tr class="group-row ${pcls}">
         <td class="code">${sc}</td>
         <td colspan="2">${r[COL.세트명칭] || ''}</td>
         <td>${pbadge}</td>
-        <td colspan="4"></td>
+        <td colspan="3"></td>
+        <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
+        <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.안분)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">안분기준</div></td>
         <td>${fmt(r[COL.예상판매])}</td>
         <td><b>${fmt(r[COL.소진합])}</b></td>
-        <td colspan="5"></td>
+        <td colspan="6"></td>
         <td>${fmt(r[COL.세트총손실])}</td>
         <td>${fmt(r[COL.손실절감])}</td>
         <td>${강제 === 'Y' ? '<span class="badge badge-gy">Y</span>' : ''}</td>
