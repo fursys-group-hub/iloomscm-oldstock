@@ -112,6 +112,11 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .btn-excel:hover{background:#15803d}
 .btn-reset-all{display:none;align-items:center;gap:4px;padding:5px 12px;background:#fff;color:#1d4ed8;border:1px solid #93c5fd;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
 .btn-reset-all:hover{background:#eff6ff}
+/* 뷰 탭 (세트별/단품별) */
+.view-tabs{display:flex;gap:6px;padding:8px 24px;background:#fff;border-bottom:1px solid #E5E7EB}
+.view-tab{padding:5px 16px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#374151}
+.view-tab.active{background:#c80a1e;color:#fff;border-color:#c80a1e}
+.view-tab:hover:not(.active){background:#F3F4F6}
 </style>
 </head>
 <body>
@@ -189,12 +194,20 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <span id="resultCount"></span>
 </div>
 
-<!-- 테이블 -->
-<div class="result-wrap">
+<!-- 뷰 탭 -->
+<div class="view-tabs">
+  <button id="tabSet" class="view-tab active" onclick="switchTab('set')">세트별</button>
+  <button id="tabItem" class="view-tab" onclick="switchTab('item')">단품별</button>
+</div>
+
+<!-- 테이블 (세트별) -->
+<div class="result-wrap" id="setView">
   <table class="result-table" id="resultTable">
     <thead>
       <tr>
-        <th>세트조합</th><th>세트명칭</th><th>단품조합</th><th>단품명칭</th>
+        <th>세트조합</th><th>세트명칭</th><th>단품조합</th>
+        <th>중복<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트수</span></th>
+        <th>단품명칭</th>
         <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">품목단위</span></th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
@@ -205,7 +218,26 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="21" class="loading">결과 로딩 중...</td></tr>
+      <tr><td colspan="22" class="loading">결과 로딩 중...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 테이블 (단품별) -->
+<div class="result-wrap" id="itemView" style="display:none">
+  <table class="result-table" style="min-width:1100px">
+    <thead>
+      <tr>
+        <th>단품조합</th><th>단품명칭</th><th>이원화</th><th>시리즈</th><th>공급업체</th>
+        <th>세트수<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">안분분할</span></th>
+        <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">현재고</span></th>
+        <th>소진예정<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">총필요수량</span></th>
+        <th>과부족</th><th>추가생산</th><th>폐기예상</th>
+        <th>추가생산금액</th><th>폐기예상금액</th>
+      </tr>
+    </thead>
+    <tbody id="itemTableBody">
+      <tr><td colspan="13" class="loading">단품별 탭을 선택하면 표시됩니다.</td></tr>
     </tbody>
   </table>
 </div>
@@ -229,9 +261,18 @@ const COL = {
 
 let allData = [];
 let filteredData = [];       // 현재 화면에 표시된 행 (엑셀 다운로드용)
-let overrides = {};          // { 세트조합: 새소진합 } – 수동 수정값
+let overrides = {};          // { 세트조합: 새소진합 } – 수동 수정값 (localStorage 저장)
 let lastOverrideCalc = {};   // 마지막 renderTable 에서 계산한 세트별 재계산 결과
 let currentFilter = 'all';
+let currentView = 'set';
+
+const LS_KEY = 'iloom_sojin_overrides';
+function loadOverrides() {
+  try { overrides = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) { overrides = {}; }
+}
+function saveOverrides() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(overrides)); } catch(e) {}
+}
 
 // ── 서버 상태 확인 ───────────────────────────────────────────────────────────
 async function checkServer() {
@@ -357,7 +398,7 @@ function loadResults() {
     })
     .catch(() => {
       document.getElementById('tableBody').innerHTML =
-        '<tr><td colspan="21" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
+        '<tr><td colspan="22" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
     });
 }
 
@@ -416,9 +457,16 @@ function renderTable(rows) {
 
   if (!filtered.length) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="21" class="loading">검색 결과 없음</td></tr>`;
+      `<tr><td colspan="22" class="loading">검색 결과 없음</td></tr>`;
     return;
   }
+
+  // 단품 중복 세트수 (allData 전체 기준 — 필터 무관하게 전체 안분 분할 수 표시)
+  const itemSetCount = {};
+  allData.forEach(r => {
+    const dc = r[COL.단품조합];
+    if (dc) itemSetCount[dc] = (itemSetCount[dc] || 0) + 1;
+  });
 
   // ── 소진합 override 사전 재계산 (allData 전체 기준, 단종Y 품목만) ─────────
   const overrideCalc = {};
@@ -482,7 +530,7 @@ function renderTable(rows) {
 
       html += `<tr class="group-row ${pcls}${isOvr ? ' override-active' : ''}">
         <td class="code">${sc}</td>
-        <td colspan="2">${r[COL.세트명칭] || ''}</td>
+        <td colspan="3">${r[COL.세트명칭] || ''}</td>
         <td>${pbadge}</td>
         <td colspan="3"></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
@@ -535,10 +583,15 @@ function renderTable(rows) {
       : fmt(과부족num);
     const modTd = (isOvr && isJJ) ? ' style="background:#eff6ff"' : '';
 
+    const cnt = itemSetCount[r[COL.단품조합]] || 0;
+    const cntBadge = cnt <= 1
+      ? `<span style="color:#9CA3AF;font-size:10px">1</span>`
+      : `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700">${cnt}</span>`;
     html += `<tr class="${rowcls}">
       <td class="code">${sc}</td>
       <td>${r[COL.세트명칭] || ''}</td>
       <td class="code">${r[COL.단품조합] || ''}</td>
+      <td style="text-align:center">${cntBadge}</td>
       <td>${r[COL.단품명칭] || ''}</td>
       <td>${fmt(r[COL.구성수량])}</td>
       <td>${isJJ ? '<span class="badge badge-jy">Y</span>' : '<span class="badge badge-jn">N</span>'}</td>
@@ -567,17 +620,23 @@ function filterTable() { renderTable(allData); }
 function setSoJinHap(sc, val) {
   if (val < 0) return;
   overrides[sc] = val;
+  saveOverrides();
   renderTable(allData);
+  if (currentView === 'item') renderItemTable();
 }
 
 function resetSoJinHap(sc) {
   delete overrides[sc];
+  saveOverrides();
   renderTable(allData);
+  if (currentView === 'item') renderItemTable();
 }
 
 function resetAllOverrides() {
   overrides = {};
+  saveOverrides();
   renderTable(allData);
+  if (currentView === 'item') renderItemTable();
 }
 
 // ── 엑셀 다운로드 ─────────────────────────────────────────────────────────────
@@ -656,6 +715,105 @@ function downloadExcel() {
   XLSX.writeFile(wb, `짝맞추기결과_${today}.xlsx`);
 }
 
+// ── 뷰 탭 전환 ───────────────────────────────────────────────────────────────
+function switchTab(view) {
+  currentView = view;
+  document.getElementById('setView').style.display  = view === 'set'  ? '' : 'none';
+  document.getElementById('itemView').style.display = view === 'item' ? '' : 'none';
+  document.getElementById('tabSet').classList.toggle('active', view === 'set');
+  document.getElementById('tabItem').classList.toggle('active', view === 'item');
+  if (view === 'item') renderItemTable();
+}
+
+// ── 단품별 집계 테이블 ─────────────────────────────────────────────────────
+function renderItemTable() {
+  const tbody = document.getElementById('itemTableBody');
+  if (!allData.length) {
+    tbody.innerHTML = '<tr><td colspan="13" class="loading">먼저 짝맞추기를 실행하거나 결과를 새로고침하세요.</td></tr>';
+    return;
+  }
+
+  // 단종Y 품목만 집계 (운영품 N은 소진계획 없음)
+  const items = {};
+  allData.forEach(r => {
+    if (r[COL.단종여부] !== 'Y') return;
+    const dc = r[COL.단품조합];
+    if (!dc) return;
+    const sc    = r[COL.세트조합];
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const anBun = parseFloat(r[COL.안분재고])  || 0;
+    const ipgoD = parseFloat(r[COL.입고단가])  || 0;
+    const gongD = parseFloat(r[COL.공장도가])  || 0;
+    const newSoJin = overrides[sc];
+
+    let 필요_v, 추가_v, 폐기_v, 추가금액_v, 폐기금액_v;
+    if (newSoJin !== undefined) {
+      필요_v     = newSoJin * qty;
+      const gb   = anBun - 필요_v;
+      추가_v     = Math.max(0, -gb);
+      폐기_v     = Math.max(0,  gb);
+      추가금액_v = 추가_v * ipgoD;
+      폐기금액_v = 폐기_v * gongD;
+    } else {
+      필요_v     = parseFloat(r[COL.필요수량])      || 0;
+      추가_v     = parseFloat(r[COL.추가생산])       || 0;
+      폐기_v     = parseFloat(r[COL.폐기수량])       || 0;
+      추가금액_v = parseFloat(r[COL.추가생산금액])   || 0;
+      폐기금액_v = parseFloat(r[COL.폐기금액])       || 0;
+    }
+
+    if (!items[dc]) {
+      items[dc] = {
+        단품명칭: r[COL.단품명칭] || '',
+        이원화:   r[COL.이원화]   || 'N',
+        시리즈:   r[COL.시리즈]   || '',
+        공급업체: r[COL.공급업체] || '',
+        가용재고: parseFloat(r[COL.가용재고]) || 0,
+        세트수: 0, 총필요: 0, 총추가: 0, 총폐기: 0,
+        총추가금액: 0, 총폐기금액: 0,
+      };
+    }
+    items[dc].세트수++;
+    items[dc].총필요     += 필요_v;
+    items[dc].총추가     += 추가_v;
+    items[dc].총폐기     += 폐기_v;
+    items[dc].총추가금액 += 추가금액_v;
+    items[dc].총폐기금액 += 폐기금액_v;
+  });
+
+  const sorted = Object.entries(items).sort((a, b) => a[0].localeCompare(b[0]));
+  if (!sorted.length) {
+    tbody.innerHTML = '<tr><td colspan="13" class="loading">단종 대상 단품이 없습니다.</td></tr>';
+    return;
+  }
+
+  let html = '';
+  for (const [dc, d] of sorted) {
+    const 과부족 = d.가용재고 - d.총필요;
+    const gbStr  = 과부족 > 0
+      ? `<span class="num-pos">${fmt(Math.round(과부족))}</span>`
+      : 과부족 < 0
+        ? `<span class="num-neg">${fmt(Math.round(과부족))}</span>`
+        : fmt(0);
+    html += `<tr class="item-row">
+      <td class="code">${dc}</td>
+      <td>${d.단품명칭}</td>
+      <td style="text-align:center">${d.이원화 === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
+      <td>${d.시리즈}</td>
+      <td>${d.공급업체}</td>
+      <td style="text-align:center">${d.세트수 > 1 ? `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:11px;font-weight:700">${d.세트수}</span>` : `<span style="color:#9CA3AF;font-size:11px">1</span>`}</td>
+      <td>${fmt(d.가용재고)}</td>
+      <td>${fmt(Math.round(d.총필요))}</td>
+      <td>${gbStr}</td>
+      <td>${fmt(Math.round(d.총추가))}</td>
+      <td>${fmt(Math.round(d.총폐기))}</td>
+      <td>${fmt(Math.round(d.총추가금액))}</td>
+      <td>${fmt(Math.round(d.총폐기금액))}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
 // 예상판매 헤더 동기화
 document.getElementById('paramMonths').addEventListener('input', function() {
   const m = parseInt(this.value) || 10;
@@ -672,6 +830,7 @@ function setFilter(f) {
 }
 
 // ── 초기화 ────────────────────────────────────────────────────────────────────
+loadOverrides();   // localStorage 에서 소진합 수정값 복원
 checkServer();
 loadResults();
 setFilter('all');
