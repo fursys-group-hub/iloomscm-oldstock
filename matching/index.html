@@ -34,6 +34,18 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .dot-red{background:#ef4444}
 .dot-yellow{background:#f59e0b}
 
+/* 설정 패널 */
+.settings-panel{background:#F8F9FB;border-bottom:1px solid #E5E7EB;padding:10px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.settings-panel summary{font-size:12px;font-weight:600;color:#374151;cursor:pointer;user-select:none;list-style:none}
+.settings-panel summary::before{content:'⚙ '}
+.param-group{display:flex;align-items:center;gap:8px}
+.param-label{font-size:12px;color:#6B7280;white-space:nowrap}
+.param-input{width:70px;padding:4px 8px;border:1px solid #D1D5DB;border-radius:4px;font-size:13px;font-weight:600;text-align:right;outline:none}
+.param-input:focus{border-color:#c80a1e}
+.param-unit{font-size:12px;color:#9CA3AF}
+.param-reset{font-size:11px;color:#9CA3AF;cursor:pointer;text-decoration:underline;background:none;border:none;padding:0}
+.param-reset:hover{color:#374151}
+
 /* 상태 메시지 */
 .status-box{padding:10px 24px;font-size:12px}
 .status-running{color:#1d4ed8;background:#eff6ff;border-bottom:1px solid #bfdbfe}
@@ -112,6 +124,23 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <span style="font-size:11px;color:#9CA3AF;margin-left:4px">구글시트 '짝맞추기 대상' B=단품코드 · C=단품색상</span>
 </div>
 
+<!-- 설정 패널 -->
+<div class="settings-panel">
+  <span style="font-size:12px;font-weight:600;color:#374151">⚙ 계산 기준값</span>
+  <div class="param-group">
+    <label class="param-label" for="paramMonths">예상판매기간</label>
+    <input class="param-input" id="paramMonths" type="number" value="10" min="1" max="60" step="1">
+    <span class="param-unit">개월</span>
+  </div>
+  <div class="param-group">
+    <label class="param-label" for="paramSafety">강제중단 기준<br><span style="font-size:10px;color:#9CA3AF">(추가생산비/세트입고가)</span></label>
+    <input class="param-input" id="paramSafety" type="number" value="80" min="1" max="200" step="5">
+    <span class="param-unit">%</span>
+  </div>
+  <button class="param-reset" onclick="resetParams()">기본값 복원</button>
+  <span style="font-size:11px;color:#9CA3AF;margin-left:auto">변경 후 '짝맞추기 실행' 버튼을 누르면 해당 기준으로 계산됩니다</span>
+</div>
+
 <!-- 상태 메시지 -->
 <div id="statusBox" class="status-box status-hint">
   구글시트 '짝맞추기 대상' 시트에 단품코드·색상을 입력한 뒤 실행 버튼을 누르세요. 로컬 짝맞추기 서버(port 5002)가 실행 중이어야 합니다.
@@ -147,7 +176,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <tr>
         <th>세트조합</th><th>세트명칭</th><th>단품조합</th><th>단품명칭</th>
         <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th>
-        <th>가용<br>재고</th><th>안분<br>재고</th><th>10개월<br>예상판매</th>
+        <th>가용<br>재고</th><th>안분<br>재고</th><th id="thForecast">10개월<br>예상판매</th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
         <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
@@ -199,17 +228,37 @@ async function checkServer() {
   return false;
 }
 
+function getParams() {
+  const months = parseInt(document.getElementById('paramMonths').value) || 10;
+  const safety = parseFloat(document.getElementById('paramSafety').value) || 80;
+  return {
+    forecast_months: Math.max(1, Math.min(60, months)),
+    safety_ratio: Math.max(0.01, Math.min(2.0, safety / 100)),
+  };
+}
+
+function resetParams() {
+  document.getElementById('paramMonths').value = 10;
+  document.getElementById('paramSafety').value = 80;
+}
+
 // ── 실행 ─────────────────────────────────────────────────────────────────────
 async function runMatching() {
   const btn = document.getElementById('btnRun');
   if (btn.disabled) return;
+  const params = getParams();
   btn.disabled = true;
   document.getElementById('runIcon').innerHTML = '<span class="spinner"></span>';
-  setStatus('running', '짝맞추기 실행 중... (FGDW 조회 + BQ 재고 + 알고리즘, 약 1~3분 소요)');
+  setStatus('running',
+    `짝맞추기 실행 중... (예상판매기간 ${params.forecast_months}개월, 강제중단 ${(params.safety_ratio*100).toFixed(0)}%) — FGDW 조회 + BQ 재고 + 알고리즘, 약 1~3분 소요`);
 
   try {
-    const r = await fetch(SERVER + '/run', {method: 'POST',
-      signal: AbortSignal.timeout(300000)});  // 5분 타임아웃
+    const r = await fetch(SERVER + '/run', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(params),
+      signal: AbortSignal.timeout(300000),  // 5분 타임아웃
+    });
     const json = await r.json();
     if (json.ok) {
       setStatus('ok', json.message);
@@ -374,6 +423,12 @@ function renderTable(rows) {
 }
 
 function filterTable() { renderTable(allData); }
+
+// 예상판매 헤더 동기화
+document.getElementById('paramMonths').addEventListener('input', function() {
+  const m = parseInt(this.value) || 10;
+  document.getElementById('thForecast').innerHTML = m + '개월<br>예상판매';
+});
 
 function setFilter(f) {
   currentFilter = f;
