@@ -98,6 +98,20 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .spinner{display:inline-block;width:18px;height:18px;border:2px solid #E5E7EB;border-top-color:#c80a1e;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:700px){.iloom-nav-inner{gap:0}.iloom-tab{padding:10px;font-size:12px}}
+
+/* 소진합 편집 인풋 */
+.sojinhap-input{width:64px;font-size:12px;font-weight:700;text-align:right;border:1px solid #CBD5E1;border-radius:4px;padding:2px 6px;background:rgba(255,255,255,.85);-moz-appearance:textfield}
+.sojinhap-input::-webkit-outer-spin-button,.sojinhap-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.sojinhap-input:focus{outline:none;border-color:#c80a1e}
+.sojinhap-input.modified{border-color:#3b82f6;background:#eff6ff}
+.reset-btn{background:none;border:none;cursor:pointer;color:#9CA3AF;font-size:13px;padding:0 2px;vertical-align:middle;line-height:1}
+.reset-btn:hover{color:#374151}
+.group-row.override-active td{border-top:2px solid #3b82f6!important}
+/* 엑셀 / 초기화 버튼 */
+.btn-excel{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.btn-excel:hover{background:#15803d}
+.btn-reset-all{display:none;align-items:center;gap:4px;padding:5px 12px;background:#fff;color:#1d4ed8;border:1px solid #93c5fd;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.btn-reset-all:hover{background:#eff6ff}
 </style>
 </head>
 <body>
@@ -170,6 +184,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <button class="filter-btn" id="btnJin" onclick="setFilter('진행')" style="font-size:12px">진행만</button>
   <button class="filter-btn" id="btnJung" onclick="setFilter('중단')" style="font-size:12px">중단만</button>
   <button class="filter-btn" id="btnJong" onclick="setFilter('단종')" style="font-size:12px">단종품만</button>
+  <button class="btn-reset-all" id="btnResetAll" onclick="resetAllOverrides()">↺ 소진합 초기화</button>
+  <button class="btn-excel" onclick="downloadExcel()">↓ 엑셀 다운로드</button>
   <span id="resultCount"></span>
 </div>
 
@@ -194,12 +210,13 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   </table>
 </div>
 
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
 const SERVER = 'http://localhost:5002';
 const SHEET_ID = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
 const SHEET_NAME = '짝맞추기 결과';
 
-// 헤더 인덱스 (RESULT_HEADERS 순서와 동일)
+// 헤더 인덱스 (RESULT_HEADERS 순서와 동일, 29=입고단가는 재계산 전용)
 const COL = {
   세트조합:0, 세트명칭:1, 단품조합:2, 단품명칭:3, 구성수량:4, 이원화:5,
   시리즈:6, 공급업체:7, 입고가:8, 공장도가:9, 가용재고:10, 안분재고:11,
@@ -207,9 +224,13 @@ const COL = {
   추가생산:17, 폐기수량:18, 추가생산금액:19, 폐기금액:20,
   세트폐기금액:21, 세트추가생산비:22, 세트총손실:23,
   baseline:24, 손실절감:25, 강제중단:26, 판정:27, 기준일시:28,
+  입고단가:29,
 };
 
 let allData = [];
+let filteredData = [];       // 현재 화면에 표시된 행 (엑셀 다운로드용)
+let overrides = {};          // { 세트조합: 새소진합 } – 수동 수정값
+let lastOverrideCalc = {};   // 마지막 renderTable 에서 계산한 세트별 재계산 결과
 let currentFilter = 'all';
 
 // ── 서버 상태 확인 ───────────────────────────────────────────────────────────
@@ -387,6 +408,11 @@ function renderTable(rows) {
   }
 
   document.getElementById('resultCount').textContent = `${filtered.length}행 표시`;
+  filteredData = filtered;
+
+  // 소진합 초기화 버튼 표시 토글
+  const rAllBtn = document.getElementById('btnResetAll');
+  if (rAllBtn) rAllBtn.style.display = Object.keys(overrides).length ? 'inline-flex' : 'none';
 
   if (!filtered.length) {
     document.getElementById('tableBody').innerHTML =
@@ -394,11 +420,31 @@ function renderTable(rows) {
     return;
   }
 
-  // 세트별 구성 가능 수량 사전 계산: min_i( floor(재고_i / 구성수량_i) )
+  // ── 소진합 override 사전 재계산 (allData 전체 기준, 단종Y 품목만) ─────────
+  const overrideCalc = {};
+  for (const [sc, newSoJin] of Object.entries(overrides)) {
+    const jjRows = allData.filter(r => r[COL.세트조합] === sc && r[COL.단종여부] === 'Y');
+    let setWaste = 0, setAdd = 0, baseline = 0;
+    for (const r of jjRows) {
+      const qty    = parseFloat(r[COL.구성수량]) || 1;
+      const anBun  = parseFloat(r[COL.안분재고])  || 0;
+      const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
+      const gongD  = parseFloat(r[COL.공장도가])  || 0;
+      const ovr필요 = newSoJin * qty;
+      const 과부족  = anBun - ovr필요;
+      setAdd   += Math.max(0, -과부족) * ipgoD;
+      setWaste += Math.max(0, 과부족)  * gongD;
+      baseline += anBun * gongD;
+    }
+    overrideCalc[sc] = { 세트총손실: setWaste + setAdd, 손실절감: baseline - (setWaste + setAdd) };
+  }
+  lastOverrideCalc = overrideCalc;
+
+  // ── 세트별 구성 가능 수량 (단종Y 품목만 사용 — N 항목은 제외) ───────────
   const setStats = {};
   filtered.forEach(r => {
     const sc = r[COL.세트조합];
-    if (!sc) return;
+    if (!sc || r[COL.단종여부] !== 'Y') return;
     const qty   = parseFloat(r[COL.구성수량]) || 1;
     const avail = parseFloat(r[COL.가용재고])  || 0;
     const alloc = parseFloat(r[COL.안분재고])  || 0;
@@ -413,21 +459,28 @@ function renderTable(rows) {
   let lastSet = null;
 
   filtered.forEach(r => {
-    const sc = r[COL.세트조합];
-    const 판정 = r[COL.판정] || '';
-    const 강제 = r[COL.강제중단] || '';
+    const sc     = r[COL.세트조합];
+    const 판정   = r[COL.판정]    || '';
+    const 강제   = r[COL.강제중단] || '';
+    const newSoJin = overrides[sc];
+    const isOvr  = newSoJin !== undefined;
 
-    // 세트 그룹 헤더
+    // ── 세트 그룹 헤더 ──────────────────────────────────────────────────────
     if (sc !== lastSet) {
       lastSet = sc;
-      const pcls = 판정 === '진행' ? '판정-진행' : (강제 === 'Y' ? '판정-강제' : '판정-중단');
+      const pcls  = 판정 === '진행' ? '판정-진행' : (강제 === 'Y' ? '판정-강제' : '판정-중단');
       const pbadge = 판정 === '진행'
         ? '<span class="badge badge-py">진행</span>'
-        : 강제 === 'Y'
-          ? '<span class="badge badge-gy">강제중단</span>'
-          : '<span class="badge badge-pn">중단</span>';
+        : 강제 === 'Y' ? '<span class="badge badge-gy">강제중단</span>'
+                        : '<span class="badge badge-pn">중단</span>';
       const ss = setStats[sc] || { 가용: 0, 안분: 0 };
-      html += `<tr class="group-row ${pcls}">
+      const curSoJin   = isOvr ? newSoJin : (parseInt(r[COL.소진합]) || 0);
+      const calc       = overrideCalc[sc];
+      const totalLoss  = calc ? calc.세트총손실 : (parseFloat(r[COL.세트총손실]) || 0);
+      const lossGain   = calc ? calc.손실절감   : (parseFloat(r[COL.손실절감])   || 0);
+      const scSafe     = sc.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+      html += `<tr class="group-row ${pcls}${isOvr ? ' override-active' : ''}">
         <td class="code">${sc}</td>
         <td colspan="2">${r[COL.세트명칭] || ''}</td>
         <td>${pbadge}</td>
@@ -435,22 +488,52 @@ function renderTable(rows) {
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.안분)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">안분기준</div></td>
         <td>${fmt(parseFloat(r[COL.예상판매]||0) / (parseFloat(r[COL.구성수량])||1))}</td>
-        <td><b>${fmt(r[COL.소진합])}</b></td>
+        <td style="white-space:nowrap;padding:4px 6px">
+          <input type="number" class="sojinhap-input${isOvr ? ' modified' : ''}" value="${curSoJin}" min="0" step="1"
+                 onchange="setSoJinHap('${scSafe}',parseInt(this.value)||0)"
+                 onclick="event.stopPropagation()">
+          ${isOvr ? `<button class="reset-btn" onclick="resetSoJinHap('${scSafe}');event.stopPropagation()" title="원래값으로 복원">↺</button>` : ''}
+        </td>
         <td colspan="6"></td>
-        <td>${fmt(r[COL.세트총손실])}</td>
-        <td>${fmt(r[COL.손실절감])}</td>
+        <td style="${isOvr ? 'color:#1d4ed8;font-weight:700' : ''}">${fmt(totalLoss)}</td>
+        <td style="${isOvr ? 'color:#1d4ed8;font-weight:700' : ''}">${fmt(lossGain)}</td>
         <td>${강제 === 'Y' ? '<span class="badge badge-gy">Y</span>' : ''}</td>
         <td></td>
       </tr>`;
     }
 
-    const isJJ = r[COL.단종여부] === 'Y';
+    // ── 아이템 행 ──────────────────────────────────────────────────────────
+    const isJJ  = r[COL.단종여부] === 'Y';
     const rowcls = isJJ ? 'row-jongong' : 'item-row';
-    const 과부족 = parseFloat(r[COL.과부족] || 0);
-    const 과부족str = isNaN(과부족) ? '-'
-      : 과부족 > 0 ? `<span class="num-pos">${fmt(과부족)}</span>`
-      : 과부족 < 0 ? `<span class="num-neg">${fmt(과부족)}</span>`
-      : fmt(과부족);
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+
+    let 필요_v, 과부족_v, 추가_v, 폐기_v, 추가금액_v, 폐기금액_v;
+    if (isOvr && isJJ) {
+      const anBun  = parseFloat(r[COL.안분재고])  || 0;
+      const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
+      const gongD  = parseFloat(r[COL.공장도가])  || 0;
+      필요_v     = newSoJin * qty;
+      과부족_v   = anBun - 필요_v;
+      추가_v     = Math.max(0, -과부족_v);
+      폐기_v     = Math.max(0, 과부족_v);
+      추가금액_v = 추가_v * ipgoD;
+      폐기금액_v = 폐기_v * gongD;
+    } else {
+      필요_v     = r[COL.필요수량];
+      과부족_v   = r[COL.과부족];
+      추가_v     = r[COL.추가생산];
+      폐기_v     = r[COL.폐기수량];
+      추가금액_v = r[COL.추가생산금액];
+      폐기금액_v = r[COL.폐기금액];
+    }
+
+    const 과부족num = parseFloat(과부족_v ?? 0);
+    const 과부족str = !isJJ ? '-'
+      : isNaN(과부족num) ? '-'
+      : 과부족num > 0 ? `<span class="num-pos">${fmt(과부족num)}</span>`
+      : 과부족num < 0 ? `<span class="num-neg">${fmt(과부족num)}</span>`
+      : fmt(과부족num);
+    const modTd = (isOvr && isJJ) ? ' style="background:#eff6ff"' : '';
 
     html += `<tr class="${rowcls}">
       <td class="code">${sc}</td>
@@ -463,13 +546,13 @@ function renderTable(rows) {
       <td>${fmt(r[COL.가용재고])}</td>
       <td>${isJJ ? fmt(r[COL.안분재고]) : '-'}</td>
       <td>${fmt(r[COL.예상판매])}</td>
-      <td><b>${fmt(r[COL.소진합])}</b></td>
-      <td>${isJJ ? fmt(r[COL.필요수량]) : '-'}</td>
-      <td>${isJJ ? 과부족str : '-'}</td>
-      <td>${isJJ ? fmt(r[COL.추가생산]) : '-'}</td>
-      <td>${isJJ ? fmt(r[COL.폐기수량]) : '-'}</td>
-      <td>${isJJ ? fmt(r[COL.추가생산금액]) : '-'}</td>
-      <td>${isJJ ? fmt(r[COL.폐기금액]) : '-'}</td>
+      <td><b>${isOvr ? fmt(newSoJin) : fmt(r[COL.소진합])}</b></td>
+      <td${modTd}>${isJJ ? fmt(필요_v) : '-'}</td>
+      <td${modTd}>${isJJ ? 과부족str : '-'}</td>
+      <td${modTd}>${isJJ ? fmt(추가_v) : '-'}</td>
+      <td${modTd}>${isJJ ? fmt(폐기_v) : '-'}</td>
+      <td${modTd}>${isJJ ? fmt(추가금액_v) : '-'}</td>
+      <td${modTd}>${isJJ ? fmt(폐기금액_v) : '-'}</td>
       <td></td><td></td><td></td>
       <td>${판정 === '진행' ? '<span class="badge badge-py">진행</span>' : '<span class="badge badge-pn">중단</span>'}</td>
     </tr>`;
@@ -479,6 +562,99 @@ function renderTable(rows) {
 }
 
 function filterTable() { renderTable(allData); }
+
+// ── 소진합 수동 조정 ──────────────────────────────────────────────────────────
+function setSoJinHap(sc, val) {
+  if (val < 0) return;
+  overrides[sc] = val;
+  renderTable(allData);
+}
+
+function resetSoJinHap(sc) {
+  delete overrides[sc];
+  renderTable(allData);
+}
+
+function resetAllOverrides() {
+  overrides = {};
+  renderTable(allData);
+}
+
+// ── 엑셀 다운로드 ─────────────────────────────────────────────────────────────
+function downloadExcel() {
+  if (!filteredData.length) { alert('내려받을 데이터가 없습니다.'); return; }
+
+  const headers = [
+    '세트조합','세트명칭','단품조합','단품명칭','구성수량','이원화',
+    '시리즈','공급업체','입고가','공장도가','가용재고','안분재고',
+    '10개월예상판매','단종여부','소진합','필요수량','과부족',
+    '추가생산','폐기예상수량','추가생산금액','폐기예상금액',
+    '세트_폐기금액','세트_추가생산비','세트_총손실','세트_baseline폐기','세트_손실절감',
+    '세트_강제중단','판정','기준일시',
+  ];
+
+  const dataRows = filteredData.map(r => {
+    const sc    = r[COL.세트조합];
+    const isJJ  = r[COL.단종여부] === 'Y';
+    const newSoJin = overrides[sc];
+    const calc  = lastOverrideCalc[sc];
+
+    let 필요_v     = r[COL.필요수량];
+    let 과부족_v   = r[COL.과부족];
+    let 추가_v     = r[COL.추가생산];
+    let 폐기_v     = r[COL.폐기수량];
+    let 추가금액_v = r[COL.추가생산금액];
+    let 폐기금액_v = r[COL.폐기금액];
+    let 소진합_v   = r[COL.소진합];
+    let 세트손실_v = r[COL.세트총손실];
+    let 절감_v     = r[COL.손실절감];
+
+    if (newSoJin !== undefined && isJJ) {
+      const qty   = parseFloat(r[COL.구성수량]) || 1;
+      const anBun = parseFloat(r[COL.안분재고])  || 0;
+      const ipgoD = parseFloat(r[COL.입고단가])  || 0;
+      const gongD = parseFloat(r[COL.공장도가])  || 0;
+      필요_v     = newSoJin * qty;
+      과부족_v   = anBun - 필요_v;
+      추가_v     = Math.max(0, -과부족_v);
+      폐기_v     = Math.max(0, 과부족_v);
+      추가금액_v = 추가_v * ipgoD;
+      폐기금액_v = 폐기_v * gongD;
+      소진합_v   = newSoJin;
+    }
+    if (newSoJin !== undefined && calc) {
+      세트손실_v = calc.세트총손실;
+      절감_v     = calc.손실절감;
+    }
+
+    return [
+      r[COL.세트조합], r[COL.세트명칭], r[COL.단품조합], r[COL.단품명칭],
+      r[COL.구성수량], r[COL.이원화], r[COL.시리즈], r[COL.공급업체],
+      r[COL.입고가], r[COL.공장도가], r[COL.가용재고],
+      isJJ ? r[COL.안분재고] : '',
+      r[COL.예상판매], r[COL.단종여부], 소진합_v,
+      isJJ ? 필요_v : '', isJJ ? 과부족_v : '',
+      isJJ ? 추가_v  : '', isJJ ? 폐기_v   : '',
+      isJJ ? 추가금액_v : '', isJJ ? 폐기금액_v : '',
+      r[COL.세트폐기금액], r[COL.세트추가생산비], 세트손실_v,
+      r[COL.baseline], 절감_v, r[COL.강제중단], r[COL.판정], r[COL.기준일시],
+    ];
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+  ws['!cols'] = [
+    {wch:16},{wch:20},{wch:14},{wch:22},{wch:6},{wch:6},
+    {wch:12},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},
+    {wch:10},{wch:6},{wch:8},{wch:8},{wch:10},
+    {wch:8},{wch:8},{wch:12},{wch:12},
+    {wch:12},{wch:12},{wch:12},{wch:12},{wch:12},
+    {wch:8},{wch:6},{wch:14},
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '짝맞추기결과');
+  const today = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `짝맞추기결과_${today}.xlsx`);
+}
 
 // 예상판매 헤더 동기화
 document.getElementById('paramMonths').addEventListener('input', function() {
