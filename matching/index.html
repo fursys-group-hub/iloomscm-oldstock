@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>짝맞추기 | iloom SCM 대시보드</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F5F7;color:#1F2937}
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000}
+.iloom-nav-inner{max-width:1600px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;display:inline-flex;align-items:center}
+.iloom-nav-logo .dv{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333}
+.iloom-nav-tabs{display:flex;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+
+/* 컨트롤 바 */
+.ctrl-bar{background:#fff;border-bottom:1px solid #E5E7EB;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ctrl-bar h1{font-size:18px;font-weight:700;margin-right:8px}
+.btn-run{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-run:hover:not(:disabled){background:#a50818}
+.btn-run:disabled{background:#9CA3AF;cursor:not-allowed}
+.btn-refresh{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer}
+.btn-refresh:hover{background:#E5E7EB}
+.server-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.server-badge.online{background:#d1fae5;color:#065f46}
+.server-badge.offline{background:#fee2e2;color:#991b1b}
+.server-badge.checking{background:#fef9c3;color:#713f12}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-green{background:#10b981}
+.dot-red{background:#ef4444}
+.dot-yellow{background:#f59e0b}
+
+/* 상태 메시지 */
+.status-box{padding:10px 24px;font-size:12px}
+.status-running{color:#1d4ed8;background:#eff6ff;border-bottom:1px solid #bfdbfe}
+.status-ok{color:#065f46;background:#d1fae5;border-bottom:1px solid #6ee7b7}
+.status-err{color:#991b1b;background:#fee2e2;border-bottom:1px solid #fca5a5}
+.status-hint{color:#6B7280;background:#F9FAFB;border-bottom:1px solid #E5E7EB}
+
+/* 요약 */
+.summary-bar{display:flex;gap:20px;align-items:center;padding:10px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.sum-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.sum-num{font-size:18px;font-weight:700;line-height:1}
+.sum-lbl{font-size:10px;color:#6B7280}
+.sum-sep{width:1px;height:32px;background:#E5E7EB;margin:0 4px}
+
+/* 툴바 */
+.toolbar{display:flex;align-items:center;gap:10px;padding:10px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:240px;outline:none}
+.search-box:focus{border-color:#c80a1e}
+#resultCount{font-size:12px;color:#6B7280;margin-left:auto}
+.filter-btn{padding:5px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px;cursor:pointer;background:#fff}
+.filter-btn.active-filter{background:#c80a1e;color:#fff;border-color:#c80a1e}
+
+/* 테이블 */
+.result-wrap{padding:16px 24px;overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 260px)}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:clip;box-shadow:0 1px 3px rgba(0,0,0,.08);min-width:1400px}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:7px 9px;font-size:11px;font-weight:600;color:#374151;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:3}
+.result-table th:first-child,.result-table th:nth-child(2),.result-table th:nth-child(3),.result-table th:nth-child(4){text-align:left}
+.result-table td{padding:7px 9px;font-size:12px;border-bottom:1px solid #F3F4F6;vertical-align:middle;text-align:right;white-space:nowrap}
+.result-table td:first-child,.result-table td:nth-child(2),.result-table td:nth-child(3),.result-table td:nth-child(4){text-align:left}
+.group-row td{background:#F0F4FF;font-weight:700;font-size:12px;color:#1F2937;padding:7px 9px;border-top:2px solid #CBD5E1}
+.group-row.판정-진행 td{background:#ECFDF5}
+.group-row.판정-중단 td{background:#FFF1F2}
+.group-row.판정-강제 td{background:#FEFCE8}
+.row-jongong{background:#FFF8F8}
+.row-jongong:hover{background:#FEF2F2}
+.item-row:hover{background:#FAFAFA}
+.code{font-family:Montserrat,ui-monospace,monospace;font-size:11px}
+.badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600}
+.badge-jy{background:#fee2e2;color:#991b1b}
+.badge-jn{background:#F3F4F6;color:#6B7280}
+.badge-py{background:#d1fae5;color:#065f46}
+.badge-pn{background:#FEE2E2;color:#991b1b}
+.badge-gy{background:#fef9c3;color:#713f12}
+.num-pos{color:#059669;font-weight:700}
+.num-neg{color:#c80a1e;font-weight:700}
+.loading{text-align:center;padding:60px;color:#6B7280;font-size:14px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid #E5E7EB;border-top-color:#c80a1e;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.iloom-nav-inner{gap:0}.iloom-tab{padding:10px;font-size:12px}}
+</style>
+</head>
+<body>
+
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <a class="iloom-nav-logo" href="../">iloom<span class="dv"></span><span class="sub">SCM 대시보드</span></a>
+    <div class="iloom-nav-tabs">
+      <a class="iloom-tab" href="../spec-change/">사양변경</a>
+      <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+      <a class="iloom-tab" href="../discontinued-sku/">단종(단품)</a>
+      <a class="iloom-tab" href="../cumulative/">누적재고관리</a>
+      <a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
+      <a class="iloom-tab active" href="../matching/">짝맞추기</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 컨트롤 바 -->
+<div class="ctrl-bar">
+  <h1>단종품목 짝맞추기</h1>
+  <span id="serverBadge" class="server-badge checking"><span class="dot dot-yellow"></span>서버 확인 중...</span>
+  <button id="btnRun" class="btn-run" disabled onclick="runMatching()">
+    <span id="runIcon">&#9654;</span> 짝맞추기 실행
+  </button>
+  <button class="btn-refresh" onclick="loadResults()">&#8635; 결과 새로고침</button>
+  <span style="font-size:11px;color:#9CA3AF;margin-left:4px">구글시트 '짝맞추기 대상' B=단품코드 · C=단품색상</span>
+</div>
+
+<!-- 상태 메시지 -->
+<div id="statusBox" class="status-box status-hint">
+  구글시트 '짝맞추기 대상' 시트에 단품코드·색상을 입력한 뒤 실행 버튼을 누르세요. 로컬 짝맞추기 서버(port 5002)가 실행 중이어야 합니다.
+</div>
+
+<!-- 요약 -->
+<div class="summary-bar" id="summaryBar" style="display:none">
+  <div class="sum-item"><span class="sum-num" id="sumTotal">-</span><span class="sum-lbl">전체 세트</span></div>
+  <div class="sum-sep"></div>
+  <div class="sum-item"><span class="sum-num" id="sumJin" style="color:#059669">-</span><span class="sum-lbl">진행</span></div>
+  <div class="sum-sep"></div>
+  <div class="sum-item"><span class="sum-num" id="sumJung" style="color:#c80a1e">-</span><span class="sum-lbl">중단</span></div>
+  <div class="sum-sep"></div>
+  <div class="sum-item"><span class="sum-num" id="sumRows">-</span><span class="sum-lbl">결과 행수</span></div>
+  <div class="sum-sep"></div>
+  <span id="sumRefDate" style="font-size:11px;color:#6B7280;margin-left:auto"></span>
+</div>
+
+<!-- 툴바 -->
+<div class="toolbar">
+  <input class="search-box" id="searchBox" placeholder="세트코드 · 단품코드 · 단품명 검색..." oninput="filterTable()">
+  <button class="filter-btn" id="btnAll" onclick="setFilter('all')" style="font-size:12px">전체</button>
+  <button class="filter-btn" id="btnJin" onclick="setFilter('진행')" style="font-size:12px">진행만</button>
+  <button class="filter-btn" id="btnJung" onclick="setFilter('중단')" style="font-size:12px">중단만</button>
+  <button class="filter-btn" id="btnJong" onclick="setFilter('단종')" style="font-size:12px">단종품만</button>
+  <span id="resultCount"></span>
+</div>
+
+<!-- 테이블 -->
+<div class="result-wrap">
+  <table class="result-table" id="resultTable">
+    <thead>
+      <tr>
+        <th>세트조합</th><th>세트명칭</th><th>단품조합</th><th>단품명칭</th>
+        <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th>
+        <th>가용<br>재고</th><th>안분<br>재고</th><th>10개월<br>예상판매</th>
+        <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
+        <th>추가<br>생산</th><th>폐기<br>예상</th>
+        <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
+        <th>세트<br>총손실</th><th>세트<br>손실절감</th>
+        <th>강제<br>중단</th><th>판정</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr><td colspan="21" class="loading">결과 로딩 중...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const SERVER = 'http://localhost:5002';
+const SHEET_ID = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
+const SHEET_NAME = '짝맞추기 결과';
+
+// 헤더 인덱스 (RESULT_HEADERS 순서와 동일)
+const COL = {
+  세트조합:0, 세트명칭:1, 단품조합:2, 단품명칭:3, 구성수량:4, 이원화:5,
+  시리즈:6, 공급업체:7, 입고가:8, 공장도가:9, 가용재고:10, 안분재고:11,
+  예상판매:12, 단종여부:13, 소진합:14, 필요수량:15, 과부족:16,
+  추가생산:17, 폐기수량:18, 추가생산금액:19, 폐기금액:20,
+  세트폐기금액:21, 세트추가생산비:22, 세트총손실:23,
+  baseline:24, 손실절감:25, 강제중단:26, 판정:27, 기준일시:28,
+};
+
+let allData = [];
+let currentFilter = 'all';
+
+// ── 서버 상태 확인 ───────────────────────────────────────────────────────────
+async function checkServer() {
+  const badge = document.getElementById('serverBadge');
+  const btn   = document.getElementById('btnRun');
+  try {
+    const r = await fetch(SERVER + '/health', {signal: AbortSignal.timeout(3000)});
+    if (r.ok) {
+      badge.className = 'server-badge online';
+      badge.innerHTML = '<span class="dot dot-green"></span>서버 실행 중';
+      btn.disabled = false;
+      return true;
+    }
+  } catch {}
+  badge.className = 'server-badge offline';
+  badge.innerHTML = '<span class="dot dot-red"></span>서버 오프라인';
+  btn.disabled = true;
+  setStatus('warn', '짝맞추기 서버(port 5002)가 꺼져 있습니다. <b>matching_server.py</b>를 실행해 주세요.');
+  return false;
+}
+
+// ── 실행 ─────────────────────────────────────────────────────────────────────
+async function runMatching() {
+  const btn = document.getElementById('btnRun');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  document.getElementById('runIcon').innerHTML = '<span class="spinner"></span>';
+  setStatus('running', '짝맞추기 실행 중... (FGDW 조회 + BQ 재고 + 알고리즘, 약 1~3분 소요)');
+
+  try {
+    const r = await fetch(SERVER + '/run', {method: 'POST',
+      signal: AbortSignal.timeout(300000)});  // 5분 타임아웃
+    const json = await r.json();
+    if (json.ok) {
+      setStatus('ok', json.message);
+      await new Promise(res => setTimeout(res, 1500));  // 시트 반영 대기
+      loadResults();
+    } else {
+      setStatus('err', '오류: ' + (json.error || '알 수 없는 오류'));
+    }
+  } catch (e) {
+    setStatus('err', '서버 요청 실패: ' + e.message);
+  } finally {
+    document.getElementById('runIcon').textContent = '▶';
+    await checkServer();
+  }
+}
+
+function setStatus(type, msg) {
+  const box = document.getElementById('statusBox');
+  box.className = 'status-box status-' + ({running:'running',ok:'ok',err:'err',warn:'err',hint:'hint'}[type] || 'hint');
+  box.innerHTML = msg;
+}
+
+// ── GViz 결과 로드 ────────────────────────────────────────────────────────────
+function loadResults() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(SHEET_NAME)}&_=${Date.now()}`;
+  fetch(url)
+    .then(r => r.text())
+    .then(txt => {
+      const json = JSON.parse(txt.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
+      const cols = json.table.cols.map(c => c.label);
+      const rows = (json.table.rows || []).map(r =>
+        (r.c || []).map(cell => cell ? (cell.v ?? '') : '')
+      );
+      allData = rows;
+      renderSummary(rows, cols);
+      renderTable(rows);
+    })
+    .catch(() => {
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="21" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
+    });
+}
+
+function fmt(n) {
+  if (n === '' || n === null || n === undefined) return '-';
+  const num = parseFloat(n);
+  if (isNaN(num)) return String(n);
+  return num.toLocaleString('ko-KR');
+}
+
+function renderSummary(rows, cols) {
+  if (!rows.length) return;
+  // 세트별 판정 집계
+  const setJudge = {};
+  rows.forEach(r => {
+    const sc = r[COL.세트조합];
+    const p  = r[COL.판정];
+    if (sc) setJudge[sc] = p;
+  });
+  const sets  = Object.keys(setJudge).length;
+  const jin   = Object.values(setJudge).filter(v => v === '진행').length;
+  const jung  = sets - jin;
+  const refDt = rows.length ? (rows[0][COL.기준일시] || '') : '';
+
+  document.getElementById('sumTotal').textContent = sets;
+  document.getElementById('sumJin').textContent   = jin;
+  document.getElementById('sumJung').textContent  = jung;
+  document.getElementById('sumRows').textContent  = rows.length;
+  document.getElementById('sumRefDate').textContent = refDt ? '기준: ' + refDt : '';
+  document.getElementById('summaryBar').style.display = 'flex';
+}
+
+function renderTable(rows) {
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  let filtered = rows;
+
+  if (currentFilter === '진행') filtered = filtered.filter(r => r[COL.판정] === '진행');
+  else if (currentFilter === '중단') filtered = filtered.filter(r => r[COL.판정] !== '진행');
+  else if (currentFilter === '단종') filtered = filtered.filter(r => r[COL.단종여부] === 'Y');
+
+  if (q) {
+    filtered = filtered.filter(r =>
+      (r[COL.세트조합] || '').toLowerCase().includes(q) ||
+      (r[COL.세트명칭] || '').toLowerCase().includes(q) ||
+      (r[COL.단품조합] || '').toLowerCase().includes(q) ||
+      (r[COL.단품명칭] || '').toLowerCase().includes(q)
+    );
+  }
+
+  document.getElementById('resultCount').textContent = `${filtered.length}행 표시`;
+
+  if (!filtered.length) {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="21" class="loading">검색 결과 없음</td></tr>`;
+    return;
+  }
+
+  let html = '';
+  let lastSet = null;
+
+  filtered.forEach(r => {
+    const sc = r[COL.세트조합];
+    const 판정 = r[COL.판정] || '';
+    const 강제 = r[COL.강제중단] || '';
+
+    // 세트 그룹 헤더
+    if (sc !== lastSet) {
+      lastSet = sc;
+      const pcls = 판정 === '진행' ? '판정-진행' : (강제 === 'Y' ? '판정-강제' : '판정-중단');
+      const pbadge = 판정 === '진행'
+        ? '<span class="badge badge-py">진행</span>'
+        : 강제 === 'Y'
+          ? '<span class="badge badge-gy">강제중단</span>'
+          : '<span class="badge badge-pn">중단</span>';
+      html += `<tr class="group-row ${pcls}">
+        <td class="code">${sc}</td>
+        <td colspan="2">${r[COL.세트명칭] || ''}</td>
+        <td>${pbadge}</td>
+        <td colspan="4"></td>
+        <td>${fmt(r[COL.예상판매])}</td>
+        <td><b>${fmt(r[COL.소진합])}</b></td>
+        <td colspan="5"></td>
+        <td>${fmt(r[COL.세트총손실])}</td>
+        <td>${fmt(r[COL.손실절감])}</td>
+        <td>${강제 === 'Y' ? '<span class="badge badge-gy">Y</span>' : ''}</td>
+        <td></td>
+      </tr>`;
+    }
+
+    const isJJ = r[COL.단종여부] === 'Y';
+    const rowcls = isJJ ? 'row-jongong' : 'item-row';
+    const 과부족 = parseFloat(r[COL.과부족] || 0);
+    const 과부족str = isNaN(과부족) ? '-'
+      : 과부족 > 0 ? `<span class="num-pos">${fmt(과부족)}</span>`
+      : 과부족 < 0 ? `<span class="num-neg">${fmt(과부족)}</span>`
+      : fmt(과부족);
+
+    html += `<tr class="${rowcls}">
+      <td class="code">${sc}</td>
+      <td>${r[COL.세트명칭] || ''}</td>
+      <td class="code">${r[COL.단품조합] || ''}</td>
+      <td>${r[COL.단품명칭] || ''}</td>
+      <td>${fmt(r[COL.구성수량])}</td>
+      <td>${isJJ ? '<span class="badge badge-jy">Y</span>' : '<span class="badge badge-jn">N</span>'}</td>
+      <td>${r[COL.이원화] === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
+      <td>${fmt(r[COL.가용재고])}</td>
+      <td>${fmt(r[COL.안분재고])}</td>
+      <td>${fmt(r[COL.예상판매])}</td>
+      <td><b>${fmt(r[COL.소진합])}</b></td>
+      <td>${fmt(r[COL.필요수량])}</td>
+      <td>${과부족str}</td>
+      <td>${isJJ ? fmt(r[COL.추가생산]) : ''}</td>
+      <td>${isJJ ? fmt(r[COL.폐기수량]) : ''}</td>
+      <td>${isJJ ? fmt(r[COL.추가생산금액]) : ''}</td>
+      <td>${isJJ ? fmt(r[COL.폐기금액]) : ''}</td>
+      <td></td><td></td><td></td>
+      <td>${판정 === '진행' ? '<span class="badge badge-py">진행</span>' : '<span class="badge badge-pn">중단</span>'}</td>
+    </tr>`;
+  });
+
+  document.getElementById('tableBody').innerHTML = html;
+}
+
+function filterTable() { renderTable(allData); }
+
+function setFilter(f) {
+  currentFilter = f;
+  ['btnAll','btnJin','btnJung','btnJong'].forEach(id =>
+    document.getElementById(id).classList.remove('active-filter'));
+  document.getElementById({all:'btnAll',진행:'btnJin',중단:'btnJung',단종:'btnJong'}[f] || 'btnAll')
+    .classList.add('active-filter');
+  filterTable();
+}
+
+// ── 초기화 ────────────────────────────────────────────────────────────────────
+checkServer();
+loadResults();
+setFilter('all');
+</script>
+</body>
+</html>
