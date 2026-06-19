@@ -180,7 +180,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <tr>
         <th>세트조합</th><th>세트명칭</th><th>단품조합</th><th>단품명칭</th>
         <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th>
-        <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매</th>
+        <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">품목단위</span></th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
         <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
@@ -434,7 +434,7 @@ function renderTable(rows) {
         <td colspan="3"></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.안분)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">안분기준</div></td>
-        <td>${fmt(r[COL.예상판매])}</td>
+        <td>${fmt(parseFloat(r[COL.예상판매]||0) / (parseFloat(r[COL.구성수량])||1))}</td>
         <td><b>${fmt(r[COL.소진합])}</b></td>
         <td colspan="6"></td>
         <td>${fmt(r[COL.세트총손실])}</td>
@@ -461,15 +461,15 @@ function renderTable(rows) {
       <td>${isJJ ? '<span class="badge badge-jy">Y</span>' : '<span class="badge badge-jn">N</span>'}</td>
       <td>${r[COL.이원화] === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
       <td>${fmt(r[COL.가용재고])}</td>
-      <td>${fmt(r[COL.안분재고])}</td>
+      <td>${isJJ ? fmt(r[COL.안분재고]) : '-'}</td>
       <td>${fmt(r[COL.예상판매])}</td>
       <td><b>${fmt(r[COL.소진합])}</b></td>
-      <td>${fmt(r[COL.필요수량])}</td>
-      <td>${과부족str}</td>
-      <td>${isJJ ? fmt(r[COL.추가생산]) : ''}</td>
-      <td>${isJJ ? fmt(r[COL.폐기수량]) : ''}</td>
-      <td>${isJJ ? fmt(r[COL.추가생산금액]) : ''}</td>
-      <td>${isJJ ? fmt(r[COL.폐기금액]) : ''}</td>
+      <td>${isJJ ? fmt(r[COL.필요수량]) : '-'}</td>
+      <td>${isJJ ? 과부족str : '-'}</td>
+      <td>${isJJ ? fmt(r[COL.추가생산]) : '-'}</td>
+      <td>${isJJ ? fmt(r[COL.폐기수량]) : '-'}</td>
+      <td>${isJJ ? fmt(r[COL.추가생산금액]) : '-'}</td>
+      <td>${isJJ ? fmt(r[COL.폐기금액]) : '-'}</td>
       <td></td><td></td><td></td>
       <td>${판정 === '진행' ? '<span class="badge badge-py">진행</span>' : '<span class="badge badge-pn">중단</span>'}</td>
     </tr>`;
@@ -483,7 +483,7 @@ function filterTable() { renderTable(allData); }
 // 예상판매 헤더 동기화
 document.getElementById('paramMonths').addEventListener('input', function() {
   const m = parseInt(this.value) || 10;
-  document.getElementById('thForecast').innerHTML = m + '개월<br>예상판매';
+  document.getElementById('thForecast').innerHTML = m + '개월<br>예상판매<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">품목단위</span>';
 });
 
 function setFilter(f) {
