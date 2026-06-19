@@ -25,6 +25,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .btn-run:disabled{background:#9CA3AF;cursor:not-allowed}
 .btn-refresh{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer}
 .btn-refresh:hover{background:#E5E7EB}
+.btn-start-server{display:none;align-items:center;gap:5px;padding:6px 13px;background:#fff;color:#065f46;border:1px solid #10b981;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-start-server:hover:not(:disabled){background:#d1fae5}
+.btn-start-server:disabled{opacity:.5;cursor:not-allowed}
 .server-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
 .server-badge.online{background:#d1fae5;color:#065f46}
 .server-badge.offline{background:#fee2e2;color:#991b1b}
@@ -117,6 +120,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="ctrl-bar">
   <h1>단종품목 짝맞추기</h1>
   <span id="serverBadge" class="server-badge checking"><span class="dot dot-yellow"></span>서버 확인 중...</span>
+  <button id="btnStartServer" class="btn-start-server" onclick="startServer()">&#9654; 서버 시작</button>
   <button id="btnRun" class="btn-run" disabled onclick="runMatching()">
     <span id="runIcon">&#9654;</span> 짝맞추기 실행
   </button>
@@ -210,22 +214,56 @@ let currentFilter = 'all';
 
 // ── 서버 상태 확인 ───────────────────────────────────────────────────────────
 async function checkServer() {
-  const badge = document.getElementById('serverBadge');
-  const btn   = document.getElementById('btnRun');
+  const badge   = document.getElementById('serverBadge');
+  const btnRun  = document.getElementById('btnRun');
+  const btnStart = document.getElementById('btnStartServer');
   try {
     const r = await fetch(SERVER + '/health', {signal: AbortSignal.timeout(3000)});
     if (r.ok) {
       badge.className = 'server-badge online';
       badge.innerHTML = '<span class="dot dot-green"></span>서버 실행 중';
-      btn.disabled = false;
+      btnRun.disabled = false;
+      btnStart.style.display = 'none';
       return true;
     }
   } catch {}
   badge.className = 'server-badge offline';
   badge.innerHTML = '<span class="dot dot-red"></span>서버 오프라인';
-  btn.disabled = true;
-  setStatus('warn', '짝맞추기 서버(port 5002)가 꺼져 있습니다. <b>matching_server.py</b>를 실행해 주세요.');
+  btnRun.disabled = true;
+  btnStart.style.display = 'inline-flex';
+  btnStart.disabled = false;
+  setStatus('warn', '짝맞추기 서버(port 5002)가 꺼져 있습니다. <b>서버 시작</b> 버튼을 누르세요. <span style="color:#9CA3AF">(처음이라면 바탕화면의 <b>짝맞추기_서버버튼_프로토콜등록.reg</b> 파일을 먼저 실행하세요)</span>');
   return false;
+}
+
+// ── 서버 시작 (커스텀 URL 프로토콜) ─────────────────────────────────────────
+function startServer() {
+  const btnStart = document.getElementById('btnStartServer');
+  btnStart.disabled = true;
+  setStatus('running', '서버 시작 명령 전송 중...');
+
+  // iframe 트릭: 페이지 이동 없이 커스텀 프로토콜 실행
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = 'iloomscm://start';
+  document.body.appendChild(iframe);
+  setTimeout(() => document.body.removeChild(iframe), 2000);
+
+  // 서버 뜰 때까지 폴링 (최대 40초, 2초 간격)
+  setStatus('running', '서버 시작 중... 잠시 기다려 주세요 (약 5~10초)');
+  let attempts = 0;
+  const poll = setInterval(async () => {
+    attempts++;
+    const ok = await checkServer();
+    if (ok) {
+      clearInterval(poll);
+      setStatus('ok', '서버가 시작되었습니다. 짝맞추기를 실행할 수 있습니다.');
+    } else if (attempts >= 20) {
+      clearInterval(poll);
+      btnStart.disabled = false;
+      setStatus('warn', '서버가 응답하지 않습니다. 바탕화면의 <b>짝맞추기서버시작.bat</b>를 직접 실행하거나, <b>짝맞추기_서버버튼_프로토콜등록.reg</b> 파일이 등록되었는지 확인하세요.');
+    }
+  }, 2000);
 }
 
 function getParams() {
