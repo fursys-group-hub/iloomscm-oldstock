@@ -233,7 +233,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th>세트수<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">안분분할</span></th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">현재고</span></th>
         <th>소진예정<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">총필요수량</span></th>
-        <th>과부족</th><th>추가생산</th><th>폐기예상</th>
+        <th>잔여재고</th><th>추가생산</th><th>폐기예상</th>
         <th>추가생산금액</th><th>폐기예상금액</th>
       </tr>
     </thead>
@@ -497,10 +497,10 @@ function renderTable(rows) {
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       const ovr필요 = newSoJin * qty;
       const remItem = itemRemain[dc];
-      // 폐기예상: 잔여재고(가용-전세트소진합계) 기준, min 0
+      // 과부족·추가생산·폐기예상 모두 잔여재고(가용-전세트소진합계) 기준, min 0
       const 잔여 = remItem ? (remItem.avail - remItem.totalNeed) : (avail - ovr필요);
-      setAdd   += Math.max(0, -(avail - ovr필요)) * ipgoD;
-      setWaste += Math.max(0, 잔여) * gongD;
+      setAdd   += Math.max(0, -잔여) * ipgoD;
+      setWaste += Math.max(0,  잔여) * gongD;
       baseline += avail * gongD;
     }
     overrideCalc[sc] = { 세트총손실: setWaste + setAdd, 손실절감: baseline - (setWaste + setAdd) };
@@ -584,10 +584,11 @@ function renderTable(rows) {
       const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       필요_v     = newSoJin * qty;
-      과부족_v   = avail - 필요_v;
-      추가_v     = Math.max(0, -과부족_v);
-      // 폐기예상: 잔여재고(가용-전세트소진합계) 기준, min 0
-      폐기_v     = Math.max(0, remainVal !== null ? remainVal : 과부족_v);
+      // 과부족·추가생산·폐기예상 모두 잔여재고(가용-전세트소진합계) 기준
+      const 잔여val = remainVal !== null ? remainVal : (avail - 필요_v);
+      과부족_v   = 잔여val;
+      추가_v     = Math.max(0, -잔여val);
+      폐기_v     = Math.max(0,  잔여val);
       추가금액_v = 추가_v * ipgoD;
       폐기금액_v = 폐기_v * gongD;
     } else {
@@ -736,7 +737,7 @@ function downloadExcel() {
   // ── Sheet 2: 단품결과 (단품별 집계) ────────────────────────────────────────
   const itemHeaders = [
     '단품조합','단품명칭','이원화','시리즈','공급업체','중복세트수',
-    '가용재고','소진예정','과부족','추가생산','폐기예상','추가생산금액','폐기예상금액',
+    '가용재고','소진예정','잔여재고','추가생산','폐기예상','추가생산금액','폐기예상금액',
   ];
   const exItems = {};
   allData.forEach(r => {
@@ -749,37 +750,29 @@ function downloadExcel() {
     const ipgoD = parseFloat(r[COL.입고단가]) || 0;
     const gongD = parseFloat(r[COL.공장도가]) || 0;
     const newSoJin = overrides[sc];
-    let 필요_v, 추가_v, 추가금액_v;
-    if (newSoJin !== undefined) {
-      필요_v = newSoJin * qty;
-      추가_v = Math.max(0, -(avail - 필요_v));
-      추가금액_v = 추가_v * ipgoD;
-    } else {
-      필요_v     = parseFloat(r[COL.필요수량])    || 0;
-      추가_v     = parseFloat(r[COL.추가생산])     || 0;
-      추가금액_v = parseFloat(r[COL.추가생산금액]) || 0;
-    }
+    const 필요_v = newSoJin !== undefined
+      ? newSoJin * qty
+      : (parseFloat(r[COL.필요수량]) || 0);
     if (!exItems[dc]) {
       exItems[dc] = {
         단품명칭: r[COL.단품명칭] || '', 이원화: r[COL.이원화] || 'N',
         시리즈: r[COL.시리즈] || '', 공급업체: r[COL.공급업체] || '',
-        gongD, 가용재고: avail,
-        세트수: 0, 총필요: 0, 총추가: 0, 총추가금액: 0,
+        ipgoD, gongD, 가용재고: avail,
+        세트수: 0, 총필요: 0,
       };
     }
     exItems[dc].세트수++;
-    exItems[dc].총필요     += 필요_v;
-    exItems[dc].총추가     += 추가_v;
-    exItems[dc].총추가금액 += 추가금액_v;
+    exItems[dc].총필요 += 필요_v;
   });
   const itemRows = Object.entries(exItems).sort((a, b) => a[0].localeCompare(b[0])).map(([dc, d]) => {
-    const 잔여   = d.가용재고 - d.총필요;
-    const 총폐기 = Math.max(0, 잔여);
+    const 잔여재고 = d.가용재고 - d.총필요;
+    const 총추가   = Math.max(0, -잔여재고);    // 잔여재고 기준
+    const 총폐기   = Math.max(0,  잔여재고);    // 잔여재고 기준
     return [
       dc, d.단품명칭, d.이원화, d.시리즈, d.공급업체, d.세트수,
-      d.가용재고, Math.round(d.총필요), Math.round(잔여),
-      Math.round(d.총추가), Math.round(총폐기),
-      Math.round(d.총추가금액), Math.round(총폐기 * d.gongD),
+      d.가용재고, Math.round(d.총필요), Math.round(잔여재고),
+      Math.round(총추가), Math.round(총폐기),
+      Math.round(총추가 * d.ipgoD), Math.round(총폐기 * d.gongD),
     ];
   });
   const ws2 = XLSX.utils.aoa_to_sheet([itemHeaders, ...itemRows]);
@@ -916,15 +909,12 @@ function renderItemTable() {
         시리즈:   r[COL.시리즈]   || '',
         공급업체: r[COL.공급업체] || '',
         가용재고: parseFloat(r[COL.가용재고]) || 0,
-        gongD:    gongD,
-        세트수: 0, 총필요: 0, 총추가: 0,
-        총추가금액: 0,
+        ipgoD, gongD,
+        세트수: 0, 총필요: 0,
       };
     }
     items[dc].세트수++;
-    items[dc].총필요     += 필요_v;
-    items[dc].총추가     += 추가_v;
-    items[dc].총추가금액 += 추가금액_v;
+    items[dc].총필요 += 필요_v;
   });
 
   const sorted = Object.entries(items).sort((a, b) => a[0].localeCompare(b[0]));
@@ -935,13 +925,15 @@ function renderItemTable() {
 
   let html = '';
   for (const [dc, d] of sorted) {
-    const 잔여 = d.가용재고 - d.총필요;
-    const 총폐기 = Math.max(0, 잔여);             // 폐기예상 = 잔여재고 기준, min 0
+    const 잔여재고   = d.가용재고 - d.총필요;
+    const 총추가     = Math.max(0, -잔여재고);    // 잔여재고 기준
+    const 총폐기     = Math.max(0,  잔여재고);    // 잔여재고 기준
+    const 총추가금액 = 총추가 * d.ipgoD;
     const 총폐기금액 = 총폐기 * d.gongD;
-    const gbStr  = 잔여 > 0
-      ? `<span class="num-pos">${fmt(Math.round(잔여))}</span>`
-      : 잔여 < 0
-        ? `<span class="num-neg">${fmt(Math.round(잔여))}</span>`
+    const remStr = 잔여재고 > 0
+      ? `<span class="num-pos">${fmt(Math.round(잔여재고))}</span>`
+      : 잔여재고 < 0
+        ? `<span class="num-neg">${fmt(Math.round(잔여재고))}</span>`
         : fmt(0);
     html += `<tr class="item-row">
       <td class="code">${dc}</td>
@@ -952,10 +944,10 @@ function renderItemTable() {
       <td style="text-align:center">${d.세트수 > 1 ? `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:11px;font-weight:700">${d.세트수}</span>` : `<span style="color:#9CA3AF;font-size:11px">1</span>`}</td>
       <td>${fmt(d.가용재고)}</td>
       <td>${fmt(Math.round(d.총필요))}</td>
-      <td>${gbStr}</td>
-      <td>${fmt(Math.round(d.총추가))}</td>
+      <td>${remStr}</td>
+      <td>${fmt(Math.round(총추가))}</td>
       <td>${fmt(Math.round(총폐기))}</td>
-      <td>${fmt(Math.round(d.총추가금액))}</td>
+      <td>${fmt(Math.round(총추가금액))}</td>
       <td>${fmt(Math.round(총폐기금액))}</td>
     </tr>`;
   }
