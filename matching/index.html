@@ -184,6 +184,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     </div>
     <div class="nav-auth">
       <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <a id="btnSheet" href="https://docs.google.com/spreadsheets/d/1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc/edit" target="_blank" rel="noopener"
+         style="display:none;padding:5px 13px;background:#0f9d58;color:#fff;border-radius:5px;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap">
+        &#128196; 구글시트
+      </a>
       <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
       <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
     </div>
@@ -1172,6 +1176,7 @@ function updateAuthUI() {
   // 네비 버튼
   document.getElementById('btnNavLogin').style.display  = user ? 'none' : '';
   document.getElementById('btnNavLogout').style.display = user ? '' : 'none';
+  document.getElementById('btnSheet').style.display     = user ? '' : 'none';
   const chip = document.getElementById('navUserChip');
   chip.style.display = user ? '' : 'none';
   chip.textContent   = user ? `👤 ${user}` : '';
