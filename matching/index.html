@@ -617,7 +617,7 @@ function renderTable(rows) {
       const dc     = r[COL.단품조합];
       const qty    = parseFloat(r[COL.구성수량]) || 1;
       const avail  = parseFloat(r[COL.가용재고])  || 0;
-      const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
+      const ipgoD  = parseFloat(r[COL.입고가])  || 0;
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       const ovr필요 = newSoJin * qty;
       const remItem = itemRemain[dc];
@@ -705,7 +705,7 @@ function renderTable(rows) {
     let 필요_v, 과부족_v, 추가_v, 폐기_v, 추가금액_v, 폐기금액_v;
     if (isOvr && isJJ) {
       const avail  = parseFloat(r[COL.가용재고])  || 0;
-      const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
+      const ipgoD  = parseFloat(r[COL.입고가])  || 0;
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       필요_v     = newSoJin * qty;
       // 과부족·추가생산·폐기예상 모두 잔여재고(가용-전세트소진합계) 기준
@@ -871,7 +871,7 @@ function downloadExcel() {
     const sc    = r[COL.세트조합];
     const qty   = parseFloat(r[COL.구성수량]) || 1;
     const avail = parseFloat(r[COL.가용재고]) || 0;
-    const ipgoD = parseFloat(r[COL.입고단가]) || 0;
+    const ipgoD = parseFloat(r[COL.입고가]) || 0;
     const gongD = parseFloat(r[COL.공장도가]) || 0;
     const newSoJin = overrides[sc];
     const 필요_v = newSoJin !== undefined
@@ -947,7 +947,7 @@ function downloadExcel() {
     if (newSoJin !== undefined && isJJ) {
       const qty   = parseFloat(r[COL.구성수량]) || 1;
       const avail = parseFloat(r[COL.가용재고]) || 0;
-      const ipgoD = parseFloat(r[COL.입고단가]) || 0;
+      const ipgoD = parseFloat(r[COL.입고가]) || 0;
       const gongD = parseFloat(r[COL.공장도가]) || 0;
       필요_v     = newSoJin * qty;
       과부족_v   = avail - 필요_v;
@@ -1022,7 +1022,7 @@ function renderItemTable() {
     if (!dc) return;
     const sc     = r[COL.세트조합];
     const qty    = parseFloat(r[COL.구성수량]) || 1;
-    const ipgoD  = parseFloat(r[COL.입고단가]) || 0;
+    const ipgoD  = parseFloat(r[COL.입고가]) || 0;
     const gongD  = parseFloat(r[COL.공장도가]) || 0;
     const newSoJin = overrides[sc];
     const 필요_v = newSoJin !== undefined
