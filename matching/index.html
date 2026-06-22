@@ -213,12 +213,13 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
         <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
+        <th>잔여재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">가용-총소진</span></th>
         <th>세트<br>총손실</th><th>세트<br>손실절감</th>
         <th>강제<br>중단</th><th>판정</th>
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="22" class="loading">결과 로딩 중...</td></tr>
+      <tr><td colspan="23" class="loading">결과 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -398,7 +399,7 @@ function loadResults() {
     })
     .catch(() => {
       document.getElementById('tableBody').innerHTML =
-        '<tr><td colspan="22" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
+        '<tr><td colspan="23" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
     });
 }
 
@@ -457,7 +458,7 @@ function renderTable(rows) {
 
   if (!filtered.length) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="22" class="loading">검색 결과 없음</td></tr>`;
+      `<tr><td colspan="23" class="loading">검색 결과 없음</td></tr>`;
     return;
   }
 
@@ -468,21 +469,36 @@ function renderTable(rows) {
     if (dc) itemSetCount[dc] = (itemSetCount[dc] || 0) + 1;
   });
 
-  // ── 소진합 override 사전 재계산 (allData 전체 기준, 단종Y 품목만) ─────────
+  // 단품별 잔여재고 사전계산: 가용재고 - sum(전 세트 필요수량)
+  const itemRemain = {};
+  allData.forEach(r => {
+    if (r[COL.단종여부] !== 'Y') return;
+    const dc    = r[COL.단품조합];
+    if (!dc) return;
+    const sc    = r[COL.세트조합];
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고])  || 0;
+    const ovSoJin = overrides[sc];
+    const 필요  = ovSoJin !== undefined ? ovSoJin * qty : (parseFloat(r[COL.필요수량]) || 0);
+    if (!itemRemain[dc]) itemRemain[dc] = { avail, totalNeed: 0 };
+    itemRemain[dc].totalNeed += 필요;
+  });
+
+  // ── 소진합 override 사전 재계산 (가용재고 기준, 단종Y 품목만) ──────────────
   const overrideCalc = {};
   for (const [sc, newSoJin] of Object.entries(overrides)) {
     const jjRows = allData.filter(r => r[COL.세트조합] === sc && r[COL.단종여부] === 'Y');
     let setWaste = 0, setAdd = 0, baseline = 0;
     for (const r of jjRows) {
       const qty    = parseFloat(r[COL.구성수량]) || 1;
-      const anBun  = parseFloat(r[COL.안분재고])  || 0;
+      const avail  = parseFloat(r[COL.가용재고])  || 0;   // 안분재고 → 가용재고
       const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       const ovr필요 = newSoJin * qty;
-      const 과부족  = anBun - ovr필요;
+      const 과부족  = avail - ovr필요;
       setAdd   += Math.max(0, -과부족) * ipgoD;
       setWaste += Math.max(0, 과부족)  * gongD;
-      baseline += anBun * gongD;
+      baseline += avail * gongD;
     }
     overrideCalc[sc] = { 세트총손실: setWaste + setAdd, 손실절감: baseline - (setWaste + setAdd) };
   }
@@ -542,7 +558,7 @@ function renderTable(rows) {
                  onclick="event.stopPropagation()">
           ${isOvr ? `<button class="reset-btn" onclick="resetSoJinHap('${scSafe}');event.stopPropagation()" title="원래값으로 복원">↺</button>` : ''}
         </td>
-        <td colspan="6"></td>
+        <td colspan="7"></td>
         <td style="${isOvr ? 'color:#1d4ed8;font-weight:700' : ''}">${fmt(totalLoss)}</td>
         <td style="${isOvr ? 'color:#1d4ed8;font-weight:700' : ''}">${fmt(lossGain)}</td>
         <td>${강제 === 'Y' ? '<span class="badge badge-gy">Y</span>' : ''}</td>
@@ -557,11 +573,11 @@ function renderTable(rows) {
 
     let 필요_v, 과부족_v, 추가_v, 폐기_v, 추가금액_v, 폐기금액_v;
     if (isOvr && isJJ) {
-      const anBun  = parseFloat(r[COL.안분재고])  || 0;
+      const avail  = parseFloat(r[COL.가용재고])  || 0;   // 안분재고 → 가용재고 기준
       const ipgoD  = parseFloat(r[COL.입고단가])  || 0;
       const gongD  = parseFloat(r[COL.공장도가])  || 0;
       필요_v     = newSoJin * qty;
-      과부족_v   = anBun - 필요_v;
+      과부족_v   = avail - 필요_v;
       추가_v     = Math.max(0, -과부족_v);
       폐기_v     = Math.max(0, 과부족_v);
       추가금액_v = 추가_v * ipgoD;
@@ -582,6 +598,14 @@ function renderTable(rows) {
       : 과부족num < 0 ? `<span class="num-neg">${fmt(과부족num)}</span>`
       : fmt(과부족num);
     const modTd = (isOvr && isJJ) ? ' style="background:#eff6ff"' : '';
+
+    // 잔여재고: 가용재고 - 이 단품의 전 세트 소진예정 합계
+    const rem = isJJ ? itemRemain[r[COL.단품조합]] : null;
+    const remainVal = rem ? Math.round(rem.avail - rem.totalNeed) : null;
+    const remainStr = remainVal === null ? '-'
+      : remainVal > 0 ? `<span class="num-pos">${fmt(remainVal)}</span>`
+      : remainVal < 0 ? `<span class="num-neg">${fmt(remainVal)}</span>`
+      : fmt(0);
 
     const cnt = itemSetCount[r[COL.단품조합]] || 0;
     const cntBadge = cnt <= 1
@@ -606,6 +630,7 @@ function renderTable(rows) {
       <td${modTd}>${isJJ ? fmt(폐기_v) : '-'}</td>
       <td${modTd}>${isJJ ? fmt(추가금액_v) : '-'}</td>
       <td${modTd}>${isJJ ? fmt(폐기금액_v) : '-'}</td>
+      <td style="text-align:right">${remainStr}</td>
       <td></td><td></td><td></td>
       <td>${판정 === '진행' ? '<span class="badge badge-py">진행</span>' : '<span class="badge badge-pn">중단</span>'}</td>
     </tr>`;
@@ -643,11 +668,26 @@ function resetAllOverrides() {
 function downloadExcel() {
   if (!filteredData.length) { alert('내려받을 데이터가 없습니다.'); return; }
 
+  // downloadExcel용 itemRemain 재계산 (allData 기준)
+  const exItemRemain = {};
+  allData.forEach(r => {
+    if (r[COL.단종여부] !== 'Y') return;
+    const dc    = r[COL.단품조합];
+    if (!dc) return;
+    const sc    = r[COL.세트조합];
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고])  || 0;
+    const ovSoJin = overrides[sc];
+    const 필요 = ovSoJin !== undefined ? ovSoJin * qty : (parseFloat(r[COL.필요수량]) || 0);
+    if (!exItemRemain[dc]) exItemRemain[dc] = { avail, totalNeed: 0 };
+    exItemRemain[dc].totalNeed += 필요;
+  });
+
   const headers = [
     '세트조합','세트명칭','단품조합','단품명칭','구성수량','이원화',
     '시리즈','공급업체','입고가','공장도가','가용재고','안분재고',
     '10개월예상판매','단종여부','소진합','필요수량','과부족',
-    '추가생산','폐기예상수량','추가생산금액','폐기예상금액',
+    '추가생산','폐기예상수량','추가생산금액','폐기예상금액','잔여재고',
     '세트_폐기금액','세트_추가생산비','세트_총손실','세트_baseline폐기','세트_손실절감',
     '세트_강제중단','판정','기준일시',
   ];
@@ -670,11 +710,11 @@ function downloadExcel() {
 
     if (newSoJin !== undefined && isJJ) {
       const qty   = parseFloat(r[COL.구성수량]) || 1;
-      const anBun = parseFloat(r[COL.안분재고])  || 0;
+      const avail = parseFloat(r[COL.가용재고])  || 0;   // 안분재고 → 가용재고 기준
       const ipgoD = parseFloat(r[COL.입고단가])  || 0;
       const gongD = parseFloat(r[COL.공장도가])  || 0;
       필요_v     = newSoJin * qty;
-      과부족_v   = anBun - 필요_v;
+      과부족_v   = avail - 필요_v;
       추가_v     = Math.max(0, -과부족_v);
       폐기_v     = Math.max(0, 과부족_v);
       추가금액_v = 추가_v * ipgoD;
@@ -686,6 +726,10 @@ function downloadExcel() {
       절감_v     = calc.손실절감;
     }
 
+    // 잔여재고: 가용재고 - 이 단품의 전 세트 소진 합계
+    const rem = isJJ ? exItemRemain[r[COL.단품조합]] : null;
+    const 잔여재고_v = rem !== null ? Math.round(rem.avail - rem.totalNeed) : '';
+
     return [
       r[COL.세트조합], r[COL.세트명칭], r[COL.단품조합], r[COL.단품명칭],
       r[COL.구성수량], r[COL.이원화], r[COL.시리즈], r[COL.공급업체],
@@ -695,6 +739,7 @@ function downloadExcel() {
       isJJ ? 필요_v : '', isJJ ? 과부족_v : '',
       isJJ ? 추가_v  : '', isJJ ? 폐기_v   : '',
       isJJ ? 추가금액_v : '', isJJ ? 폐기금액_v : '',
+      isJJ ? 잔여재고_v : '',
       r[COL.세트폐기금액], r[COL.세트추가생산비], 세트손실_v,
       r[COL.baseline], 절감_v, r[COL.강제중단], r[COL.판정], r[COL.기준일시],
     ];
@@ -705,7 +750,7 @@ function downloadExcel() {
     {wch:16},{wch:20},{wch:14},{wch:22},{wch:6},{wch:6},
     {wch:12},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},
     {wch:10},{wch:6},{wch:8},{wch:8},{wch:10},
-    {wch:8},{wch:8},{wch:12},{wch:12},
+    {wch:8},{wch:8},{wch:12},{wch:12},{wch:10},
     {wch:12},{wch:12},{wch:12},{wch:12},{wch:12},
     {wch:8},{wch:6},{wch:14},
   ];
@@ -741,7 +786,7 @@ function renderItemTable() {
     if (!dc) return;
     const sc    = r[COL.세트조합];
     const qty   = parseFloat(r[COL.구성수량]) || 1;
-    const anBun = parseFloat(r[COL.안분재고])  || 0;
+    const avail  = parseFloat(r[COL.가용재고])  || 0;   // 가용재고 기준
     const ipgoD = parseFloat(r[COL.입고단가])  || 0;
     const gongD = parseFloat(r[COL.공장도가])  || 0;
     const newSoJin = overrides[sc];
@@ -749,7 +794,7 @@ function renderItemTable() {
     let 필요_v, 추가_v, 폐기_v, 추가금액_v, 폐기금액_v;
     if (newSoJin !== undefined) {
       필요_v     = newSoJin * qty;
-      const gb   = anBun - 필요_v;
+      const gb   = avail - 필요_v;   // 안분재고 → 가용재고 기준
       추가_v     = Math.max(0, -gb);
       폐기_v     = Math.max(0,  gb);
       추가금액_v = 추가_v * ipgoD;
