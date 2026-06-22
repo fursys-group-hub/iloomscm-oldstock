@@ -668,26 +668,128 @@ function resetAllOverrides() {
   if (currentView === 'item') renderItemTable();
 }
 
-// ── 엑셀 다운로드 ─────────────────────────────────────────────────────────────
+// ── 엑셀 다운로드 (3시트) ────────────────────────────────────────────────────
 function downloadExcel() {
   if (!filteredData.length) { alert('내려받을 데이터가 없습니다.'); return; }
 
-  // downloadExcel용 itemRemain 재계산 (allData 기준)
+  // ── 공통 사전계산 ─────────────────────────────────────────────────────────
+  // itemRemain (allData 전체 기준 — 필터 무관)
   const exItemRemain = {};
   allData.forEach(r => {
     if (r[COL.단종여부] !== 'Y') return;
-    const dc    = r[COL.단품조합];
+    const dc = r[COL.단품조합];
     if (!dc) return;
-    const sc    = r[COL.세트조합];
-    const qty   = parseFloat(r[COL.구성수량]) || 1;
-    const avail = parseFloat(r[COL.가용재고])  || 0;
+    const sc  = r[COL.세트조합];
+    const qty = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고]) || 0;
     const ovSoJin = overrides[sc];
     const 필요 = ovSoJin !== undefined ? ovSoJin * qty : (parseFloat(r[COL.필요수량]) || 0);
     if (!exItemRemain[dc]) exItemRemain[dc] = { avail, totalNeed: 0 };
     exItemRemain[dc].totalNeed += 필요;
   });
 
-  const headers = [
+  // setStats (filteredData 기준 — 화면과 동일)
+  const exSetStats = {};
+  filteredData.forEach(r => {
+    const sc = r[COL.세트조합];
+    if (!sc || r[COL.단종여부] !== 'Y') return;
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고]) || 0;
+    const alloc = parseFloat(r[COL.안분재고]) || 0;
+    if (!exSetStats[sc]) exSetStats[sc] = { 가용: Infinity, 안분: Infinity };
+    exSetStats[sc].가용 = Math.min(exSetStats[sc].가용, Math.floor(avail / qty));
+    exSetStats[sc].안분 = Math.min(exSetStats[sc].안분, Math.floor(alloc / qty));
+  });
+
+  // ── Sheet 1: 세트결과 (세트조합별 소계) ────────────────────────────────────
+  const setHeaders = [
+    '세트조합','세트명칭','시리즈','공급업체','판정','강제중단',
+    '가용기준_구성가능','안분기준_구성가능','소진합',
+    '세트총손실','세트손실절감','기준일시',
+  ];
+  const seenSets = new Set();
+  const setRows = [];
+  filteredData.forEach(r => {
+    const sc = r[COL.세트조합];
+    if (seenSets.has(sc)) return;
+    seenSets.add(sc);
+    const newSoJin  = overrides[sc];
+    const calc      = lastOverrideCalc[sc];
+    const ss        = exSetStats[sc] || {};
+    const curSoJin  = newSoJin !== undefined ? newSoJin : (parseInt(r[COL.소진합]) || 0);
+    const totalLoss = calc ? calc.세트총손실 : (parseFloat(r[COL.세트총손실]) || 0);
+    const lossGain  = calc ? calc.손실절감   : (parseFloat(r[COL.손실절감])   || 0);
+    setRows.push([
+      sc, r[COL.세트명칭], r[COL.시리즈], r[COL.공급업체],
+      r[COL.판정], r[COL.강제중단],
+      isFinite(ss.가용) ? ss.가용 : '',
+      isFinite(ss.안분) ? ss.안분 : '',
+      curSoJin, totalLoss, lossGain, r[COL.기준일시],
+    ]);
+  });
+  const ws1 = XLSX.utils.aoa_to_sheet([setHeaders, ...setRows]);
+  ws1['!cols'] = [
+    {wch:16},{wch:22},{wch:12},{wch:14},{wch:6},{wch:8},
+    {wch:14},{wch:14},{wch:8},{wch:14},{wch:14},{wch:16},
+  ];
+
+  // ── Sheet 2: 단품결과 (단품별 집계) ────────────────────────────────────────
+  const itemHeaders = [
+    '단품조합','단품명칭','이원화','시리즈','공급업체','중복세트수',
+    '가용재고','소진예정','과부족','추가생산','폐기예상','추가생산금액','폐기예상금액',
+  ];
+  const exItems = {};
+  allData.forEach(r => {
+    if (r[COL.단종여부] !== 'Y') return;
+    const dc = r[COL.단품조합];
+    if (!dc) return;
+    const sc    = r[COL.세트조합];
+    const qty   = parseFloat(r[COL.구성수량]) || 1;
+    const avail = parseFloat(r[COL.가용재고]) || 0;
+    const ipgoD = parseFloat(r[COL.입고단가]) || 0;
+    const gongD = parseFloat(r[COL.공장도가]) || 0;
+    const newSoJin = overrides[sc];
+    let 필요_v, 추가_v, 추가금액_v;
+    if (newSoJin !== undefined) {
+      필요_v = newSoJin * qty;
+      추가_v = Math.max(0, -(avail - 필요_v));
+      추가금액_v = 추가_v * ipgoD;
+    } else {
+      필요_v     = parseFloat(r[COL.필요수량])    || 0;
+      추가_v     = parseFloat(r[COL.추가생산])     || 0;
+      추가금액_v = parseFloat(r[COL.추가생산금액]) || 0;
+    }
+    if (!exItems[dc]) {
+      exItems[dc] = {
+        단품명칭: r[COL.단품명칭] || '', 이원화: r[COL.이원화] || 'N',
+        시리즈: r[COL.시리즈] || '', 공급업체: r[COL.공급업체] || '',
+        gongD, 가용재고: avail,
+        세트수: 0, 총필요: 0, 총추가: 0, 총추가금액: 0,
+      };
+    }
+    exItems[dc].세트수++;
+    exItems[dc].총필요     += 필요_v;
+    exItems[dc].총추가     += 추가_v;
+    exItems[dc].총추가금액 += 추가금액_v;
+  });
+  const itemRows = Object.entries(exItems).sort((a, b) => a[0].localeCompare(b[0])).map(([dc, d]) => {
+    const 잔여   = d.가용재고 - d.총필요;
+    const 총폐기 = Math.max(0, 잔여);
+    return [
+      dc, d.단품명칭, d.이원화, d.시리즈, d.공급업체, d.세트수,
+      d.가용재고, Math.round(d.총필요), Math.round(잔여),
+      Math.round(d.총추가), Math.round(총폐기),
+      Math.round(d.총추가금액), Math.round(총폐기 * d.gongD),
+    ];
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet([itemHeaders, ...itemRows]);
+  ws2['!cols'] = [
+    {wch:14},{wch:22},{wch:6},{wch:12},{wch:14},{wch:8},
+    {wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12},
+  ];
+
+  // ── Sheet 3: 상세결과 (기존 전체 행) ────────────────────────────────────────
+  const detailHeaders = [
     '세트조합','세트명칭','단품조합','단품명칭','구성수량','이원화',
     '시리즈','공급업체','입고가','공장도가','가용재고','안분재고',
     '10개월예상판매','단종여부','소진합','필요수량','과부족',
@@ -695,13 +797,11 @@ function downloadExcel() {
     '세트_폐기금액','세트_추가생산비','세트_총손실','세트_baseline폐기','세트_손실절감',
     '세트_강제중단','판정','기준일시',
   ];
-
-  const dataRows = filteredData.map(r => {
+  const detailRows = filteredData.map(r => {
     const sc    = r[COL.세트조합];
     const isJJ  = r[COL.단종여부] === 'Y';
     const newSoJin = overrides[sc];
     const calc  = lastOverrideCalc[sc];
-
     let 필요_v     = r[COL.필요수량];
     let 과부족_v   = r[COL.과부족];
     let 추가_v     = r[COL.추가생산];
@@ -711,20 +811,16 @@ function downloadExcel() {
     let 소진합_v   = r[COL.소진합];
     let 세트손실_v = r[COL.세트총손실];
     let 절감_v     = r[COL.손실절감];
-
-    // 잔여재고: 가용재고 - 이 단품의 전 세트 소진 합계
     const rem = isJJ ? exItemRemain[r[COL.단품조합]] : null;
     const 잔여재고_v = rem !== null ? Math.round(rem.avail - rem.totalNeed) : '';
-
     if (newSoJin !== undefined && isJJ) {
       const qty   = parseFloat(r[COL.구성수량]) || 1;
-      const avail = parseFloat(r[COL.가용재고])  || 0;
-      const ipgoD = parseFloat(r[COL.입고단가])  || 0;
-      const gongD = parseFloat(r[COL.공장도가])  || 0;
+      const avail = parseFloat(r[COL.가용재고]) || 0;
+      const ipgoD = parseFloat(r[COL.입고단가]) || 0;
+      const gongD = parseFloat(r[COL.공장도가]) || 0;
       필요_v     = newSoJin * qty;
       과부족_v   = avail - 필요_v;
       추가_v     = Math.max(0, -과부족_v);
-      // 폐기예상: 잔여재고 기준, min 0
       폐기_v     = Math.max(0, rem ? (rem.avail - rem.totalNeed) : 과부족_v);
       추가금액_v = 추가_v * ipgoD;
       폐기금액_v = 폐기_v * gongD;
@@ -734,7 +830,6 @@ function downloadExcel() {
       세트손실_v = calc.세트총손실;
       절감_v     = calc.손실절감;
     }
-
     return [
       r[COL.세트조합], r[COL.세트명칭], r[COL.단품조합], r[COL.단품명칭],
       r[COL.구성수량], r[COL.이원화], r[COL.시리즈], r[COL.공급업체],
@@ -749,9 +844,8 @@ function downloadExcel() {
       r[COL.baseline], 절감_v, r[COL.강제중단], r[COL.판정], r[COL.기준일시],
     ];
   });
-
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
-  ws['!cols'] = [
+  const ws3 = XLSX.utils.aoa_to_sheet([detailHeaders, ...detailRows]);
+  ws3['!cols'] = [
     {wch:16},{wch:20},{wch:14},{wch:22},{wch:6},{wch:6},
     {wch:12},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},
     {wch:10},{wch:6},{wch:8},{wch:8},{wch:10},
@@ -759,8 +853,11 @@ function downloadExcel() {
     {wch:12},{wch:12},{wch:12},{wch:12},{wch:12},
     {wch:8},{wch:6},{wch:14},
   ];
+
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '짝맞추기결과');
+  XLSX.utils.book_append_sheet(wb, ws1, '세트결과');
+  XLSX.utils.book_append_sheet(wb, ws2, '단품결과');
+  XLSX.utils.book_append_sheet(wb, ws3, '상세결과');
   const today = new Date().toISOString().slice(0, 10);
   XLSX.writeFile(wb, `짝맞추기결과_${today}.xlsx`);
 }
