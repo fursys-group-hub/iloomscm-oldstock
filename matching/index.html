@@ -117,6 +117,56 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .view-tab{padding:5px 16px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#374151}
 .view-tab.active{background:#c80a1e;color:#fff;border-color:#c80a1e}
 .view-tab:hover:not(.active){background:#F3F4F6}
+/* 관리 탭 */
+.view-tab.admin-tab{border-color:#6366f1;color:#6366f1}
+.view-tab.admin-tab.active{background:#6366f1;color:#fff;border-color:#6366f1}
+.view-tab.admin-tab:hover:not(.active){background:#eef2ff}
+
+/* 로그인 버튼 / 사용자 표시 */
+.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
+.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer}
+.btn-nav-login:hover{background:#a50818}
+.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer}
+.btn-nav-logout:hover{background:#E5E7EB}
+.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
+
+/* 로그인 모달 */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px}
+.modal-box h3{font-size:17px;font-weight:700;color:#1F2937}
+.modal-box p{font-size:13px;color:#6B7280;margin-top:-8px}
+.modal-input{padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%}
+.modal-input:focus{border-color:#c80a1e}
+.modal-error{font-size:12px;color:#c80a1e;min-height:16px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.btn-modal-ok{padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-modal-ok:hover{background:#a50818}
+.btn-modal-cancel{padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer}
+.btn-modal-cancel:hover{background:#E5E7EB}
+
+/* 로그인 프롬프트 */
+.login-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 24px;color:#6B7280}
+.login-prompt h2{font-size:18px;font-weight:700;color:#1F2937}
+.login-prompt p{font-size:13px}
+.btn-login-big{padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-login-big:hover{background:#a50818}
+
+/* 관리 탭 콘텐츠 */
+.admin-wrap{padding:24px;max-width:800px}
+.admin-section{background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:24px;margin-bottom:20px}
+.admin-section h3{font-size:15px;font-weight:700;margin-bottom:12px;color:#1F2937}
+.id-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.id-item{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#F9FAFB;border-radius:6px;font-size:13px;font-family:monospace}
+.id-item.is-default{color:#6B7280}
+.id-item .del-btn{padding:2px 10px;font-size:11px;background:#fee2e2;color:#991b1b;border:none;border-radius:4px;cursor:pointer;font-weight:600}
+.id-item .del-btn:hover{background:#fca5a5}
+.add-id-row{display:flex;gap:8px}
+.add-id-input{flex:1;padding:8px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:monospace;outline:none}
+.add-id-input:focus{border-color:#6366f1}
+.btn-add-id{padding:8px 18px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-add-id:hover{background:#4f46e5}
+.btn-download{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#0369a1;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn-download:hover{background:#0284c7}
 </style>
 </head>
 <body>
@@ -125,18 +175,45 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <div class="iloom-nav-inner">
     <a class="iloom-nav-logo" href="../">iloom<span class="dv"></span><span class="sub">SCM 대시보드</span></a>
     <div class="iloom-nav-tabs">
-      <a class="iloom-tab" href="../spec-change/">사양변경</a>
+      <a class="iloom-tab auth-hide" href="../spec-change/">사양변경</a>
       <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
-      <a class="iloom-tab" href="../discontinued-sku/">단종(단품)</a>
-      <a class="iloom-tab" href="../cumulative/">누적재고관리</a>
-      <a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
-      <a class="iloom-tab active" href="../matching/">짝맞추기</a>
+      <a class="iloom-tab auth-hide" href="../discontinued-sku/">단종(단품)</a>
+      <a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
+      <a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
+      <a class="iloom-tab active auth-hide" href="../matching/">짝맞추기</a>
+    </div>
+    <div class="nav-auth">
+      <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
+      <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 </nav>
 
+<!-- 로그인 모달 -->
+<div id="loginModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)hideLoginModal()">
+  <div class="modal-box">
+    <h3>로그인</h3>
+    <p>허가된 EP ID를 입력하세요</p>
+    <input id="loginInput" class="modal-input" type="text" placeholder="EP ID" autocomplete="off"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="loginError" class="modal-error"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="hideLoginModal()">취소</button>
+      <button class="btn-modal-ok" onclick="doLogin()">로그인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 비로그인 시 표시 -->
+<div id="loginPrompt" class="login-prompt" style="display:none">
+  <h2>🔒 로그인이 필요합니다</h2>
+  <p>짝맞추기 기능은 허가된 사용자만 이용할 수 있습니다.</p>
+  <button class="btn-login-big" onclick="showLoginModal()">EP ID로 로그인</button>
+</div>
+
 <!-- 컨트롤 바 -->
-<div class="ctrl-bar">
+<div class="ctrl-bar" id="mainCtrlBar">
   <h1>단종품목 짝맞추기</h1>
   <span id="serverBadge" class="server-badge checking"><span class="dot dot-yellow"></span>서버 확인 중...</span>
   <button id="btnStartServer" class="btn-start-server" onclick="startServer()">&#9654; 서버 시작</button>
@@ -146,6 +223,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <button class="btn-refresh" onclick="loadResults()">&#8635; 결과 새로고침</button>
   <span style="font-size:11px;color:#9CA3AF;margin-left:4px">구글시트 '짝맞추기 대상' B=단품코드 · C=단품색상</span>
 </div>
+
+<!-- ─── 로그인 필요 콘텐츠 (mainContent) ─────────────────────────────────── -->
+<div id="mainContent">
 
 <!-- 설정 패널 -->
 <div class="settings-panel">
@@ -198,6 +278,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="view-tabs">
   <button id="tabSet" class="view-tab active" onclick="switchTab('set')">세트별</button>
   <button id="tabItem" class="view-tab" onclick="switchTab('item')">단품별</button>
+  <button id="tabAdmin" class="view-tab admin-tab" onclick="switchTab('admin')" style="margin-left:auto">관리</button>
 </div>
 
 <!-- 테이블 (세트별) -->
@@ -242,6 +323,43 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     </tbody>
   </table>
 </div>
+
+<!-- 관리 탭 -->
+<div id="adminView" style="display:none">
+  <div class="admin-wrap">
+
+    <div class="admin-section">
+      <h3>EP ID 관리</h3>
+      <p style="font-size:12px;color:#6B7280;margin-bottom:14px">
+        이 목록에 있는 ID만 로그인할 수 있습니다.
+        기본 ID(k94rainy, wonsuk_kim, nakwon_choi)는 삭제할 수 없습니다.<br>
+        <span style="color:#f59e0b;font-weight:600">⚠ ID 목록은 이 브라우저 로컬에 저장됩니다.</span>
+      </p>
+      <div id="idList" class="id-list"></div>
+      <div class="add-id-row">
+        <input id="newIdInput" class="add-id-input" type="text" placeholder="추가할 EP ID 입력"
+               onkeydown="if(event.key==='Enter')addEpId()">
+        <button class="btn-add-id" onclick="addEpId()">추가</button>
+      </div>
+      <p id="addIdMsg" style="font-size:12px;margin-top:8px;min-height:16px"></p>
+    </div>
+
+    <div class="admin-section">
+      <h3>짝맞추기 부가기능 다운로드</h3>
+      <p style="font-size:12px;color:#6B7280;margin-bottom:16px">
+        '짝맞추기 실행' 기능을 사용하려면 로컬 서버 프로그램(iloom-erp-tools)이 설치되어 있어야 합니다.<br>
+        아래 버튼으로 설치 파일을 내려받은 뒤 실행하세요.
+      </p>
+      <a id="downloadLink" class="btn-download" href="#" download>
+        ⬇ iloom-erp-tools 다운로드
+      </a>
+      <p style="font-size:11px;color:#9CA3AF;margin-top:10px">설치 후 트레이 아이콘에서 '짝맞추기 서버 시작'을 선택하세요.</p>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /mainContent -->
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
@@ -872,11 +990,14 @@ function downloadExcel() {
 // ── 뷰 탭 전환 ───────────────────────────────────────────────────────────────
 function switchTab(view) {
   currentView = view;
-  document.getElementById('setView').style.display  = view === 'set'  ? '' : 'none';
-  document.getElementById('itemView').style.display = view === 'item' ? '' : 'none';
-  document.getElementById('tabSet').classList.toggle('active', view === 'set');
+  document.getElementById('setView').style.display   = view === 'set'   ? '' : 'none';
+  document.getElementById('itemView').style.display  = view === 'item'  ? '' : 'none';
+  document.getElementById('adminView').style.display = view === 'admin' ? '' : 'none';
+  document.getElementById('tabSet').classList.toggle('active',  view === 'set');
   document.getElementById('tabItem').classList.toggle('active', view === 'item');
-  if (view === 'item') renderItemTable();
+  document.getElementById('tabAdmin').classList.toggle('active',view === 'admin');
+  if (view === 'item')  renderItemTable();
+  if (view === 'admin') renderAdminPanel();
 }
 
 // ── 단품별 집계 테이블 ─────────────────────────────────────────────────────
@@ -986,8 +1107,128 @@ function setFilter(f) {
   filterTable();
 }
 
+// ── 인증 / 로그인 ──────────────────────────────────────────────────────────────
+const EP_DEFAULT_IDS = ['k94rainy', 'wonsuk_kim', 'nakwon_choi'];
+const LS_EP_IDS_KEY  = 'iloom_allowed_ep_ids';
+const SS_USER_KEY    = 'iloom_ep_session';
+
+function getAllowedIds() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(LS_EP_IDS_KEY) || 'null');
+    if (Array.isArray(stored)) {
+      // 기본 ID는 항상 포함
+      const merged = [...new Set([...EP_DEFAULT_IDS, ...stored])];
+      return merged;
+    }
+  } catch(e) {}
+  return [...EP_DEFAULT_IDS];
+}
+function saveExtraIds(extras) {
+  try { localStorage.setItem(LS_EP_IDS_KEY, JSON.stringify(extras)); } catch(e) {}
+}
+function getExtraIds() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(LS_EP_IDS_KEY) || 'null');
+    return Array.isArray(stored) ? stored.filter(id => !EP_DEFAULT_IDS.includes(id)) : [];
+  } catch(e) { return []; }
+}
+
+function getLoggedInUser() {
+  return sessionStorage.getItem(SS_USER_KEY) || null;
+}
+
+function showLoginModal() {
+  document.getElementById('loginInput').value = '';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('loginInput').focus(), 50);
+}
+function hideLoginModal() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+
+function doLogin() {
+  const val = document.getElementById('loginInput').value.trim();
+  if (!val) { document.getElementById('loginError').textContent = 'ID를 입력하세요.'; return; }
+  if (getAllowedIds().includes(val)) {
+    sessionStorage.setItem(SS_USER_KEY, val);
+    hideLoginModal();
+    updateAuthUI();
+  } else {
+    document.getElementById('loginError').textContent = '허용되지 않은 EP ID입니다.';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SS_USER_KEY);
+  updateAuthUI();
+  // 로그아웃 후 세트별 탭으로 복귀
+  if (currentView !== 'set') switchTab('set');
+}
+
+function updateAuthUI() {
+  const user = getLoggedInUser();
+
+  // 네비 버튼
+  document.getElementById('btnNavLogin').style.display  = user ? 'none' : '';
+  document.getElementById('btnNavLogout').style.display = user ? '' : 'none';
+  const chip = document.getElementById('navUserChip');
+  chip.style.display = user ? '' : 'none';
+  chip.textContent   = user ? `👤 ${user}` : '';
+
+  // 네비 탭 (아울렛 재고 제외 auth-hide)
+  document.querySelectorAll('.auth-hide').forEach(el => {
+    el.style.display = user ? '' : 'none';
+  });
+
+  // 메인 컨트롤 바 + 메인 컨텐츠
+  const mc = document.getElementById('mainContent');
+  const cb = document.getElementById('mainCtrlBar');
+  const lp = document.getElementById('loginPrompt');
+  mc.style.display = user ? '' : 'none';
+  cb.style.display = user ? '' : 'none';
+  lp.style.display = user ? 'none' : '';
+}
+
+// ── 관리 패널 ──────────────────────────────────────────────────────────────────
+function renderAdminPanel() {
+  const allIds  = getAllowedIds();
+  const extras  = getExtraIds();
+  const listEl  = document.getElementById('idList');
+  listEl.innerHTML = allIds.map(id => {
+    const isDefault = EP_DEFAULT_IDS.includes(id);
+    return `<div class="id-item${isDefault ? ' is-default' : ''}">
+      <span>${id}${isDefault ? ' <span style="font-size:10px;color:#9CA3AF">(기본)</span>' : ''}</span>
+      ${isDefault ? '' : `<button class="del-btn" onclick="deleteEpId('${id}')">삭제</button>`}
+    </div>`;
+  }).join('');
+}
+
+function addEpId() {
+  const val = document.getElementById('newIdInput').value.trim();
+  const msg = document.getElementById('addIdMsg');
+  if (!val) { msg.style.color='#c80a1e'; msg.textContent='ID를 입력하세요.'; return; }
+  const allIds = getAllowedIds();
+  if (allIds.includes(val)) { msg.style.color='#c80a1e'; msg.textContent='이미 존재하는 ID입니다.'; return; }
+  const extras = getExtraIds();
+  extras.push(val);
+  saveExtraIds(extras);
+  document.getElementById('newIdInput').value = '';
+  msg.style.color='#059669'; msg.textContent=`'${val}' 추가되었습니다.`;
+  renderAdminPanel();
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+function deleteEpId(id) {
+  if (EP_DEFAULT_IDS.includes(id)) return;
+  const extras = getExtraIds().filter(x => x !== id);
+  saveExtraIds(extras);
+  renderAdminPanel();
+}
+
 // ── 초기화 ────────────────────────────────────────────────────────────────────
 loadOverrides();   // localStorage 에서 소진합 수정값 복원
+updateAuthUI();    // 인증 상태에 따라 UI 초기화
 checkServer();
 loadResults();
 setFilter('all');
