@@ -212,7 +212,7 @@ function updateAuthUI() {
   chip.textContent   = user ? `👤 ${user}` : '';
   const btnSheet = document.getElementById('btnSheet');
   if (btnSheet) btnSheet.style.display = user ? '' : 'none';
-  document.querySelectorAll('.auth-hide').forEach(el => { el.style.display = user ? '' : 'none'; });
+  document.querySelectorAll('.auth-hide').forEach(el => { el.style.display = user ? 'inline' : 'none'; });
   if (user) renderAdminPanel();
 }
 
