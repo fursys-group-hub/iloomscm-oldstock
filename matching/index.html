@@ -181,6 +181,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
       <a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
       <a class="iloom-tab active auth-hide" href="../matching/">짝맞추기</a>
+      <a class="iloom-tab auth-hide" href="../admin/">관리</a>
     </div>
     <div class="nav-auth">
       <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
@@ -201,6 +202,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     <p>허가된 EP ID를 입력하세요</p>
     <input id="loginInput" class="modal-input" type="text" placeholder="EP ID" autocomplete="off"
            onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;margin-top:-4px"><input type="checkbox" id="saveIdChk" style="cursor:pointer"> ID 저장</label>
     <div id="loginError" class="modal-error"></div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="hideLoginModal()">취소</button>
@@ -1142,7 +1144,10 @@ function getLoggedInUser() {
 }
 
 function showLoginModal() {
-  document.getElementById('loginInput').value = '';
+  const saved = localStorage.getItem('iloom_saved_ep_id') || '';
+  document.getElementById('loginInput').value = saved;
+  const chk = document.getElementById('saveIdChk');
+  if (chk) chk.checked = !!saved;
   document.getElementById('loginError').textContent = '';
   document.getElementById('loginModal').style.display = 'flex';
   setTimeout(() => document.getElementById('loginInput').focus(), 50);
@@ -1156,6 +1161,9 @@ function doLogin() {
   if (!val) { document.getElementById('loginError').textContent = 'ID를 입력하세요.'; return; }
   if (getAllowedIds().includes(val)) {
     sessionStorage.setItem(SS_USER_KEY, val);
+    const chk = document.getElementById('saveIdChk');
+    if (chk && chk.checked) localStorage.setItem('iloom_saved_ep_id', val);
+    else localStorage.removeItem('iloom_saved_ep_id');
     hideLoginModal();
     updateAuthUI();
   } else {
