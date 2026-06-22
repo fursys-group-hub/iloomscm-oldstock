@@ -321,11 +321,11 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">현재고</span></th>
         <th>소진예정<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">총필요수량</span></th>
         <th>잔여재고</th><th>추가생산</th><th>폐기예상</th>
-        <th>추가생산금액</th><th>폐기예상금액</th>
+        <th>추가생산금액</th><th>폐기예상금액</th><th>손실절감액</th>
       </tr>
     </thead>
     <tbody id="itemTableBody">
-      <tr><td colspan="13" class="loading">단품별 탭을 선택하면 표시됩니다.</td></tr>
+      <tr><td colspan="14" class="loading">단품별 탭을 선택하면 표시됩니다.</td></tr>
     </tbody>
   </table>
 </div>
@@ -862,7 +862,7 @@ function downloadExcel() {
   // ── Sheet 2: 단품결과 (단품별 집계) ────────────────────────────────────────
   const itemHeaders = [
     '단품조합','단품명칭','이원화','시리즈','공급업체','중복세트수',
-    '가용재고','소진예정','잔여재고','추가생산','폐기예상','추가생산금액','폐기예상금액',
+    '가용재고','소진예정','잔여재고','추가생산','폐기예상','추가생산금액','폐기예상금액','손실절감액',
   ];
   const exItems = {};
   allData.forEach(r => {
@@ -889,22 +889,24 @@ function downloadExcel() {
     exItems[dc].세트수++;
     exItems[dc].총필요 += 필요_v;
   });
-  let exSumAdd = 0, exSumWaste = 0, exSumAddAmt = 0, exSumWasteAmt = 0;
+  let exSumAdd = 0, exSumWaste = 0, exSumAddAmt = 0, exSumWasteAmt = 0, exSumLossGain = 0;
   const itemRows = Object.entries(exItems).sort((a, b) => a[0].localeCompare(b[0])).map(([dc, d]) => {
     const 잔여재고   = d.가용재고 - d.총필요;
     const 총추가     = Math.max(0, -잔여재고);
     const 총폐기     = Math.max(0,  잔여재고);
-    const 총추가금액 = Math.round(총추가 * d.ipgoD);   // 추가생산수량 × 입고단가
+    const 총추가금액 = Math.round(총추가 * d.ipgoD);
     const 총폐기금액 = Math.round(총폐기 * d.gongD);
+    const 손실절감액 = Math.round(Math.min(d.가용재고, d.총필요) * d.ipgoD);
     exSumAdd      += 총추가;
     exSumWaste    += 총폐기;
     exSumAddAmt   += 총추가금액;
     exSumWasteAmt += 총폐기금액;
+    exSumLossGain += 손실절감액;
     return [
       dc, d.단품명칭, d.이원화, d.시리즈, d.공급업체, d.세트수,
       d.가용재고, Math.round(d.총필요), Math.round(잔여재고),
       Math.round(총추가), Math.round(총폐기),
-      총추가금액, 총폐기금액,
+      총추가금액, 총폐기금액, 손실절감액,
     ];
   });
   // 총합 행
@@ -912,12 +914,12 @@ function downloadExcel() {
     '합계', '', '', '', '', '',
     '', '', '',
     Math.round(exSumAdd), Math.round(exSumWaste),
-    Math.round(exSumAddAmt), Math.round(exSumWasteAmt),
+    Math.round(exSumAddAmt), Math.round(exSumWasteAmt), Math.round(exSumLossGain),
   ]);
   const ws2 = XLSX.utils.aoa_to_sheet([itemHeaders, ...itemRows]);
   ws2['!cols'] = [
     {wch:14},{wch:22},{wch:6},{wch:12},{wch:14},{wch:8},
-    {wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12},
+    {wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12},{wch:12},
   ];
 
   // ── Sheet 3: 상세결과 (기존 전체 행) ────────────────────────────────────────
@@ -1011,7 +1013,7 @@ function switchTab(view) {
 function renderItemTable() {
   const tbody = document.getElementById('itemTableBody');
   if (!allData.length) {
-    tbody.innerHTML = '<tr><td colspan="13" class="loading">먼저 짝맞추기를 실행하거나 결과를 새로고침하세요.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="14" class="loading">먼저 짝맞추기를 실행하거나 결과를 새로고침하세요.</td></tr>';
     return;
   }
 
@@ -1047,12 +1049,12 @@ function renderItemTable() {
 
   const sorted = Object.entries(items).sort((a, b) => a[0].localeCompare(b[0]));
   if (!sorted.length) {
-    tbody.innerHTML = '<tr><td colspan="13" class="loading">단종 대상 단품이 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="14" class="loading">단종 대상 단품이 없습니다.</td></tr>';
     return;
   }
 
   let html = '';
-  let sumAdd = 0, sumWaste = 0, sumAddAmt = 0, sumWasteAmt = 0;
+  let sumAdd = 0, sumWaste = 0, sumAddAmt = 0, sumWasteAmt = 0, sumLossGain = 0;
 
   for (const [dc, d] of sorted) {
     const 잔여재고   = d.가용재고 - d.총필요;
@@ -1060,10 +1062,14 @@ function renderItemTable() {
     const 총폐기     = Math.max(0,  잔여재고);
     const 총추가금액 = Math.round(총추가 * d.ipgoD);   // 추가생산수량 × 입고단가
     const 총폐기금액 = Math.round(총폐기 * d.gongD);
+    // 실소진수량: 추가생산이 있으면 가용재고까지만, 없으면 소진예정 수량 전부
+    const 실소진수량 = Math.min(d.가용재고, d.총필요);
+    const 손실절감액 = Math.round(실소진수량 * d.ipgoD);
     sumAdd      += 총추가;
     sumWaste    += 총폐기;
     sumAddAmt   += 총추가금액;
     sumWasteAmt += 총폐기금액;
+    sumLossGain += 손실절감액;
 
     const remStr = 잔여재고 > 0
       ? `<span class="num-pos">${fmt(Math.round(잔여재고))}</span>`
@@ -1084,6 +1090,7 @@ function renderItemTable() {
       <td>${fmt(Math.round(총폐기))}</td>
       <td>${fmt(총추가금액)}</td>
       <td>${fmt(총폐기금액)}</td>
+      <td>${fmt(손실절감액)}</td>
     </tr>`;
   }
 
@@ -1094,6 +1101,7 @@ function renderItemTable() {
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumWaste))}</td>
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumAddAmt))}</td>
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumWasteAmt))}</td>
+    <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumLossGain))}</td>
   </tr>`;
 
   tbody.innerHTML = html;
