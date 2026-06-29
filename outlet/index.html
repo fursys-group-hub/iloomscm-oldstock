@@ -205,9 +205,10 @@ async function loadData() {
           code, color: r['색상_2'] || '',
           name: r['단품명'] || '',
           disc: r['단종예정'] || '',
-          dual: r['이원화코드'] || '',
-          dualYn: r['이원화 코드 유무'] || '',
-          dualStock: r['이원화코드 재고 유무'] || ''
+          usage: r['사용구분'] || '',
+          purpose: r['용도구분'] || '',
+          siteStock: toInt(r['사업장재고']),
+          avail: toInt(r['가용재고'])
         });
       }
     });
@@ -263,6 +264,10 @@ function renderTable() {
         <td style="text-align:center">${esc(it.color)}</td>
         <td>${esc(it.name)}</td>
         <td style="text-align:center">${discBadge}</td>
+        <td style="text-align:center">${esc(it.usage)}</td>
+        <td style="text-align:center">${esc(it.purpose)}</td>
+        <td style="text-align:right">${it.siteStock.toLocaleString('ko-KR')}</td>
+        <td style="text-align:right">${it.avail.toLocaleString('ko-KR')}</td>
       </tr>`;
     }).join('');
 
@@ -271,6 +276,7 @@ function renderTable() {
         <div class="detail-title">구성 단품 (${s.items.length}개)</div>
         <table class="detail-table"><thead><tr>
           <th>단품코드</th><th>색상</th><th>단품명</th><th>단종예정</th>
+          <th>사용구분</th><th>용도구분</th><th style="text-align:right">사업장재고</th><th style="text-align:right">가용재고</th>
         </tr></thead><tbody>${detItems}</tbody></table>
       </div></td>
     </tr>`;
