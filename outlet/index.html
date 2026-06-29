@@ -151,7 +151,13 @@ async function fetchSheet(name) {
   const text = await resp.text();
   const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
   if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
-  const cols = json.table.cols.map(c => c.label);
+  // 중복 헤더를 _1, _2 suffix로 처리 (Python read_sheet_rows와 동일)
+  const rawCols = json.table.cols.map(c => c.label);
+  const seen = {}, cols = [];
+  for (const c of rawCols) {
+    if (!(c in seen)) { seen[c] = 0; cols.push(c); }
+    else { seen[c]++; cols.push(`${c}_${seen[c]}`); }
+  }
   return (json.table.rows || []).map(row => {
     const obj = {};
     (row.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
@@ -257,9 +263,6 @@ function renderTable() {
         <td style="text-align:center">${esc(it.color)}</td>
         <td>${esc(it.name)}</td>
         <td style="text-align:center">${discBadge}</td>
-        <td class="code">${esc(it.dual)}</td>
-        <td style="text-align:center">${it.dualYn === 'Y' ? 'Y' : ''}</td>
-        <td style="text-align:center">${it.dualStock === 'Y' ? '있음' : ''}</td>
       </tr>`;
     }).join('');
 
@@ -268,7 +271,6 @@ function renderTable() {
         <div class="detail-title">구성 단품 (${s.items.length}개)</div>
         <table class="detail-table"><thead><tr>
           <th>단품코드</th><th>색상</th><th>단품명</th><th>단종예정</th>
-          <th>이원화코드</th><th>이원화유무</th><th>이원화재고</th>
         </tr></thead><tbody>${detItems}</tbody></table>
       </div></td>
     </tr>`;
