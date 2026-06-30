@@ -84,7 +84,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </nav>
 <div class="page-header">
   <h1>아울렛 재고 현황</h1>
-  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-06-30 10:11</div>
+  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-06-30 10:37</div>
 </div>
 
 
@@ -15124,66 +15124,72 @@ function sortTable(mode) {
 document.addEventListener('DOMContentLoaded', () => filterTable());
 
 function downloadExcel() {
-  const BOM = '﻿';
-  const genTime = document.querySelector('.meta')?.textContent?.trim() || '';
-  const headers = ['#','세트코드','색상','세트명','목표판매량','판매수량','계획대비잔여수량','판매가능수량','전일대비','25년평출'];
-  const subHeaders = ['','','','단품코드','단품색상','단품명','단종예정','사용구분','용도구분','구성수량','사업장재고','가용재고'];
+  const xe = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const sCell = v => '<Cell><Data ss:Type="String">' + xe(v) + '</Data></Cell>';
+  const nCell = v => {
+    if (v === undefined || v === null || v === '') return sCell('');
+    const n = parseFloat(String(v).replace(/,/g,''));
+    return isNaN(n) ? sCell(String(v)) : '<Cell><Data ss:Type="Number">' + n + '</Data></Cell>';
+  };
+  const mkRow = cells => '<Row>' + cells.join('') + '</Row>';
+  const qCell = dv => (dv == null || dv === '') ? sCell('') : (dv == 99999 ? sCell('제약없음') : nCell(dv));
+  const diffStr = dv => (!dv || dv === '0') ? '-' : (parseInt(dv) > 0 ? '▲' + dv : '▼' + Math.abs(parseInt(dv)));
 
-  const toVal = (v99, raw) => v99 == 99999 ? '제약없음' : raw;
-  const esc = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const mainH = ['#','세트코드','색상','세트명','목표판매량','판매수량','계획대비잔여수량','판매가능수량','전일대비','25년평출'];
+  const subH  = ['단품코드','단품색상','단품명','단종예정','사용구분','용도구분','구성수량','사업장재고','가용재고'];
 
-  const lines = [];
-  lines.push(['# 아울렛 재고 현황', genTime].map(esc).join(','));
-  lines.push('');
-  lines.push(headers.map(esc).join(','));
+  const sh1 = [mkRow(mainH.map(sCell))];
+  const sh2 = [mkRow(mainH.map(sCell))];
 
-  document.querySelectorAll('#tableBody .main-row').forEach(row => {
-    if (row.style.display === 'none') return;
-    const td = row.querySelectorAll('td');
-    const qtyVal  = toVal(td[6]?.dataset.val, td[6]?.dataset.val);
-    const pureVal = toVal(td[7]?.dataset.val, td[7]?.dataset.val);
-    const diffRaw = td[8]?.dataset.val || '0';
-    const diffDisp = diffRaw === '0' ? '-' : (parseInt(diffRaw) > 0 ? '▲' + diffRaw : '▼' + Math.abs(parseInt(diffRaw)));
-    lines.push([
-      td[0]?.innerText.trim(),
-      td[1]?.innerText.trim(),
-      td[2]?.innerText.trim(),
-      td[3]?.innerText.trim(),
-      td[4]?.dataset.val || '',
-      td[5]?.dataset.val || '',
-      qtyVal,
-      pureVal,
-      diffDisp,
-      td[9]?.innerText.trim(),
-    ].map(esc).join(','));
+  document.querySelectorAll('#tableBody .main-row').forEach(tr => {
+    if (tr.style.display === 'none') return;
+    const td = tr.querySelectorAll('td');
+    const row = mkRow([
+      nCell(td[0]?.innerText.trim()),
+      sCell(td[1]?.innerText.trim()),
+      sCell(td[2]?.innerText.trim()),
+      sCell(td[3]?.innerText.trim()),
+      nCell(td[4]?.dataset.val),
+      nCell(td[5]?.dataset.val),
+      qCell(td[6]?.dataset.val),
+      qCell(td[7]?.dataset.val),
+      sCell(diffStr(td[8]?.dataset.val)),
+      sCell(td[9]?.innerText.trim()),
+    ]);
+    sh1.push(row);
+    sh2.push(row);
 
-    const idx = row.dataset.idx;
-    const det = document.getElementById('det-' + idx);
+    const det = document.getElementById('det-' + tr.dataset.idx);
     if (det) {
-      lines.push(subHeaders.map(esc).join(','));
+      sh2.push(mkRow(subH.map(sCell)));
       det.querySelectorAll('.detail-table tbody tr').forEach(sub => {
         const sc = sub.querySelectorAll('td');
-        lines.push([
-          '','','',
-          sc[0]?.innerText.trim(),
-          sc[1]?.innerText.trim(),
-          sc[2]?.innerText.trim(),
-          sc[3]?.innerText.trim(),
-          sc[4]?.innerText.trim(),
-          sc[5]?.innerText.trim(),
-          sc[6]?.innerText.trim(),
-          sc[7]?.innerText.trim(),
-          sc[8]?.innerText.trim(),
-        ].map(esc).join(','));
+        sh2.push(mkRow([
+          sCell(sc[0]?.innerText.trim()),
+          sCell(sc[1]?.innerText.trim()),
+          sCell(sc[2]?.innerText.trim()),
+          sCell(sc[3]?.innerText.trim()),
+          sCell(sc[4]?.innerText.trim()),
+          sCell(sc[5]?.innerText.trim()),
+          nCell(sc[6]?.innerText.trim().replace(/,/g,'')),
+          nCell(sc[7]?.innerText.trim().replace(/,/g,'')),
+          nCell(sc[8]?.innerText.trim().replace(/,/g,'')),
+        ]));
       });
     }
   });
 
   const today = new Date().toISOString().slice(0,10);
-  const blob = new Blob([BOM + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const xml = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?>'
+    + '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
+    + '<Worksheet ss:Name="세트기준"><Table>' + sh1.join('') + '</Table></Worksheet>'
+    + '<Worksheet ss:Name="단품상세"><Table>' + sh2.join('') + '</Table></Worksheet>'
+    + '</Workbook>';
+
+  const blob = new Blob(['﻿' + xml], {type:'application/vnd.ms-excel;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = '아울렛재고현황_' + today + '.csv';
+  a.download = '아울렛재고현황_' + today + '.xls';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
