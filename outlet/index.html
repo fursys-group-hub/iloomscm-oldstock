@@ -84,7 +84,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </nav>
 <div class="page-header">
   <h1>아울렛 재고 현황</h1>
-  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-06-30 10:00</div>
+  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-06-30 10:05</div>
 </div>
 
 
@@ -15180,8 +15180,7 @@ function downloadExcel() {
   });
 
   const today = new Date().toISOString().slice(0,10);
-  const blob = new Blob([BOM + lines.join('
-')], {type:'text/csv;charset=utf-8;'});
+  const blob = new Blob([BOM + lines.join('\n')], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = '아울렛재고현황_' + today + '.csv';
