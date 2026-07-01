@@ -272,8 +272,41 @@ table.dh-table{width:100%;border-collapse:collapse;font-size:13px}
 .cat-g2{color:#666;font-size:12px;margin-left:6px}
 .disc-date{color:#999;font-size:11px;margin-left:6px}
 </style>
+<style>
+.auth-hide{display:none}
+.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
+.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-nav-login:hover{background:#a50818}
+.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-nav-logout:hover{background:#E5E7EB}
+.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
+</style>
 </head>
 <body>
+<div id="authOverlay" style="position:fixed;inset:0;background:#F4F5F7;z-index:9998;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:48px">&#128274;</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1F2937">로그인이 필요합니다</h2>
+    <p style="font-size:13px;color:#6B7280">허가된 사용자만 이용할 수 있습니다.</p>
+    <button onclick="showLoginModal()" style="padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">EP ID로 로그인</button>
+    <button onclick="location.href='../outlet/'" style="padding:10px 28px;background:#fff;color:#374151;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">아울렛 재고 확인</button>
+  </div>
+</div>
+<div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideLoginModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">로그인</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">허가된 EP ID를 입력하세요</p>
+    <input id="loginInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;margin-top:-4px"><input type="checkbox" id="saveIdChk" style="cursor:pointer"> ID 저장</label>
+    <div id="loginError" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
+    </div>
+  </div>
+</div>
 
 <style>
 .iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
@@ -1424,5 +1457,18 @@ renderSummary();
 renderDetailShell();
 renderMonthlyShell();
 renderDiscontinued();
+</script>
+<script>
+const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
+const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
+const SS_USER_KEY='iloom_ep_session';
+function getAllowedIds(){try{const s=JSON.parse(localStorage.getItem(LS_EP_IDS_KEY)||'null');if(Array.isArray(s))return[...new Set([...EP_DEFAULT_IDS,...s])];}catch(e){}return[...EP_DEFAULT_IDS];}
+function getLoggedInUser(){return sessionStorage.getItem(SS_USER_KEY)||null;}
+function showLoginModal(){const saved=localStorage.getItem('iloom_saved_ep_id')||'';document.getElementById('loginInput').value=saved;const chk=document.getElementById('saveIdChk');if(chk)chk.checked=!!saved;document.getElementById('loginError').textContent='';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('loginInput').focus(),50);}
+function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
+function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}if(getAllowedIds().includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
+function doLogout(){sessionStorage.removeItem(SS_USER_KEY);updateAuthUI();}
+function updateAuthUI(){const user=getLoggedInUser();const ov=document.getElementById('authOverlay');if(ov)ov.style.display=user?'none':'flex';const bl=document.getElementById('btnNavLogin');if(bl)bl.style.display=user?'none':'';const bo=document.getElementById('btnNavLogout');if(bo)bo.style.display=user?'':'none';const chip=document.getElementById('navUserChip');if(chip){chip.style.display=user?'':'none';chip.textContent=user?('👤 '+user):'';}document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'':'none';});}
+updateAuthUI();
 </script>
 </body></html>
