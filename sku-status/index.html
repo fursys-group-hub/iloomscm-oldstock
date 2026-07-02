@@ -245,24 +245,15 @@ th.iloom-col-filter-active::after {
 }
 </style>
 
-<style>
-.auth-hide{display:none}
-.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
-.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-.btn-nav-login:hover{background:#a50818}
-.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
-.btn-nav-logout:hover{background:#E5E7EB}
-.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
-</style>
 </head>
 <body>
+
 <div id="authOverlay" style="position:fixed;inset:0;background:#F4F5F7;z-index:9998;display:flex;align-items:center;justify-content:center">
   <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px">
-    <div style="font-size:48px">&#128274;</div>
+    <div style="font-size:48px">🔒</div>
     <h2 style="font-size:18px;font-weight:700;color:#1F2937">로그인이 필요합니다</h2>
     <p style="font-size:13px;color:#6B7280">허가된 사용자만 이용할 수 있습니다.</p>
     <button onclick="showLoginModal()" style="padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">EP ID로 로그인</button>
-    <button onclick="location.href='../outlet/'" style="padding:10px 28px;background:#fff;color:#374151;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">아울렛 재고 확인</button>
   </div>
 </div>
 <div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideLoginModal()">
@@ -299,10 +290,11 @@ th.iloom-col-filter-active::after {
   .iloom-nav-logo{padding:10px 0;font-size:18px}
   .iloom-tab{padding:10px 10px;font-size:12px}
 }
+/* Auth */.auth-hide{display:none}.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer}.btn-nav-login:hover{background:#a50818}.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer}.btn-nav-logout:hover{background:#E5E7EB}.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
 </style>
 <nav class="iloom-nav">
   <div class="iloom-nav-inner">
-    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <span class="iloom-nav-logo">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></span>
     <div class="iloom-nav-tabs">
 <a class="iloom-tab auth-hide" href="../spec-change/">사양변경</a>
 <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
@@ -314,6 +306,7 @@ th.iloom-col-filter-active::after {
     </div>
     <div class="nav-auth">
       <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <a id="btnSheet" href="https://docs.google.com/spreadsheets/d/1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc/edit" target="_blank" rel="noopener" style="display:none;padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;text-decoration:none">📄 구글시트</a>
       <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
       <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
     </div>
@@ -333,7 +326,7 @@ th.iloom-col-filter-active::after {
 
   table.pivot { border-collapse:collapse; width:100%; font-size:12.5px; font-variant-numeric:tabular-nums; }
   table.pivot th, table.pivot td { border:1px solid #E0E0E0; padding:6px 8px; white-space:nowrap; }
-  table.pivot thead th { background:#F8F8F8; color:#333; font-weight:700; text-align:center; }
+  table.pivot thead th { background:#F8F8F8; color:#333; font-weight:700; text-align:center; position:sticky; top:0; z-index:3; }
   table.pivot tbody td { text-align:right; }
   table.pivot tbody td.lbl { text-align:center; font-weight:500; background:#FCFCFC; }
   table.pivot tbody td.grp { text-align:center; font-weight:700; background:#F4F4F4; }
@@ -343,7 +336,7 @@ th.iloom-col-filter-active::after {
   table.pivot .pos { color:#c80a1e; }
   table.pivot .neg { color:#1d4ed8; }
   table.pivot .zero { color:#bbb; }
-  .ss-wrap { overflow-x:auto; }
+  .ss-wrap { overflow-x:auto; overflow-y:auto; max-height:calc(100vh - 260px); }
   .badge-prev { font-size:11px; color:#999; background:#F8F8F8; border:1px solid #E0E0E0; padding:2px 8px; }
 
   table.pivot tr.prevcmp td { background:#F4F7FB; color:#555; font-size:11.5px; }
@@ -379,8 +372,8 @@ th.iloom-col-filter-active::after {
 <div class="ss-head">
   <h1>운영품목 현황</h1>
   <span class="sub">양지센터 SKU · 공장도가 기준</span>
-  <span class="sub">· 재고기준 2026-07-02</span>
-  <span class="sub">· 2026-07</span>
+  <span class="sub">· 재고기준 2026-06-17</span>
+  <span class="sub">· 2026-06</span>
 </div>
 
 
@@ -396,27 +389,27 @@ th.iloom-col-filter-active::after {
     
     <div class="ss-summary">
       <div class="ss-sum-title">전월 대비
-        (2026-06 → 2026-07)
+        — 전월 스냅샷 없음 (다음 달부터 표시)
       </div>
       <div class="ss-sum-grid">
         
           
           <div class="ss-sum-item">
             <span class="ss-sum-label">운영품목</span>
-            <span class="ss-sum-metric">품목수 <b>6,011</b> <span class="neg">▼120</span></span>
+            <span class="ss-sum-metric">품목수 <b>6,114</b> <span class="zero">–</span></span>
           </div>
         
           
           <div class="ss-sum-item">
             <span class="ss-sum-label">재고보유</span>
-            <span class="ss-sum-metric">품목수 <b>4,978</b> <span class="neg">▼105</span></span>
+            <span class="ss-sum-metric">품목수 <b>5,076</b> <span class="zero">–</span></span>
           </div>
         
         
         
         <div class="ss-sum-item">
           <span class="ss-sum-label">재고금액</span>
-          <span class="ss-sum-metric"><b>14,185.8</b>백만 <span class="pos">▲68.4</span></span>
+          <span class="ss-sum-metric"><b>13,407.2</b>백만 <span class="zero">–</span></span>
         </div>
       </div>
     </div>
@@ -425,7 +418,7 @@ th.iloom-col-filter-active::after {
     <table class="pivot">
       <thead>
         <tr>
-          <th rowspan="2" colspan="2" class="no-filter">2026-07</th>
+          <th rowspan="2" colspan="2" class="no-filter">2026-06</th>
           <th colspan="4">품목수</th>
           <th colspan="4">수량</th>
           <th colspan="4">재고금액 (공장도가, 백만원)</th>
@@ -453,40 +446,40 @@ th.iloom-col-filter-active::after {
               <td class="grp" rowspan="4">운영품목</td>
               <td class="lbl">재고</td>
               
-                <td>4,210</td>
+                <td>4,157</td>
               
-                <td>59</td>
+                <td>110</td>
               
-                <td>1</td>
+                <td>3</td>
               
                 <td>4,270</td>
               
               
-                <td>235,809</td>
+                <td>221,946</td>
               
-                <td>1,841</td>
+                <td>5,762</td>
               
-                <td>1</td>
+                <td>4</td>
               
-                <td>237,651</td>
-              
-              
-                <td>12,880.2</td>
-              
-                <td>292.5</td>
-              
-                <td>0.0</td>
-              
-                <td>13,172.7</td>
+                <td>227,712</td>
               
               
-                <td>56.0</td>
+                <td>11,732.2</td>
               
-                <td>31.2</td>
+                <td>542.7</td>
               
-                <td>1.0</td>
+                <td>0.1</td>
               
-                <td>55.7</td>
+                <td>12,275.0</td>
+              
+              
+                <td>53.4</td>
+              
+                <td>52.4</td>
+              
+                <td>1.3</td>
+              
+                <td>53.3</td>
               
             </tr>
           
@@ -495,40 +488,40 @@ th.iloom-col-filter-active::after {
               
               <td class="lbl">비재고</td>
               
-                <td>1,636</td>
+                <td>1,772</td>
               
-                <td>104</td>
-              
-                <td>1</td>
-              
-                <td>1,741</td>
-              
-              
-                <td>19,727</td>
-              
-                <td>1,596</td>
+                <td>71</td>
               
                 <td>1</td>
               
-                <td>21,324</td>
+                <td>1,844</td>
               
               
-                <td>909.9</td>
+                <td>22,616</td>
               
-                <td>101.5</td>
+                <td>678</td>
+              
+                <td>1</td>
+              
+                <td>23,295</td>
+              
+              
+                <td>1,096.1</td>
+              
+                <td>36.1</td>
               
                 <td>0.0</td>
               
-                <td>1,011.4</td>
+                <td>1,132.2</td>
               
               
-                <td>12.1</td>
+                <td>12.8</td>
               
-                <td>15.3</td>
+                <td>9.5</td>
               
                 <td>1.0</td>
               
-                <td>12.2</td>
+                <td>12.6</td>
               
             </tr>
           
@@ -537,40 +530,40 @@ th.iloom-col-filter-active::after {
               
               <td class="lbl">소계</td>
               
-                <td>5,846</td>
+                <td>5,929</td>
               
-                <td>163</td>
+                <td>181</td>
               
-                <td>2</td>
+                <td>4</td>
               
-                <td>6,011</td>
-              
-              
-                <td>255,536</td>
-              
-                <td>3,437</td>
-              
-                <td>2</td>
-              
-                <td>258,975</td>
+                <td>6,114</td>
               
               
-                <td>13,790.1</td>
+                <td>244,562</td>
               
-                <td>394.0</td>
+                <td>6,440</td>
               
-                <td>0.0</td>
+                <td>5</td>
               
-                <td>14,184.2</td>
+                <td>251,007</td>
               
               
-                <td>43.7</td>
+                <td>12,828.3</td>
               
-                <td>21.1</td>
+                <td>578.8</td>
               
-                <td>1.0</td>
+                <td>0.1</td>
               
-                <td>43.1</td>
+                <td>13,407.2</td>
+              
+              
+                <td>41.2</td>
+              
+                <td>35.6</td>
+              
+                <td>1.2</td>
+              
+                <td>41.1</td>
               
             </tr>
           
@@ -582,66 +575,66 @@ th.iloom-col-filter-active::after {
               
                 
                 
-                  <td class="neg">▼77</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼42</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼1</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼120</td>
-                
-              
-            
-              
-                
-                
-                  <td class="pos">▲2,600</td>
-                
-              
-                
-                
-                  <td class="neg">▼2,030</td>
-                
-              
-                
-                
-                  <td class="neg">▼1</td>
-                
-              
-                
-                
-                  <td class="pos">▲569</td>
+                  <td class="zero">–</td>
                 
               
             
               
                 
                 
-                  <td class="pos">▲97.8</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼31.0</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼0.0</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="pos">▲66.8</td>
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
                 
               
             
@@ -649,22 +642,22 @@ th.iloom-col-filter-active::after {
             
               
               
-                <td class="pos">▲1.0</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="neg">▼5.6</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="zero">·</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="pos">▲0.9</td>
+                <td class="zero">–</td>
               
             
           </tr>
@@ -675,40 +668,40 @@ th.iloom-col-filter-active::after {
               <td class="grp" rowspan="4">재고보유</td>
               <td class="lbl">재고</td>
               
-                <td>4,095</td>
+                <td>4,051</td>
               
-                <td>59</td>
+                <td>110</td>
               
-                <td>1</td>
+                <td>3</td>
               
-                <td>4,155</td>
-              
-              
-                <td>235,816</td>
-              
-                <td>1,841</td>
-              
-                <td>1</td>
-              
-                <td>237,658</td>
+                <td>4,164</td>
               
               
-                <td>12,881.8</td>
+                <td>221,946</td>
               
-                <td>292.5</td>
+                <td>5,762</td>
               
-                <td>0.0</td>
+                <td>4</td>
               
-                <td>13,174.4</td>
+                <td>227,712</td>
               
               
-                <td>57.6</td>
+                <td>11,732.2</td>
               
-                <td>31.2</td>
+                <td>542.7</td>
               
-                <td>1.0</td>
+                <td>0.1</td>
               
-                <td>57.2</td>
+                <td>12,275.0</td>
+              
+              
+                <td>54.8</td>
+              
+                <td>52.4</td>
+              
+                <td>1.3</td>
+              
+                <td>54.7</td>
               
             </tr>
           
@@ -717,40 +710,40 @@ th.iloom-col-filter-active::after {
               
               <td class="lbl">비재고</td>
               
-                <td>718</td>
+                <td>840</td>
               
-                <td>104</td>
-              
-                <td>1</td>
-              
-                <td>823</td>
-              
-              
-                <td>19,742</td>
-              
-                <td>1,596</td>
+                <td>71</td>
               
                 <td>1</td>
               
-                <td>21,339</td>
+                <td>912</td>
               
               
-                <td>909.9</td>
+                <td>22,631</td>
               
-                <td>101.5</td>
+                <td>678</td>
+              
+                <td>1</td>
+              
+                <td>23,310</td>
+              
+              
+                <td>1,096.1</td>
+              
+                <td>36.1</td>
               
                 <td>0.0</td>
               
-                <td>1,011.4</td>
+                <td>1,132.2</td>
               
               
-                <td>27.5</td>
+                <td>26.9</td>
               
-                <td>15.3</td>
+                <td>9.5</td>
               
                 <td>1.0</td>
               
-                <td>25.9</td>
+                <td>25.6</td>
               
             </tr>
           
@@ -759,40 +752,40 @@ th.iloom-col-filter-active::after {
               
               <td class="lbl">소계</td>
               
-                <td>4,813</td>
+                <td>4,891</td>
               
-                <td>163</td>
+                <td>181</td>
               
-                <td>2</td>
+                <td>4</td>
               
-                <td>4,978</td>
-              
-              
-                <td>255,558</td>
-              
-                <td>3,437</td>
-              
-                <td>2</td>
-              
-                <td>258,997</td>
+                <td>5,076</td>
               
               
-                <td>13,791.7</td>
+                <td>244,577</td>
               
-                <td>394.0</td>
+                <td>6,440</td>
               
-                <td>0.0</td>
+                <td>5</td>
               
-                <td>14,185.8</td>
+                <td>251,022</td>
               
               
-                <td>53.1</td>
+                <td>12,828.3</td>
               
-                <td>21.1</td>
+                <td>578.8</td>
               
-                <td>1.0</td>
+                <td>0.1</td>
               
-                <td>52.0</td>
+                <td>13,407.2</td>
+              
+              
+                <td>50.0</td>
+              
+                <td>35.6</td>
+              
+                <td>1.2</td>
+              
+                <td>49.5</td>
               
             </tr>
           
@@ -804,66 +797,66 @@ th.iloom-col-filter-active::after {
               
                 
                 
-                  <td class="neg">▼62</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼42</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼1</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼105</td>
-                
-              
-            
-              
-                
-                
-                  <td class="pos">▲2,607</td>
-                
-              
-                
-                
-                  <td class="neg">▼2,030</td>
-                
-              
-                
-                
-                  <td class="neg">▼1</td>
-                
-              
-                
-                
-                  <td class="pos">▲576</td>
+                  <td class="zero">–</td>
                 
               
             
               
                 
                 
-                  <td class="pos">▲99.4</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼31.0</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="neg">▼0.0</td>
+                  <td class="zero">–</td>
                 
               
                 
                 
-                  <td class="pos">▲68.4</td>
+                  <td class="zero">–</td>
+                
+              
+            
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
+                
+              
+                
+                
+                  <td class="zero">–</td>
                 
               
             
@@ -871,22 +864,22 @@ th.iloom-col-filter-active::after {
             
               
               
-                <td class="pos">▲1.2</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="neg">▼5.6</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="zero">·</td>
+                <td class="zero">–</td>
               
             
               
               
-                <td class="pos">▲1.2</td>
+                <td class="zero">–</td>
               
             
           </tr>
@@ -903,45 +896,15 @@ th.iloom-col-filter-active::after {
     <p class="ss-sec-title">양지센터 등급별 재고현황</p>
     <p class="ss-sec-desc">
       운영등급 × 사용구분 · 공급처 4분류(supply 대시보드 기준) · 재고금액 단위: 원
-      · 전월비 기준 2026-06
+      · <span class="badge-prev">전월 스냅샷 없음 (다음 달부터 표시)</span>
     </p>
 
     
     
     <div class="ss-summary">
       <div class="ss-sum-title">전월 대비
-        (2026-06 → 2026-07) · 등급별 변동 분석
+        — 전월 스냅샷 없음 (다음 달부터 표시)
       </div>
-      
-      <div class="ss-sum-grid">
-        <div class="ss-sum-item">
-          <span class="ss-sum-label">총 재고금액</span>
-          <span class="ss-sum-metric"><b>14,185.8</b>백만
-            
-            <span class="pos">▲68.4백만 (+0.5%)</span>
-          </span>
-        </div>
-      </div>
-      <div class="ss-movers">
-        <span class="ss-movers-label">변동 주도 등급</span>
-        
-          <span class="ss-mover pos">A ▲140백만</span>
-        
-          <span class="ss-mover neg">Z ▼123백만</span>
-        
-          <span class="ss-mover pos">O ▲66백만</span>
-        
-          <span class="ss-mover pos">N ▲55백만</span>
-        
-          <span class="ss-mover neg">C ▼51백만</span>
-        
-      </div>
-      
-      <div class="ss-cause">
-        <div><b>원인</b> · 전체 0.5% 증가 — 재고 순증가(입고&gt;출고) 추정 · A↑·Z↓ 상쇄 → 등급 재분류 가능성</div>
-        
-      </div>
-      
       
     </div>
 
@@ -974,25 +937,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>987,544,400</td>
+              <td>857,277,600</td>
             
-              <td>1,524,482,000</td>
+              <td>1,578,928,700</td>
             
-              <td>2,924,645,770</td>
+              <td>2,562,961,600</td>
             
-              <td>494,381,190</td>
+              <td>400,799,700</td>
             
-            <td>5,931,053,360</td>
-            <td>41.8%</td>
+            <td>5,399,967,600</td>
+            <td>40.3%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                140,144,100
-              </td>
-              <td class="pos">
-                ▲0.8%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1004,25 +962,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>433,386,730</td>
+              <td>406,076,390</td>
             
-              <td>460,101,860</td>
+              <td>473,467,930</td>
             
-              <td>1,398,442,410</td>
+              <td>1,331,615,830</td>
             
-              <td>111,838,390</td>
+              <td>100,553,550</td>
             
-            <td>2,403,769,390</td>
-            <td>16.9%</td>
+            <td>2,311,713,700</td>
+            <td>17.2%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -12,107,680
-              </td>
-              <td class="neg">
-                ▼0.2%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1034,25 +987,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>330,791,000</td>
+              <td>313,499,800</td>
             
-              <td>362,487,900</td>
+              <td>384,996,600</td>
             
-              <td>1,871,225,695</td>
+              <td>1,919,206,735</td>
             
-              <td>410,437,370</td>
+              <td>444,410,560</td>
             
-            <td>2,974,941,965</td>
-            <td>21.0%</td>
+            <td>3,062,113,695</td>
+            <td>22.8%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -50,831,660
-              </td>
-              <td class="neg">
-                ▼0.5%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1064,25 +1012,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>6,134,700</td>
+              <td>10,569,500</td>
             
               <td>46,035,200</td>
             
-              <td>99,243,540</td>
+              <td>108,317,960</td>
             
               <td>-</td>
             
-            <td>151,413,440</td>
-            <td>1.1%</td>
+            <td>164,922,660</td>
+            <td>1.2%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -5,311,200
-              </td>
-              <td class="neg">
-                ▼0.0%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1094,25 +1037,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>118,169,570</td>
+              <td>130,493,860</td>
             
-              <td>94,536,300</td>
+              <td>83,922,300</td>
             
-              <td>655,585,262</td>
+              <td>103,202,090</td>
             
-              <td>294,793,900</td>
+              <td>231,352,000</td>
             
-            <td>1,163,085,032</td>
-            <td>8.2%</td>
+            <td>548,970,250</td>
+            <td>4.1%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                40,429,453
-              </td>
-              <td class="pos">
-                ▲0.2%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1120,25 +1058,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">개발</td>
             
-              <td>31,705,540</td>
+              <td>23,437,300</td>
             
               <td>81,441,600</td>
             
-              <td>49,022,740</td>
+              <td>356,396,683</td>
             
               <td>-</td>
             
-            <td>162,169,880</td>
-            <td>1.1%</td>
+            <td>461,275,583</td>
+            <td>3.4%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                14,120,850
-              </td>
-              <td class="pos">
-                ▲0.1%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1150,25 +1083,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>80,062,100</td>
+              <td>43,326,900</td>
             
               <td>-</td>
             
-              <td>16,586,350</td>
+              <td>17,809,250</td>
             
               <td>-</td>
             
-            <td>96,648,450</td>
-            <td>0.7%</td>
+            <td>61,136,150</td>
+            <td>0.5%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                14,923,200
-              </td>
-              <td class="pos">
-                ▲0.1%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1176,25 +1104,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">개발</td>
             
-              <td>56,400,000</td>
+              <td>6,000,000</td>
             
-              <td>53,799,600</td>
+              <td>55,559,400</td>
             
-              <td>16,872,915</td>
+              <td>14,610,315</td>
             
               <td>-</td>
             
-            <td>127,072,515</td>
-            <td>0.9%</td>
+            <td>76,169,715</td>
+            <td>0.6%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                51,405,600
-              </td>
-              <td class="pos">
-                ▲0.4%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1208,23 +1131,18 @@ th.iloom-col-filter-active::after {
             
               <td>-</td>
             
+              <td>34,547,200</td>
+            
+              <td>27,211,700</td>
+            
               <td>-</td>
             
-              <td>8,348,600</td>
-            
-              <td>-</td>
-            
-            <td>8,348,600</td>
-            <td>0.1%</td>
+            <td>61,758,900</td>
+            <td>0.5%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -2,062,500
-              </td>
-              <td class="neg">
-                ▼0.0%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1236,21 +1154,16 @@ th.iloom-col-filter-active::after {
             
               <td>-</td>
             
-              <td>7,048,900</td>
+              <td>3,387,000</td>
             
               <td>-</td>
             
-            <td>7,048,900</td>
+            <td>3,387,000</td>
             <td>0.0%</td>
             <td>0.00</td>
             
             
-              <td class="pos">
-                664,000
-              </td>
-              <td class="pos">
-                ▲0.0%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1262,25 +1175,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">사용</td>
             
-              <td>122,117,890</td>
+              <td>155,577,300</td>
             
-              <td>150,615,500</td>
+              <td>129,432,170</td>
             
-              <td>660,844,730</td>
+              <td>815,006,730</td>
             
-              <td>128,885,840</td>
+              <td>117,684,480</td>
             
-            <td>1,062,463,960</td>
-            <td>7.5%</td>
+            <td>1,217,700,680</td>
+            <td>9.1%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -25,782,300
-              </td>
-              <td class="neg">
-                ▼0.2%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1288,25 +1196,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">개발</td>
             
-              <td>14,307,330</td>
+              <td>9,856,630</td>
             
               <td>136,100</td>
             
-              <td>79,225,770</td>
+              <td>24,902,790</td>
             
-              <td>4,079,000</td>
+              <td>3,105,000</td>
             
-            <td>97,748,200</td>
-            <td>0.7%</td>
+            <td>38,000,520</td>
+            <td>0.3%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -96,721,410
-              </td>
-              <td class="neg">
-                ▼0.7%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1314,25 +1217,20 @@ th.iloom-col-filter-active::after {
             
             <td class="lbl">단종</td>
             
-              <td>-</td>
+              <td>11,100</td>
             
               <td>-</td>
             
-              <td>46,300</td>
+              <td>94,700</td>
             
               <td>-</td>
             
-            <td>46,300</td>
+            <td>105,800</td>
             <td>0.0%</td>
             <td>0.00</td>
             
             
-              <td class="neg">
-                -11,100
-              </td>
-              <td class="neg">
-                ▼0.0%p
-              </td>
+              <td class="zero">–</td><td class="zero">–</td>
             
           </tr>
         
@@ -1340,13 +1238,12 @@ th.iloom-col-filter-active::after {
         
         <tr class="total">
           <td class="lbl" colspan="2">합 계</td>
-          <td>2,180,619,260</td><td>2,773,636,060</td><td>7,787,138,982</td><td>1,444,415,690</td>
-          <td>14,185,809,992</td>
+          <td>1,956,126,380</td><td>2,868,467,200</td><td>7,284,723,383</td><td>1,297,905,290</td>
+          <td>13,407,222,253</td>
           <td>100%</td>
           <td>0.00</td>
           
-            <td class="pos">68,396,443</td>
-            <td class="pos" title="총 재고금액 증감률">▲0.5%</td>
+            <td class="zero">–</td><td class="zero">–</td>
           
         </tr>
       </tbody>
@@ -1824,19 +1721,21 @@ window.IloomCode = (function() {
 })();
 </script>
 
-
 <script>
-const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
-const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
-const SS_USER_KEY='iloom_ep_session';
+// ── 인증 ─────────────────────────────────────────────────────────
+const EP_DEFAULT_IDS = ['k94rainy','wonsuk_kim','nakwon_choi'];
+const LS_EP_IDS_KEY  = 'iloom_allowed_ep_ids';
+const SS_USER_KEY    = 'iloom_ep_session';
 function getAllowedIds(){try{const s=JSON.parse(localStorage.getItem(LS_EP_IDS_KEY)||'null');if(Array.isArray(s))return[...new Set([...EP_DEFAULT_IDS,...s])];}catch(e){}return[...EP_DEFAULT_IDS];}
 function getLoggedInUser(){return sessionStorage.getItem(SS_USER_KEY)||null;}
 function showLoginModal(){const saved=localStorage.getItem('iloom_saved_ep_id')||'';document.getElementById('loginInput').value=saved;const chk=document.getElementById('saveIdChk');if(chk)chk.checked=!!saved;document.getElementById('loginError').textContent='';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('loginInput').focus(),50);}
 function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
 function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}if(getAllowedIds().includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
 function doLogout(){sessionStorage.removeItem(SS_USER_KEY);updateAuthUI();}
-function updateAuthUI(){const user=getLoggedInUser();const ov=document.getElementById('authOverlay');if(ov)ov.style.display=user?'none':'flex';const bl=document.getElementById('btnNavLogin');if(bl)bl.style.display=user?'none':'';const bo=document.getElementById('btnNavLogout');if(bo)bo.style.display=user?'':'none';const chip=document.getElementById('navUserChip');if(chip){chip.style.display=user?'':'none';chip.textContent=user?('👤 '+user):'';}document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'':'none';});}
+function updateAuthUI(){const user=getLoggedInUser();document.getElementById('authOverlay').style.display=user?'none':'flex';document.getElementById('btnNavLogin').style.display=user?'none':'';document.getElementById('btnNavLogout').style.display=user?'':'none';const chip=document.getElementById('navUserChip');chip.style.display=user?'':'none';chip.textContent=user?`👤 ${user}`:'';const btnSheet=document.getElementById('btnSheet');if(btnSheet)btnSheet.style.display=user?'':'none';document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'inline':'none';});}
 updateAuthUI();
 </script>
+
+
 </body>
 </html>
