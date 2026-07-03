@@ -80,6 +80,21 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
       <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
       <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
     </div>
+    <button type="button" onclick="hideLoginModal();showRequestModal()" style="padding:6px 0;background:none;border:none;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">EP ID 권한신청</button>
+  </div>
+</div>
+<div id="requestModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideRequestModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">권한신청</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">사용할 EP ID를 입력하면 관리자 승인 후 접속할 수 있습니다.</p>
+    <input id="requestInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')submitAccessRequest()">
+    <div id="requestMsg" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideRequestModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="submitAccessRequest()" style="padding:8px 22px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">신청</button>
+    </div>
   </div>
 </div>
 
@@ -106,12 +121,20 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
 
 <div class="admin-wrap">
 
+  <!-- 권한신청 내역 -->
+  <div class="admin-section">
+    <h3>신청내역</h3>
+    <p class="desc">'권한신청'으로 접수된 EP ID입니다. 승인하면 모든 사용자·브라우저에서 즉시 로그인할 수 있습니다.</p>
+    <div id="reqList" class="id-list"></div>
+  </div>
+
   <!-- EP ID 관리 -->
   <div class="admin-section">
     <h3>EP ID 관리</h3>
     <div class="warn-box">
       ⚠ ID 목록은 <strong>각 브라우저의 로컬 스토리지</strong>에 저장됩니다.
       추가한 ID는 이 브라우저에서만 유효합니다. 다른 PC에서 허용하려면 해당 PC에서도 추가하세요.
+      전역으로 적용하려면 위 '신청내역'에서 승인하세요.
     </div>
     <p class="desc">기본 ID (k94rainy, wonsuk_kim, nakwon_choi)는 삭제할 수 없습니다.</p>
     <div id="idList" class="id-list"></div>
@@ -156,6 +179,32 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
 const EP_DEFAULT_IDS = ['k94rainy','wonsuk_kim','nakwon_choi'];
 const LS_EP_IDS_KEY  = 'iloom_allowed_ep_ids';
 const SS_USER_KEY    = 'iloom_ep_session';
+const SHEET_ID        = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxD11tQrCBou3cjIVfrvaS1HA3kmzn9TuKmX6FImU2EGYyAKQ9WdfIRSSwjWrF00uaTBQ/exec';
+
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function fetchSheet(name) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const text = await resp.text();
+  const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
+  if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
+  const cols = json.table.cols.map(c => c.label);
+  return (json.table.rows || []).map(row => {
+    const obj = {};
+    (row.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
+    return obj;
+  });
+}
+
+async function fetchApprovedIds() {
+  try {
+    const rows = await fetchSheet('권한신청');
+    return rows.filter(r => String(r['상태'] || '').trim() === '승인').map(r => String(r['EP ID'] || '').trim()).filter(Boolean);
+  } catch(e) { return []; }
+}
 
 function getAllowedIds() {
   try {
@@ -186,10 +235,30 @@ function showLoginModal() {
 }
 function hideLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
 
-function doLogin() {
+function showRequestModal() {
+  document.getElementById('requestInput').value = '';
+  document.getElementById('requestMsg').textContent = '';
+  document.getElementById('requestModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('requestInput').focus(), 50);
+}
+function hideRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
+function submitAccessRequest() {
+  const val = document.getElementById('requestInput').value.trim();
+  const msg = document.getElementById('requestMsg');
+  if (!val) { msg.style.color='#c80a1e'; msg.textContent = 'EP ID를 입력하세요.'; return; }
+  fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({action:'requestAccess', epId: val})});
+  msg.style.color='#059669';
+  msg.textContent = '신청이 접수되었습니다. 관리자 승인 후 이용 가능합니다.';
+  setTimeout(hideRequestModal, 1800);
+}
+
+async function doLogin() {
   const val = document.getElementById('loginInput').value.trim();
   if (!val) { document.getElementById('loginError').textContent = 'ID를 입력하세요.'; return; }
-  if (getAllowedIds().includes(val)) {
+  document.getElementById('loginError').textContent = '확인 중...';
+  const approved = await fetchApprovedIds();
+  const allIds = [...new Set([...getAllowedIds(), ...approved])];
+  if (allIds.includes(val)) {
     sessionStorage.setItem(SS_USER_KEY, val);
     const chk = document.getElementById('saveIdChk');
     if (chk && chk.checked) localStorage.setItem('iloom_saved_ep_id', val);
@@ -213,7 +282,48 @@ function updateAuthUI() {
   const btnSheet = document.getElementById('btnSheet');
   if (btnSheet) btnSheet.style.display = user ? '' : 'none';
   document.querySelectorAll('.auth-hide').forEach(el => { el.style.display = user ? 'inline' : 'none'; });
-  if (user) renderAdminPanel();
+  if (user) { renderAdminPanel(); loadRequests(); }
+}
+
+// ── 신청내역 ─────────────────────────────────────────────────────
+async function loadRequests() {
+  const listEl = document.getElementById('reqList');
+  try {
+    const rows = await fetchSheet('권한신청');
+    renderRequests(rows);
+  } catch(e) {
+    listEl.innerHTML = `<p class="desc" style="color:#c80a1e">신청내역 로딩 실패: ${esc(e.message)}</p>`;
+  }
+}
+
+function renderRequests(rows) {
+  const listEl = document.getElementById('reqList');
+  if (!rows.length) { listEl.innerHTML = '<p class="desc">신청 내역이 없습니다.</p>'; return; }
+  listEl.innerHTML = rows.slice().reverse().map(r => {
+    const epId = String(r['EP ID'] || '').trim();
+    const status = String(r['상태'] || '대기').trim();
+    const applied = String(r['신청일시'] || '');
+    const badge = status === '승인' ? '<span style="color:#059669;font-weight:700">승인</span>'
+      : status === '거절' ? '<span style="color:#c80a1e;font-weight:700">거절</span>'
+      : '<span style="color:#d97706;font-weight:700">대기</span>';
+    const actions = status === '대기'
+      ? `<button class="del-btn" style="background:#d1fae5;color:#065f46" onclick="reviewRequest('${esc(epId)}','approve',this)">승인</button>
+         <button class="del-btn" onclick="reviewRequest('${esc(epId)}','reject',this)">거절</button>`
+      : '';
+    return `<div class="id-item">
+      <span>${esc(epId)} <span style="font-size:10px;color:#9CA3AF">${esc(applied)}</span> ${badge}</span>
+      <span style="display:flex;gap:6px">${actions}</span>
+    </div>`;
+  }).join('');
+}
+
+function reviewRequest(epId, decision, btn) {
+  if (!confirm(`${epId} 를 ${decision === 'approve' ? '승인' : '거절'} 처리하시겠습니까?`)) return;
+  const wrap = btn.closest('.id-item');
+  if (wrap) wrap.style.opacity = '.4';
+  fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors',
+    body: JSON.stringify({action: decision === 'approve' ? 'approveAccess' : 'rejectAccess', epId})});
+  setTimeout(loadRequests, 1200);
 }
 
 // ── 관리 패널 ─────────────────────────────────────────────────────

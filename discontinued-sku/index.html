@@ -68,6 +68,21 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
       <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
     </div>
+    <button type="button" onclick="hideLoginModal();showRequestModal()" style="padding:6px 0;background:none;border:none;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">EP ID 권한신청</button>
+  </div>
+</div>
+<div id="requestModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideRequestModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">권한신청</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">사용할 EP ID를 입력하면 관리자 승인 후 접속할 수 있습니다.</p>
+    <input id="requestInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')submitAccessRequest()">
+    <div id="requestMsg" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideRequestModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="submitAccessRequest()" style="padding:8px 22px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">신청</button>
+    </div>
   </div>
 </div>
 
@@ -100,6 +115,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
 <a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
 <a class="iloom-tab auth-hide" href="../matching/">짝맞추기</a>
+<a class="iloom-tab auth-hide" href="../admin/">관리</a>
     </div>
     <div class="nav-auth">
       <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
@@ -7496,10 +7512,14 @@ const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
 const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
 const SS_USER_KEY='iloom_ep_session';
 function getAllowedIds(){try{const s=JSON.parse(localStorage.getItem(LS_EP_IDS_KEY)||'null');if(Array.isArray(s))return[...new Set([...EP_DEFAULT_IDS,...s])];}catch(e){}return[...EP_DEFAULT_IDS];}
+async function fetchApprovedIds(){try{const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent('권한신청')}`;const resp=await fetch(url);if(!resp.ok)return[];const text=await resp.text();const json=JSON.parse(text.replace(/^[^(]+\(/,'').replace(/\);\s*$/,''));if(json.status==='error')return[];const cols=json.table.cols.map(c=>c.label);const rows=(json.table.rows||[]).map(row=>{const o={};(row.c||[]).forEach((c,i)=>{o[cols[i]]=c?(c.v??''):'';});return o;});return rows.filter(r=>String(r['상태']||'').trim()==='승인').map(r=>String(r['EP ID']||'').trim()).filter(Boolean);}catch(e){return[];}}
 function getLoggedInUser(){return sessionStorage.getItem(SS_USER_KEY)||null;}
 function showLoginModal(){const saved=localStorage.getItem('iloom_saved_ep_id')||'';document.getElementById('loginInput').value=saved;const chk=document.getElementById('saveIdChk');if(chk)chk.checked=!!saved;document.getElementById('loginError').textContent='';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('loginInput').focus(),50);}
 function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
-function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}if(getAllowedIds().includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
+function showRequestModal(){document.getElementById('requestInput').value='';document.getElementById('requestMsg').textContent='';document.getElementById('requestModal').style.display='flex';setTimeout(()=>document.getElementById('requestInput').focus(),50);}
+function hideRequestModal(){document.getElementById('requestModal').style.display='none';}
+function submitAccessRequest(){const v=document.getElementById('requestInput').value.trim();const msg=document.getElementById('requestMsg');if(!v){msg.style.color='#c80a1e';msg.textContent='EP ID를 입력하세요.';return;}fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'requestAccess',epId:v})});msg.style.color='#059669';msg.textContent='신청이 접수되었습니다. 관리자 승인 후 이용 가능합니다.';setTimeout(hideRequestModal,1800);}
+async function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}document.getElementById('loginError').textContent='확인 중...';const approved=await fetchApprovedIds();const allIds=[...new Set([...getAllowedIds(),...approved])];if(allIds.includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
 function doLogout(){sessionStorage.removeItem(SS_USER_KEY);updateAuthUI();}
 function updateAuthUI(){const user=getLoggedInUser();const ov=document.getElementById('authOverlay');if(ov)ov.style.display=user?'none':'flex';const bl=document.getElementById('btnNavLogin');if(bl)bl.style.display=user?'none':'';const bo=document.getElementById('btnNavLogout');if(bo)bo.style.display=user?'':'none';const chip=document.getElementById('navUserChip');if(chip){chip.style.display=user?'':'none';chip.textContent=user?('👤 '+user):'';}document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'inline':'none';});}
 updateAuthUI();

@@ -16,6 +16,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;font-weight:500;white-space:nowrap}
 .iloom-tab:hover{color:#333}
 .iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.auth-hide{display:none}
 
 /* 컨트롤 바 */
 .ctrl-bar{background:#fff;border-bottom:1px solid #E5E7EB;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -217,6 +218,22 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="hideLoginModal()">취소</button>
       <button class="btn-modal-ok" onclick="doLogin()">로그인</button>
+    </div>
+    <button type="button" onclick="hideLoginModal();showRequestModal()" style="padding:6px 0;background:none;border:none;color:#6366f1;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:underline">EP ID 권한신청</button>
+  </div>
+</div>
+
+<!-- 권한신청 모달 -->
+<div id="requestModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)hideRequestModal()">
+  <div class="modal-box">
+    <h3>권한신청</h3>
+    <p>사용할 EP ID를 입력하면 관리자 승인 후 접속할 수 있습니다.</p>
+    <input id="requestInput" class="modal-input" type="text" placeholder="EP ID" autocomplete="off"
+           onkeydown="if(event.key==='Enter')submitAccessRequest()">
+    <div id="requestMsg" class="modal-error"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="hideRequestModal()">취소</button>
+      <button class="btn-modal-ok" onclick="submitAccessRequest()">신청</button>
     </div>
   </div>
 </div>
@@ -1136,6 +1153,25 @@ function setFilter(f) {
 const EP_DEFAULT_IDS = ['k94rainy', 'wonsuk_kim', 'nakwon_choi'];
 const LS_EP_IDS_KEY  = 'iloom_allowed_ep_ids';
 const SS_USER_KEY    = 'iloom_ep_session';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxD11tQrCBou3cjIVfrvaS1HA3kmzn9TuKmX6FImU2EGYyAKQ9WdfIRSSwjWrF00uaTBQ/exec';
+
+async function fetchApprovedIds() {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent('권한신청')}`;
+    const resp = await fetch(url);
+    if (!resp.ok) return [];
+    const text = await resp.text();
+    const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
+    if (json.status === 'error') return [];
+    const cols = json.table.cols.map(c => c.label);
+    const rows = (json.table.rows || []).map(row => {
+      const o = {};
+      (row.c || []).forEach((c, i) => { o[cols[i]] = c ? (c.v ?? '') : ''; });
+      return o;
+    });
+    return rows.filter(r => String(r['상태'] || '').trim() === '승인').map(r => String(r['EP ID'] || '').trim()).filter(Boolean);
+  } catch(e) { return []; }
+}
 
 function getAllowedIds() {
   try {
@@ -1175,10 +1211,32 @@ function hideLoginModal() {
   document.getElementById('loginModal').style.display = 'none';
 }
 
-function doLogin() {
+function showRequestModal() {
+  document.getElementById('requestInput').value = '';
+  document.getElementById('requestMsg').textContent = '';
+  document.getElementById('requestModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('requestInput').focus(), 50);
+}
+function hideRequestModal() {
+  document.getElementById('requestModal').style.display = 'none';
+}
+function submitAccessRequest() {
+  const val = document.getElementById('requestInput').value.trim();
+  const msg = document.getElementById('requestMsg');
+  if (!val) { msg.textContent = 'EP ID를 입력하세요.'; return; }
+  fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({action:'requestAccess', epId: val})});
+  msg.style.color = '#059669';
+  msg.textContent = '신청이 접수되었습니다. 관리자 승인 후 이용 가능합니다.';
+  setTimeout(hideRequestModal, 1800);
+}
+
+async function doLogin() {
   const val = document.getElementById('loginInput').value.trim();
   if (!val) { document.getElementById('loginError').textContent = 'ID를 입력하세요.'; return; }
-  if (getAllowedIds().includes(val)) {
+  document.getElementById('loginError').textContent = '확인 중...';
+  const approved = await fetchApprovedIds();
+  const allIds = [...new Set([...getAllowedIds(), ...approved])];
+  if (allIds.includes(val)) {
     sessionStorage.setItem(SS_USER_KEY, val);
     const chk = document.getElementById('saveIdChk');
     if (chk && chk.checked) localStorage.setItem('iloom_saved_ep_id', val);
@@ -1214,7 +1272,7 @@ function updateAuthUI() {
 
   // 네비 탭 (아울렛 재고 제외 auth-hide)
   document.querySelectorAll('.auth-hide').forEach(el => {
-    el.style.display = user ? '' : 'none';
+    el.style.display = user ? 'inline' : 'none';
   });
 
   // 메인 컨트롤 바 + 메인 컨텐츠
