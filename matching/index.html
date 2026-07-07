@@ -347,6 +347,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <tr>
         <th>단품조합</th><th>단품명칭</th><th>용도구분</th><th>시리즈</th><th>공급업체</th>
         <th>세트수<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">안분분할</span></th>
+        <th>월평균<br>출고수량</th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">현재고</span></th>
         <th>소진예정<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">총필요수량</span></th>
         <th>잔여재고</th><th>추가생산</th><th>폐기예상</th>
@@ -354,7 +355,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       </tr>
     </thead>
     <tbody id="itemTableBody">
-      <tr><td colspan="14" class="loading">단품별 탭을 선택하면 표시됩니다.</td></tr>
+      <tr><td colspan="15" class="loading">단품별 탭을 선택하면 표시됩니다.</td></tr>
     </tbody>
   </table>
 </div>
@@ -899,7 +900,7 @@ function downloadExcel() {
 
   // ── Sheet 2: 단품결과 (단품별 집계) ────────────────────────────────────────
   const itemHeaders = [
-    '단품조합','단품명칭','용도구분','시리즈','공급업체','중복세트수',
+    '단품조합','단품명칭','용도구분','시리즈','공급업체','중복세트수','월평균출고량',
     '가용재고','소진예정','잔여재고','추가생산','폐기예상','추가생산금액','폐기예상금액','손실절감액',
   ];
   const exItems = {};
@@ -920,6 +921,7 @@ function downloadExcel() {
       exItems[dc] = {
         단품명칭: r[COL.단품명칭] || '', 용도구분: r[COL.용도구분] || '',
         시리즈: r[COL.시리즈] || '', 공급업체: r[COL.공급업체] || '',
+        월평균출고량: parseFloat(r[COL.월평균출고량]) || 0,
         ipgoD, gongD, 가용재고: avail,
         세트수: 0, 총필요: 0,
       };
@@ -941,7 +943,7 @@ function downloadExcel() {
     exSumWasteAmt += 총폐기금액;
     exSumLossGain += 손실절감액;
     return [
-      dc, d.단품명칭, d.용도구분, d.시리즈, d.공급업체, d.세트수,
+      dc, d.단품명칭, d.용도구분, d.시리즈, d.공급업체, d.세트수, d.월평균출고량,
       d.가용재고, Math.round(d.총필요), Math.round(잔여재고),
       Math.round(총추가), Math.round(총폐기),
       총추가금액, 총폐기금액, 손실절감액,
@@ -949,14 +951,14 @@ function downloadExcel() {
   });
   // 총합 행
   itemRows.push([
-    '합계', '', '', '', '', '',
+    '합계', '', '', '', '', '', '',
     '', '', '',
     Math.round(exSumAdd), Math.round(exSumWaste),
     Math.round(exSumAddAmt), Math.round(exSumWasteAmt), Math.round(exSumLossGain),
   ]);
   const ws2 = XLSX.utils.aoa_to_sheet([itemHeaders, ...itemRows]);
   ws2['!cols'] = [
-    {wch:14},{wch:22},{wch:6},{wch:12},{wch:14},{wch:8},
+    {wch:14},{wch:22},{wch:6},{wch:12},{wch:14},{wch:8},{wch:10},
     {wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12},{wch:12},
   ];
 
@@ -1051,7 +1053,7 @@ function switchTab(view) {
 function renderItemTable() {
   const tbody = document.getElementById('itemTableBody');
   if (!allData.length) {
-    tbody.innerHTML = '<tr><td colspan="14" class="loading">먼저 짝맞추기를 실행하거나 결과를 새로고침하세요.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="15" class="loading">먼저 짝맞추기를 실행하거나 결과를 새로고침하세요.</td></tr>';
     return;
   }
 
@@ -1076,6 +1078,7 @@ function renderItemTable() {
         용도구분:   r[COL.용도구분]   || '',
         시리즈:   r[COL.시리즈]   || '',
         공급업체: r[COL.공급업체] || '',
+        월평균출고량: parseFloat(r[COL.월평균출고량]) || 0,
         가용재고: parseFloat(r[COL.가용재고]) || 0,
         ipgoD, gongD,
         세트수: 0, 총필요: 0,
@@ -1087,7 +1090,7 @@ function renderItemTable() {
 
   const sorted = Object.entries(items).sort((a, b) => a[0].localeCompare(b[0]));
   if (!sorted.length) {
-    tbody.innerHTML = '<tr><td colspan="14" class="loading">단종 대상 단품이 없습니다.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="15" class="loading">단종 대상 단품이 없습니다.</td></tr>';
     return;
   }
 
@@ -1121,6 +1124,7 @@ function renderItemTable() {
       <td>${d.시리즈}</td>
       <td>${d.공급업체}</td>
       <td style="text-align:center">${d.세트수 > 1 ? `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:11px;font-weight:700">${d.세트수}</span>` : `<span style="color:#9CA3AF;font-size:11px">1</span>`}</td>
+      <td>${fmt(d.월평균출고량)}</td>
       <td>${fmt(d.가용재고)}</td>
       <td>${fmt(Math.round(d.총필요))}</td>
       <td>${remStr}</td>
