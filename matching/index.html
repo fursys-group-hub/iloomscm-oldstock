@@ -1139,9 +1139,9 @@ function renderItemTable() {
     </tr>`;
   }
 
-  // 총합 행
-  html += `<tr style="background:#1e3a5f;color:#fff;font-weight:700;font-size:12px">
-    <td colspan="9" style="text-align:right;padding:6px 10px;color:#93c5fd">▶ 합계</td>
+  // 총합 행 (맨 위 고정 표시)
+  const totalsHtml = `<tr style="background:#1e3a5f;color:#fff;font-weight:700;font-size:12px">
+    <td colspan="10" style="text-align:right;padding:6px 10px;color:#93c5fd">▶ 합계</td>
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumAdd))}</td>
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumWaste))}</td>
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumAddAmt))}</td>
@@ -1149,7 +1149,7 @@ function renderItemTable() {
     <td style="text-align:right;padding:6px 8px">${fmt(Math.round(sumLossGain))}</td>
   </tr>`;
 
-  tbody.innerHTML = html;
+  tbody.innerHTML = totalsHtml + html;
 }
 
 // 예상판매 헤더 동기화
