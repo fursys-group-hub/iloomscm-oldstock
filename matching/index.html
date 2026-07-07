@@ -302,7 +302,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <button class="filter-btn" id="btnJin" onclick="setFilter('진행')" style="font-size:12px">진행만</button>
   <button class="filter-btn" id="btnJung" onclick="setFilter('중단')" style="font-size:12px">중단만</button>
   <button class="filter-btn" id="btnJong" onclick="setFilter('단종')" style="font-size:12px">단종품만</button>
-  <button class="filter-btn" id="btnSetSort" onclick="toggleSetSort()" style="font-size:12px">세트조합 정렬</button>
+  <button class="filter-btn" id="btnSetSort" onclick="toggleSetSort()" style="font-size:12px">세트조합 정렬 ⇅</button>
   <button class="btn-reset-all" id="btnResetAll" onclick="resetAllOverrides()">↺ 소진합 초기화</button>
   <button class="btn-excel" onclick="downloadExcel()">↓ 엑셀 다운로드</button>
   <span id="resultCount"></span>
@@ -1171,7 +1171,7 @@ function toggleSetSort() {
   btn.classList.toggle('active-filter', !!setSortDir);
   btn.textContent = setSortDir === 'asc' ? '세트조합 정렬 ▲'
     : setSortDir === 'desc' ? '세트조합 정렬 ▼'
-    : '세트조합 정렬';
+    : '세트조합 정렬 ⇅';
   filterTable();
 }
 
