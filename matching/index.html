@@ -322,7 +322,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th>세트조합</th><th>세트명칭</th><th>단품조합</th>
         <th>중복<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트수</span></th>
         <th>단품명칭</th>
-        <th>구성<br>수량</th><th>단종<br>여부</th><th>이원화</th><th>사용<br>구분</th>
+        <th>구성<br>수량</th><th>단종<br>여부</th><th>기준품목</th><th>사용<br>구분</th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">품목단위</span></th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
@@ -343,7 +343,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <table class="result-table" style="min-width:1100px">
     <thead>
       <tr>
-        <th>단품조합</th><th>단품명칭</th><th>이원화</th><th>시리즈</th><th>공급업체</th>
+        <th>단품조합</th><th>단품명칭</th><th>기준품목</th><th>시리즈</th><th>공급업체</th>
         <th>세트수<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">안분분할</span></th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">현재고</span></th>
         <th>소진예정<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">총필요수량</span></th>
@@ -402,7 +402,7 @@ const SHEET_NAME = '짝맞추기 결과';
 
 // 헤더 인덱스 (RESULT_HEADERS 순서와 동일, 29=입고단가 재계산전용, 30=사용구분)
 const COL = {
-  세트조합:0, 세트명칭:1, 단품조합:2, 단품명칭:3, 구성수량:4, 이원화:5,
+  세트조합:0, 세트명칭:1, 단품조합:2, 단품명칭:3, 구성수량:4, 기준품목:5,
   시리즈:6, 공급업체:7, 입고가:8, 공장도가:9, 가용재고:10, 안분재고:11,
   예상판매:12, 단종여부:13, 소진합:14, 필요수량:15, 과부족:16,
   추가생산:17, 폐기수량:18, 추가생산금액:19, 폐기금액:20,
@@ -775,7 +775,7 @@ function renderTable(rows) {
       <td>${r[COL.단품명칭] || ''}</td>
       <td>${fmt(r[COL.구성수량])}</td>
       <td>${isJJ ? '<span class="badge badge-jy">Y</span>' : '<span class="badge badge-jn">N</span>'}</td>
-      <td>${r[COL.이원화] === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
+      <td>${r[COL.기준품목] === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
       <td style="text-align:center;font-size:11px">${r[COL.사용구분] === '단종' ? '<span style="background:#fee2e2;color:#991b1b;border-radius:3px;padding:1px 5px;font-weight:600">단종</span>' : r[COL.사용구분] === '사용' ? '<span style="color:#059669;font-weight:600">사용</span>' : r[COL.사용구분] || ''}</td>
       <td>${fmt(r[COL.가용재고])}</td>
       <td>${isJJ ? fmt(r[COL.안분재고]) : '-'}</td>
@@ -888,7 +888,7 @@ function downloadExcel() {
 
   // ── Sheet 2: 단품결과 (단품별 집계) ────────────────────────────────────────
   const itemHeaders = [
-    '단품조합','단품명칭','이원화','시리즈','공급업체','중복세트수',
+    '단품조합','단품명칭','기준품목','시리즈','공급업체','중복세트수',
     '가용재고','소진예정','잔여재고','추가생산','폐기예상','추가생산금액','폐기예상금액','손실절감액',
   ];
   const exItems = {};
@@ -907,7 +907,7 @@ function downloadExcel() {
       : (parseFloat(r[COL.필요수량]) || 0);
     if (!exItems[dc]) {
       exItems[dc] = {
-        단품명칭: r[COL.단품명칭] || '', 이원화: r[COL.이원화] || 'N',
+        단품명칭: r[COL.단품명칭] || '', 기준품목: r[COL.기준품목] || 'N',
         시리즈: r[COL.시리즈] || '', 공급업체: r[COL.공급업체] || '',
         ipgoD, gongD, 가용재고: avail,
         세트수: 0, 총필요: 0,
@@ -930,7 +930,7 @@ function downloadExcel() {
     exSumWasteAmt += 총폐기금액;
     exSumLossGain += 손실절감액;
     return [
-      dc, d.단품명칭, d.이원화, d.시리즈, d.공급업체, d.세트수,
+      dc, d.단품명칭, d.기준품목, d.시리즈, d.공급업체, d.세트수,
       d.가용재고, Math.round(d.총필요), Math.round(잔여재고),
       Math.round(총추가), Math.round(총폐기),
       총추가금액, 총폐기금액, 손실절감액,
@@ -951,7 +951,7 @@ function downloadExcel() {
 
   // ── Sheet 3: 상세결과 (기존 전체 행) ────────────────────────────────────────
   const detailHeaders = [
-    '세트조합','세트명칭','단품조합','단품명칭','구성수량','이원화',
+    '세트조합','세트명칭','단품조합','단품명칭','구성수량','기준품목',
     '시리즈','공급업체','입고가','공장도가','가용재고','안분재고',
     '10개월예상판매','단종여부','소진합','필요수량','과부족',
     '추가생산','폐기예상수량','추가생산금액','폐기예상금액','잔여재고',
@@ -993,7 +993,7 @@ function downloadExcel() {
     }
     return [
       r[COL.세트조합], r[COL.세트명칭], r[COL.단품조합], r[COL.단품명칭],
-      r[COL.구성수량], r[COL.이원화], r[COL.시리즈], r[COL.공급업체],
+      r[COL.구성수량], r[COL.기준품목], r[COL.시리즈], r[COL.공급업체],
       r[COL.입고가], r[COL.공장도가], r[COL.가용재고],
       isJJ ? r[COL.안분재고] : '',
       r[COL.예상판매], r[COL.단종여부], 소진합_v,
@@ -1062,7 +1062,7 @@ function renderItemTable() {
     if (!items[dc]) {
       items[dc] = {
         단품명칭: r[COL.단품명칭] || '',
-        이원화:   r[COL.이원화]   || 'N',
+        기준품목:   r[COL.기준품목]   || 'N',
         시리즈:   r[COL.시리즈]   || '',
         공급업체: r[COL.공급업체] || '',
         가용재고: parseFloat(r[COL.가용재고]) || 0,
@@ -1106,7 +1106,7 @@ function renderItemTable() {
     html += `<tr class="item-row">
       <td class="code">${dc}</td>
       <td>${d.단품명칭}</td>
-      <td style="text-align:center">${d.이원화 === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
+      <td style="text-align:center">${d.기준품목 === 'Y' ? '<span class="badge badge-jn" style="background:#e0e7ff;color:#3730a3">Y</span>' : ''}</td>
       <td>${d.시리즈}</td>
       <td>${d.공급업체}</td>
       <td style="text-align:center">${d.세트수 > 1 ? `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:11px;font-weight:700">${d.세트수}</span>` : `<span style="color:#9CA3AF;font-size:11px">1</span>`}</td>
