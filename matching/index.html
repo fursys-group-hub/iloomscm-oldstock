@@ -717,6 +717,7 @@ function renderTable(rows) {
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.안분)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">안분기준</div></td>
         <td>${fmt(parseFloat(r[COL.예상판매]||0) / (parseFloat(r[COL.구성수량])||1))}</td>
+        <td></td>
         <td style="white-space:nowrap;padding:4px 6px">
           <input type="number" class="sojinhap-input${isOvr ? ' modified' : ''}" value="${curSoJin}" min="0" step="1"
                  onchange="setSoJinHap('${scSafe}',parseInt(this.value)||0)"
