@@ -75,11 +75,13 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 /* 테이블 */
 .result-wrap{padding:16px 24px;overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 260px)}
 .result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:clip;box-shadow:0 1px 3px rgba(0,0,0,.08);min-width:1400px}
-.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:7px 9px;font-size:11px;font-weight:600;color:#374151;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:3}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;border-right:1px solid #EEF0F2;padding:3px 8px;font-size:11px;font-weight:600;color:#374151;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:3}
 .result-table th:first-child,.result-table th:nth-child(2),.result-table th:nth-child(3),.result-table th:nth-child(4){text-align:left}
-.result-table td{padding:7px 9px;font-size:12px;border-bottom:1px solid #F3F4F6;vertical-align:middle;text-align:right;white-space:nowrap}
+.result-table td{padding:3px 8px;font-size:12px;line-height:1.3;border-bottom:1px solid #F3F4F6;border-right:1px solid #F5F6F7;vertical-align:middle;text-align:right;white-space:nowrap}
 .result-table td:first-child,.result-table td:nth-child(2),.result-table td:nth-child(3),.result-table td:nth-child(4){text-align:left}
-.group-row td{background:#F0F4FF;font-weight:700;font-size:12px;color:#1F2937;padding:7px 9px;border-top:2px solid #CBD5E1}
+.result-table th:last-child,.result-table td:last-child{border-right:none}
+.name-cell{white-space:normal!important;word-break:keep-all;max-width:130px;text-align:left!important}
+.group-row td{background:#F0F4FF;font-weight:700;font-size:12px;color:#1F2937;padding:3px 8px;border-top:2px solid #CBD5E1}
 .group-row.판정-진행 td{background:#ECFDF5}
 .group-row.판정-중단 td{background:#FFF1F2}
 .group-row.판정-강제 td{background:#FEFCE8}
@@ -711,7 +713,7 @@ function renderTable(rows) {
 
       html += `<tr class="group-row ${pcls}${isOvr ? ' override-active' : ''}">
         <td class="code">${sc}</td>
-        <td colspan="3">${r[COL.세트명칭] || ''}</td>
+        <td colspan="3" class="name-cell">${r[COL.세트명칭] || ''}</td>
         <td>${pbadge}</td>
         <td colspan="4"></td>
         <td style="text-align:center;padding:4px 6px"><span style="font-size:14px;font-weight:700">${fmtSets(ss.가용)}</span><div style="font-size:9px;color:#6B7280;font-weight:400;margin-top:1px">가용기준</div></td>
@@ -781,10 +783,10 @@ function renderTable(rows) {
       : `<span style="background:#fef9c3;color:#713f12;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700">${cnt}</span>`;
     html += `<tr class="${rowcls}">
       <td class="code">${sc}</td>
-      <td>${r[COL.세트명칭] || ''}</td>
+      <td class="name-cell">${r[COL.세트명칭] || ''}</td>
       <td class="code">${r[COL.단품조합] || ''}</td>
       <td style="text-align:center">${cntBadge}</td>
-      <td>${r[COL.단품명칭] || ''}</td>
+      <td class="name-cell">${r[COL.단품명칭] || ''}</td>
       <td>${fmt(r[COL.구성수량])}</td>
       <td>${isJJ ? '<span class="badge badge-jy">Y</span>' : '<span class="badge badge-jn">N</span>'}</td>
       <td style="font-size:11px">${r[COL.용도구분] || ''}</td>
@@ -1120,7 +1122,7 @@ function renderItemTable() {
         : fmt(0);
     html += `<tr class="item-row">
       <td class="code">${dc}</td>
-      <td>${d.단품명칭}</td>
+      <td class="name-cell">${d.단품명칭}</td>
       <td style="font-size:11px">${d.용도구분}</td>
       <td>${d.시리즈}</td>
       <td>${d.공급업체}</td>
