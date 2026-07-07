@@ -302,6 +302,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <button class="filter-btn" id="btnJin" onclick="setFilter('진행')" style="font-size:12px">진행만</button>
   <button class="filter-btn" id="btnJung" onclick="setFilter('중단')" style="font-size:12px">중단만</button>
   <button class="filter-btn" id="btnJong" onclick="setFilter('단종')" style="font-size:12px">단종품만</button>
+  <button class="filter-btn" id="btnSetSort" onclick="toggleSetSort()" style="font-size:12px">세트조합 정렬</button>
   <button class="btn-reset-all" id="btnResetAll" onclick="resetAllOverrides()">↺ 소진합 초기화</button>
   <button class="btn-excel" onclick="downloadExcel()">↓ 엑셀 다운로드</button>
   <span id="resultCount"></span>
@@ -324,6 +325,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <th>단품명칭</th>
         <th>구성<br>수량</th><th>짝맞추기<br>대상</th><th>용도구분</th><th>사용<br>구분</th>
         <th>가용재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th>안분재고<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">세트행=구성수</span></th><th id="thForecast">10개월<br>예상판매<br><span style="font-size:9px;font-weight:400;color:#9CA3AF">품목단위</span></th>
+        <th>월평균<br>출고량</th>
         <th>소진합</th><th>필요<br>수량</th><th>과부족</th>
         <th>추가<br>생산</th><th>폐기<br>예상</th>
         <th>추가<br>생산금액</th><th>폐기<br>예상금액</th>
@@ -333,7 +335,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr><td colspan="24" class="loading">결과 로딩 중...</td></tr>
+      <tr><td colspan="25" class="loading">결과 로딩 중...</td></tr>
     </tbody>
   </table>
 </div>
@@ -400,7 +402,7 @@ const SERVER = 'http://localhost:5002';
 const SHEET_ID = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
 const SHEET_NAME = '짝맞추기 결과';
 
-// 헤더 인덱스 (RESULT_HEADERS 순서와 동일, 29=입고단가 재계산전용, 30=사용구분)
+// 헤더 인덱스 (RESULT_HEADERS 순서와 동일, 29=입고단가 재계산전용, 30=사용구분, 31=월평균출고량)
 const COL = {
   세트조합:0, 세트명칭:1, 단품조합:2, 단품명칭:3, 구성수량:4, 용도구분:5,
   시리즈:6, 공급업체:7, 입고가:8, 공장도가:9, 가용재고:10, 안분재고:11,
@@ -408,7 +410,7 @@ const COL = {
   추가생산:17, 폐기수량:18, 추가생산금액:19, 폐기금액:20,
   세트폐기금액:21, 세트추가생산비:22, 세트총손실:23,
   baseline:24, 손실절감:25, 강제중단:26, 판정:27, 기준일시:28,
-  입고단가:29, 사용구분:30,
+  입고단가:29, 사용구분:30, 월평균출고량:31,
 };
 
 let allData = [];
@@ -417,6 +419,7 @@ let overrides = {};          // { 세트조합: 새소진합 } – 수동 수정
 let lastOverrideCalc = {};   // 마지막 renderTable 에서 계산한 세트별 재계산 결과
 let currentFilter = 'all';
 let currentView = 'set';
+let setSortDir = null;  // null | 'asc' | 'desc' — 세트조합 기준 정렬
 
 const LS_KEY = 'iloom_sojin_overrides';
 function loadOverrides() {
@@ -550,7 +553,7 @@ function loadResults() {
     })
     .catch(() => {
       document.getElementById('tableBody').innerHTML =
-        '<tr><td colspan="24" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
+        '<tr><td colspan="25" class="loading" style="color:#c80a1e">결과를 불러올 수 없습니다. 먼저 짝맞추기를 실행하세요.</td></tr>';
     });
 }
 
@@ -600,6 +603,13 @@ function renderTable(rows) {
     );
   }
 
+  if (setSortDir) {
+    filtered = [...filtered].sort((a, b) => {
+      const cmp = (a[COL.세트조합] || '').localeCompare(b[COL.세트조합] || '');
+      return setSortDir === 'asc' ? cmp : -cmp;
+    });
+  }
+
   document.getElementById('resultCount').textContent = `${filtered.length}행 표시`;
   filteredData = filtered;
 
@@ -609,7 +619,7 @@ function renderTable(rows) {
 
   if (!filtered.length) {
     document.getElementById('tableBody').innerHTML =
-      `<tr><td colspan="24" class="loading">검색 결과 없음</td></tr>`;
+      `<tr><td colspan="25" class="loading">검색 결과 없음</td></tr>`;
     return;
   }
 
@@ -780,6 +790,7 @@ function renderTable(rows) {
       <td>${fmt(r[COL.가용재고])}</td>
       <td>${isJJ ? fmt(r[COL.안분재고]) : '-'}</td>
       <td>${fmt(r[COL.예상판매])}</td>
+      <td>${fmt(r[COL.월평균출고량])}</td>
       <td><b>${isOvr ? fmt(newSoJin) : fmt(r[COL.소진합])}</b></td>
       <td${modTd}>${isJJ ? fmt(필요_v) : '-'}</td>
       <td${modTd}>${isJJ ? 과부족str : '-'}</td>
@@ -953,7 +964,7 @@ function downloadExcel() {
   const detailHeaders = [
     '세트조합','세트명칭','단품조합','단품명칭','구성수량','용도구분',
     '시리즈','공급업체','입고가','공장도가','가용재고','안분재고',
-    '10개월예상판매','짝맞추기 대상','소진합','필요수량','과부족',
+    '10개월예상판매','월평균출고량','짝맞추기 대상','소진합','필요수량','과부족',
     '추가생산','폐기예상수량','추가생산금액','폐기예상금액','잔여재고',
     '세트_폐기금액','세트_추가생산비','세트_총손실','세트_baseline폐기','세트_손실절감',
     '세트_강제중단','판정','기준일시',
@@ -996,7 +1007,7 @@ function downloadExcel() {
       r[COL.구성수량], r[COL.용도구분], r[COL.시리즈], r[COL.공급업체],
       r[COL.입고가], r[COL.공장도가], r[COL.가용재고],
       isJJ ? r[COL.안분재고] : '',
-      r[COL.예상판매], r[COL.단종여부], 소진합_v,
+      r[COL.예상판매], r[COL.월평균출고량], r[COL.단종여부], 소진합_v,
       isJJ ? 필요_v : '', isJJ ? 과부족_v : '',
       isJJ ? 추가_v  : '', isJJ ? 폐기_v   : '',
       isJJ ? 추가금액_v : '', isJJ ? 폐기금액_v : '',
@@ -1009,7 +1020,7 @@ function downloadExcel() {
   ws3['!cols'] = [
     {wch:16},{wch:20},{wch:14},{wch:22},{wch:6},{wch:6},
     {wch:12},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},
-    {wch:10},{wch:6},{wch:8},{wch:8},{wch:10},
+    {wch:10},{wch:10},{wch:6},{wch:8},{wch:8},{wch:10},
     {wch:8},{wch:8},{wch:12},{wch:12},{wch:10},
     {wch:12},{wch:12},{wch:12},{wch:12},{wch:12},
     {wch:8},{wch:6},{wch:14},
@@ -1146,6 +1157,16 @@ function setFilter(f) {
     document.getElementById(id).classList.remove('active-filter'));
   document.getElementById({all:'btnAll',진행:'btnJin',중단:'btnJung',단종:'btnJong'}[f] || 'btnAll')
     .classList.add('active-filter');
+  filterTable();
+}
+
+function toggleSetSort() {
+  setSortDir = setSortDir === 'asc' ? 'desc' : setSortDir === 'desc' ? null : 'asc';
+  const btn = document.getElementById('btnSetSort');
+  btn.classList.toggle('active-filter', !!setSortDir);
+  btn.textContent = setSortDir === 'asc' ? '세트조합 정렬 ▲'
+    : setSortDir === 'desc' ? '세트조합 정렬 ▼'
+    : '세트조합 정렬';
   filterTable();
 }
 
