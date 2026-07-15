@@ -84,7 +84,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </nav>
 <div class="page-header">
   <h1>아울렛 재고 현황</h1>
-  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-15 16:58</div>
+  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-15 17:02</div>
 </div>
 
 
@@ -104,6 +104,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="toolbar">
   <input class="search-box" id="searchBox" type="text" placeholder="세트코드 / 세트명 검색..." oninput="filterTable()">
   <button class="sort-btn active" id="sortDefault" onclick="sortTable('default')">기본</button>
+  <button class="sort-btn" id="sortCodeAsc"  onclick="sortTable('codeAsc')">세트코드 오름차순</button>
+  <button class="sort-btn" id="sortCodeDesc" onclick="sortTable('codeDesc')">세트코드 내림차순</button>
   <button class="sort-btn" id="sortQty"     onclick="sortTable('qty')">계획대비잔여순</button>
   <button class="sort-btn" id="sortPureQty" onclick="sortTable('pureQty')">판매가능순</button>
   <button class="sort-btn" id="sortSold"    onclick="sortTable('sold')">판매수량순</button>
@@ -289,7 +291,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="21">21</td>
           <td style="text-align:right" data-val="31">31</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="11"><span class="qty-ok">11</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -323,7 +325,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IGD40AQ04A</td>
               <td style="text-align:center">NCC</td>
               <td>[아울렛] 옷장도어 400폭 (이타카네오 손잡이 포함)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -364,7 +366,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="39">39</td>
           <td style="text-align:right" data-val="63">63</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="11"><span class="qty-ok">11</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.6</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -398,7 +400,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IGD40AQ04A</td>
               <td style="text-align:center">FIV</td>
               <td>[아울렛] 옷장도어 400폭 (이타카네오 손잡이 포함)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -439,7 +441,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="31">31</td>
           <td style="text-align:right" data-val="25">25</td>
           <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
-          <td style="text-align:center" data-val="7"><span class="qty-ok">7</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -473,7 +475,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IGD40AQ04A</td>
               <td style="text-align:center">FIV</td>
               <td>[아울렛] 옷장도어 400폭 (이타카네오 손잡이 포함)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -619,7 +621,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="10">10</td>
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:center" data-val="3"><span class="qty-ok">3</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -663,7 +665,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFB00AQ01A</td>
               <td style="text-align:center">NCC</td>
               <td>[아울렛] 멀티장 뒷판류(우)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -724,7 +726,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -788,7 +790,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFT00AQ01A</td>
               <td style="text-align:center">FIV</td>
               <td>[아울렛] 멀티장 윗판류(우)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -979,7 +981,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="18">18</td>
           <td style="text-align:right" data-val="16">16</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1043,7 +1045,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSCB7110MN</td>
               <td style="text-align:center">PG</td>
               <td>슬라이딩 옷장 거울도어</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1063,7 +1065,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSCB7110MNA</td>
               <td style="text-align:center">PG</td>
               <td>슬라이딩 옷장 거울도어</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1094,7 +1096,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="10">10</td>
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1158,7 +1160,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSCB7110MN</td>
               <td style="text-align:center">PG</td>
               <td>슬라이딩 옷장 거울도어</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1178,7 +1180,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSCB7110MNA</td>
               <td style="text-align:center">PG</td>
               <td>슬라이딩 옷장 거울도어</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1439,7 +1441,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="35">35</td>
           <td style="text-align:right" data-val="26">26</td>
           <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1453,7 +1455,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8000V</td>
               <td style="text-align:center">BG</td>
               <td>[아울렛] 기본장및코너장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1463,7 +1465,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8006H</td>
               <td style="text-align:center">OSV</td>
               <td>기본장 선반류 600폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1559,7 +1561,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="42">42</td>
           <td style="text-align:right" data-val="33">33</td>
           <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1623,7 +1625,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSPA0103</td>
               <td style="text-align:center">BG</td>
               <td>[아울렛] 포인트트레이</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1814,7 +1816,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="27">27</td>
           <td style="text-align:right" data-val="12">12</td>
           <td style="text-align:center" data-val="13"><span class="qty-ok">13</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1828,7 +1830,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8038V</td>
               <td style="text-align:center">DG</td>
               <td>[아울렛] 선반장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1848,7 +1850,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8038S</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 선반장(2EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1869,7 +1871,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="25">25</td>
           <td style="text-align:right" data-val="20">20</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1893,7 +1895,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8048E</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 바지걸이장</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1913,7 +1915,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8048I</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 옵션장 하부 선반류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1944,7 +1946,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="17">17</td>
           <td style="text-align:right" data-val="13">13</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -1968,7 +1970,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8048E</td>
               <td style="text-align:center">OS</td>
               <td>[아울렛] 바지걸이장</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -1988,7 +1990,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8048I</td>
               <td style="text-align:center">OS</td>
               <td>[아울렛] 옵션장 하부 선반류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2019,7 +2021,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="15">15</td>
           <td style="text-align:right" data-val="11">11</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2043,7 +2045,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFP08AQ00A</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 멀티수납장</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2074,7 +2076,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="24">24</td>
           <td style="text-align:right" data-val="19">19</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2118,7 +2120,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFY08AQ00A</td>
               <td style="text-align:center">GU</td>
               <td>하부도어장</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2294,7 +2296,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="16">16</td>
           <td style="text-align:right" data-val="14">14</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2308,7 +2310,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFS00AQ00A</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 정리장 선반류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2328,7 +2330,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFW00AQ00A</td>
               <td style="text-align:center">GU</td>
               <td>정리장 중측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2484,7 +2486,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="25">25</td>
           <td style="text-align:right" data-val="20">20</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="13"><span class="qty-ok">13</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.5</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2498,7 +2500,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFS40AQ01A</td>
               <td style="text-align:center">GU</td>
               <td>좁은장 선반류 400폭 (선반형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2529,7 +2531,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="19">19</td>
           <td style="text-align:right" data-val="14">14</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2543,7 +2545,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFS40AQ01A</td>
               <td style="text-align:center">OS</td>
               <td>좁은장 선반류 400폭 (선반형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2553,7 +2555,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFV00AQ05A</td>
               <td style="text-align:center">OS</td>
               <td>[아울렛] 좁은장 측판류,뒷판 (선반형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2574,7 +2576,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="55">55</td>
           <td style="text-align:right" data-val="40">40</td>
           <td style="text-align:center" data-val="15"><span class="qty-ok">15</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.9</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2598,7 +2600,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFP00AQ00A</td>
               <td style="text-align:center">LT</td>
               <td>2단서랍 속서랍류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2608,7 +2610,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFV00AQ06A</td>
               <td style="text-align:center">GU</td>
               <td>[아울렛] 서랍형옷장(2단 서랍) 측판류,뒷판</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2659,7 +2661,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="18">18</td>
           <td style="text-align:right" data-val="17">17</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -2673,7 +2675,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFS80AQ03A</td>
               <td style="text-align:center">OS</td>
               <td>[아울렛] 2단 서랍옷장 선반류 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2683,7 +2685,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFP00AQ00A</td>
               <td style="text-align:center">LT</td>
               <td>2단서랍 속서랍류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2693,7 +2695,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFV00AQ06A</td>
               <td style="text-align:center">OS</td>
               <td>[아울렛] 서랍형옷장(2단 서랍) 측판류,뒷판</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2703,7 +2705,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IGD80AQ00A</td>
               <td style="text-align:center">OS</td>
               <td>2단 서랍옷장류 옷장도어 (테일러 손잡이용)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -2713,7 +2715,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFN00AQ00A</td>
               <td style="text-align:center">OS</td>
               <td>2단서랍 앞판 (테일러 손잡이용)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3009,7 +3011,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="115">115</td>
           <td style="text-align:right" data-val="72">72</td>
           <td style="text-align:center" data-val="43"><span class="qty-ok">43</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">9.6</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3023,7 +3025,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HYC8038S</td>
               <td style="text-align:center">SP</td>
               <td>[아울렛] 선반장(2EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">사용</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3074,7 +3076,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="37">37</td>
           <td style="text-align:right" data-val="21">21</td>
           <td style="text-align:center" data-val="16"><span class="qty-ok">16</span></td>
-          <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3108,7 +3110,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFP08AQ00A</td>
               <td style="text-align:center">SP</td>
               <td>[아울렛] 멀티수납장</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3118,7 +3120,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFV00AQ15A</td>
               <td style="text-align:center">SP</td>
               <td>[아울렛] 옵션장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3139,7 +3141,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="11">11</td>
           <td style="text-align:right" data-val="9">9</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3173,7 +3175,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IFV00AQ15A</td>
               <td style="text-align:center">SP</td>
               <td>[아울렛] 옵션장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3204,7 +3206,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="12">12</td>
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3278,7 +3280,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0005SV</td>
               <td style="text-align:center">FIV</td>
               <td>5단 적층장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3329,7 +3331,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="17">17</td>
           <td style="text-align:right" data-val="15">15</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3343,7 +3345,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0800</td>
               <td style="text-align:center">NCCBGM</td>
               <td>직사각책상 측판(D740)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3353,7 +3355,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0814</td>
               <td style="text-align:center">NCCBGM</td>
               <td>직사각책상 상판 1400폭(D740)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3363,7 +3365,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0814B</td>
               <td style="text-align:center">NCC</td>
               <td>직사각책상 앞가림판 1400폭(D740)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3373,7 +3375,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMX0800E</td>
               <td style="text-align:center">BK</td>
               <td>[아울렛] 배선트레이</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3393,7 +3395,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMA0140B</td>
               <td style="text-align:center">BG</td>
               <td>[아울렛] 액세서리패널 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3403,7 +3405,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0005SV</td>
               <td style="text-align:center">NCC</td>
               <td>5단 적층장 측판류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3413,7 +3415,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0145SB</td>
               <td style="text-align:center">NCC</td>
               <td>5단 적층장 뒷판 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3423,7 +3425,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0145SH</td>
               <td style="text-align:center">NCCBGM</td>
               <td>5단 적층장 선반류 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3454,7 +3456,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="48">48</td>
           <td style="text-align:right" data-val="34">34</td>
           <td style="text-align:center" data-val="14"><span class="qty-ok">14</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3548,7 +3550,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0125SH</td>
               <td style="text-align:center">FIVGYM</td>
               <td>5단 적층장 선반류 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3568,7 +3570,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMC0165SV</td>
               <td style="text-align:center">FIV</td>
               <td>5단 적층장 측판류 1600폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3599,7 +3601,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="39">39</td>
           <td style="text-align:right" data-val="34">34</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3613,7 +3615,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0012</td>
               <td style="text-align:center">FIV</td>
               <td>[아울렛] 책상상판 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3644,7 +3646,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="28">28</td>
           <td style="text-align:right" data-val="24">24</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
-          <td style="text-align:center" data-val="13"><span class="qty-ok">13</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3668,7 +3670,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0000R</td>
               <td style="text-align:center">NCCBG</td>
               <td>원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3689,7 +3691,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="55">55</td>
           <td style="text-align:right" data-val="55">55</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="23"><span class="qty-ok">23</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">4.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3733,7 +3735,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMA0201</td>
               <td style="text-align:center">GY</td>
               <td>[아울렛] 모션데스크 패드</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3849,7 +3851,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="66">66</td>
           <td style="text-align:right" data-val="34">34</td>
           <td style="text-align:center" data-val="32"><span class="qty-ok">32</span></td>
-          <td style="text-align:center" data-val="23"><span class="qty-ok">23</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">5.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -3893,7 +3895,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMA0201</td>
               <td style="text-align:center">GY</td>
               <td>[아울렛] 모션데스크 패드</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -3984,7 +3986,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="35">35</td>
           <td style="text-align:right" data-val="35">35</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="8"><span class="qty-ok">8</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.9</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4028,7 +4030,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMA0201</td>
               <td style="text-align:center">GY</td>
               <td>[아울렛] 모션데스크 패드</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4144,7 +4146,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="86">86</td>
           <td style="text-align:right" data-val="60">60</td>
           <td style="text-align:center" data-val="26"><span class="qty-ok">26</span></td>
-          <td style="text-align:center" data-val="8"><span class="qty-ok">8</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">7.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4188,7 +4190,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMA0201</td>
               <td style="text-align:center">GY</td>
               <td>[아울렛] 모션데스크 패드</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4384,7 +4386,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="103">103</td>
           <td style="text-align:right" data-val="95">95</td>
           <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">18.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4398,7 +4400,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H11EAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대헤드보드 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4408,7 +4410,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H11PAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판류 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4438,7 +4440,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20F11PEX</td>
               <td style="text-align:center">TS</td>
               <td>침대철재프레임 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4448,7 +4450,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA21F11PEL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대목재프레임1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4458,7 +4460,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA21G09EAE</td>
               <td style="text-align:center">XX</td>
               <td>선반LED조명(1100폭용)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4519,7 +4521,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="234">234</td>
           <td style="text-align:right" data-val="215">215</td>
           <td style="text-align:center" data-val="19"><span class="qty-ok">19</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">27.5</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4533,7 +4535,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H15EAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대헤드보드 1500폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4543,7 +4545,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H15PAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판류 1500폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4573,7 +4575,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20F15PEX</td>
               <td style="text-align:center">TS</td>
               <td>침대철재프레임 1500폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4654,7 +4656,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="194">194</td>
           <td style="text-align:right" data-val="182">182</td>
           <td style="text-align:center" data-val="12"><span class="qty-ok">12</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">24.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4668,7 +4670,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H18EAL</td>
               <td style="text-align:center">CZ</td>
               <td>침대헤드보드 1800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4678,7 +4680,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20H18PAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판A 1800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4688,7 +4690,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA20H18PBL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판B 1800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4718,7 +4720,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20F18PEX</td>
               <td style="text-align:center">TS</td>
               <td>침대철재프레임 1800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4799,7 +4801,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="61">61</td>
           <td style="text-align:right" data-val="59">59</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">9.5</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4853,7 +4855,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA20S081N</td>
               <td style="text-align:center">L305</td>
               <td>가죽손잡이(화장대용)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4863,7 +4865,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA20R04EEL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 원형거울</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4904,7 +4906,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="363">363</td>
           <td style="text-align:right" data-val="363">363</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">58.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -4918,7 +4920,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA22H11PAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판1100폭(무헤드형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4948,7 +4950,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20F11PEX</td>
               <td style="text-align:center">TS</td>
               <td>침대철재프레임 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4958,7 +4960,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA22F11PEL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대목재프레임1100폭(무헤드형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -4989,7 +4991,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="363">363</td>
           <td style="text-align:right" data-val="220">220</td>
           <td style="text-align:center" data-val="143"><span class="qty-ok">143</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">31.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5003,7 +5005,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA22H18PAL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판A 1800폭(무헤드형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5013,7 +5015,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVBA22H18PBL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대바닥판B 1800폭(무헤드)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5043,7 +5045,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA20F18PEX</td>
               <td style="text-align:center">TS</td>
               <td>침대철재프레임 1800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5053,7 +5055,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA22F18PEL</td>
               <td style="text-align:center">CZ</td>
               <td>[아울렛] 침대목재프레임 1800폭(무헤드형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5084,7 +5086,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="68">68</td>
           <td style="text-align:right" data-val="133">133</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5098,7 +5100,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL41T12EEG</td>
               <td style="text-align:center">XX</td>
               <td>1200폭 유리 상판</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5108,7 +5110,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL41T10ESL</td>
               <td style="text-align:center">MTW</td>
               <td>1050폭 테이블 선반</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5118,7 +5120,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL41L12EEU</td>
               <td style="text-align:center">WWM</td>
               <td>1200폭 테이블 프레임</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5184,7 +5186,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="45">45</td>
           <td style="text-align:right" data-val="87">87</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5208,7 +5210,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL35T08ETL</td>
               <td style="text-align:center">KW</td>
               <td>소파테이블 상판류 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5253,7 +5255,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOD1014</td>
               <td style="text-align:center">SP</td>
               <td>상판 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5754,7 +5756,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="34">34</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="12"><span class="qty-ok">12</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5778,7 +5780,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOP0063</td>
               <td style="text-align:center">GYMOS</td>
               <td>[아울렛] 600폭 3단 서랍장 몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5809,7 +5811,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="44">44</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="12"><span class="qty-ok">12</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.6</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5833,7 +5835,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOP0063</td>
               <td style="text-align:center">GYMOS</td>
               <td>[아울렛] 600폭 3단 서랍장 몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5864,7 +5866,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="42">42</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="12"><span class="qty-ok">12</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5888,7 +5890,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOP0063</td>
               <td style="text-align:center">GYMOS</td>
               <td>[아울렛] 600폭 3단 서랍장 몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -5919,7 +5921,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="24">24</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="11"><span class="qty-ok">11</span></td>
+          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -5933,7 +5935,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSPA0104</td>
               <td style="text-align:center">NCC</td>
               <td>[아울렛]원형거울(목제)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">사용</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6259,7 +6261,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6293,7 +6295,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCF2Y10DRL</td>
               <td style="text-align:center">NBK</td>
               <td>[아울렛] 사이드장 1050폭 (우,도어형)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6334,7 +6336,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="28">28</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6348,7 +6350,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HLB0L08HVT</td>
               <td style="text-align:center">DGS</td>
               <td>[아울렛]  소파테이블 철재다리 590폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6484,7 +6486,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="99">99</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">5.5</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6498,7 +6500,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL12L72HVVR</td>
               <td style="text-align:center">UA</td>
               <td>다이닝테이블 다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6508,7 +6510,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL12T08EHL</td>
               <td style="text-align:center">UA</td>
               <td>테이블 상판 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6529,7 +6531,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="66">66</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">3.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6543,7 +6545,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL12L72HVVR</td>
               <td style="text-align:center">UA</td>
               <td>다이닝테이블 다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6584,7 +6586,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6608,7 +6610,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HC40P104GLR</td>
               <td style="text-align:center">CZ</td>
               <td>4단 서랍장 몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -6639,7 +6641,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:right" data-val="9">9</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="9"><span class="qty-ok">9</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.9</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -6663,7 +6665,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HC40P103GL</td>
               <td style="text-align:center">CZ</td>
               <td>3단 서랍장 몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7144,7 +7146,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7158,7 +7160,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HP11Y104ULR</td>
               <td style="text-align:center">CGYM</td>
               <td>4단 서랍몸통 1000폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7168,7 +7170,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HP57D104FL</td>
               <td style="text-align:center">CGYM</td>
               <td>4단 서랍앞판 1000폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7199,7 +7201,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">3.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7213,7 +7215,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HP11Y104ULR</td>
               <td style="text-align:center">NCC</td>
               <td>4단 서랍몸통 1000폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7223,7 +7225,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HP57D104FL</td>
               <td style="text-align:center">NCC</td>
               <td>4단 서랍앞판 1000폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7299,7 +7301,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7313,7 +7315,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HC57U01EHU</td>
               <td style="text-align:center">GY</td>
               <td>수납박스 브라켓</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7323,7 +7325,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HC57Y022EL</td>
               <td style="text-align:center">NCCGYM</td>
               <td>수납박스 200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7344,7 +7346,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7358,7 +7360,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB16AL00A</td>
               <td style="text-align:center">5K1A</td>
               <td>상부프레임 K(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7368,7 +7370,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB16AL01A</td>
               <td style="text-align:center">5K1A</td>
               <td>하부프레임 K(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7378,7 +7380,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH16AL00A</td>
               <td style="text-align:center">5K1A</td>
               <td>헤드보드 K(L,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7388,7 +7390,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH16AL01A</td>
               <td style="text-align:center">5K1A</td>
               <td>헤드보드 K(R,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7409,7 +7411,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7423,7 +7425,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB16AL00A</td>
               <td style="text-align:center">5K1L</td>
               <td>상부프레임 K(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7433,7 +7435,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB16AL01A</td>
               <td style="text-align:center">5K1L</td>
               <td>하부프레임 K(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7443,7 +7445,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH16AL00A</td>
               <td style="text-align:center">5K1L</td>
               <td>헤드보드 K(L,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7453,7 +7455,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH16AL01A</td>
               <td style="text-align:center">5K1L</td>
               <td>헤드보드 K(R,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7474,7 +7476,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="3"><span class="qty-ok">3</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7488,7 +7490,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB18AL00A</td>
               <td style="text-align:center">5K1A</td>
               <td>상부프레임 KK(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7498,7 +7500,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB18AL01A</td>
               <td style="text-align:center">5K1A</td>
               <td>하부프레임 KK(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7508,7 +7510,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH18AL00A</td>
               <td style="text-align:center">5K1A</td>
               <td>헤드보드 KK(L,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7518,7 +7520,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBH18AL01A</td>
               <td style="text-align:center">5K1A</td>
               <td>헤드보드 KK(R,패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7539,7 +7541,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="5">5</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7553,7 +7555,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB18AL00A</td>
               <td style="text-align:center">5K1L</td>
               <td>상부프레임 KK(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7563,7 +7565,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IBB18AL01A</td>
               <td style="text-align:center">5K1L</td>
               <td>하부프레임 KK(패브릭)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7604,7 +7606,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7628,7 +7630,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA10E11PAL</td>
               <td style="text-align:center">GYM</td>
               <td>침대바닥판류 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7638,7 +7640,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA10F11PEX</td>
               <td style="text-align:center">GY</td>
               <td>침대철제프레임 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7648,7 +7650,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA10L000AU</td>
               <td style="text-align:center">GY</td>
               <td>침대 철제다리(5EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">사용</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7658,7 +7660,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H11EAL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>침대헤드보드 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">사용</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7689,7 +7691,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7743,7 +7745,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H11EAL</td>
               <td style="text-align:center">SE</td>
               <td>침대헤드보드 1100폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7774,7 +7776,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="11"><span class="qty-ok">11</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7838,7 +7840,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H22EAL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>침대헤드보드 2200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7869,7 +7871,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -7933,7 +7935,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H22EAL</td>
               <td style="text-align:center">SE</td>
               <td>침대헤드보드 2200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -7964,7 +7966,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="8"><span class="qty-ok">8</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.9</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8028,7 +8030,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H22EAL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>침대헤드보드 2200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8059,7 +8061,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="15"><span class="qty-ok">15</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8083,7 +8085,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA10E16PAL</td>
               <td style="text-align:center">SE</td>
               <td>침대바닥판류 1650폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8093,7 +8095,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA10F16PEX</td>
               <td style="text-align:center">SE</td>
               <td>침대철제프레임 1650폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8123,7 +8125,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HBA11H22EAL</td>
               <td style="text-align:center">SE</td>
               <td>침대헤드보드 2200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8154,7 +8156,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8188,7 +8190,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10Y081PL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>데스크 몸통 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8219,7 +8221,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="11">11</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8233,7 +8235,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10B122PL</td>
               <td style="text-align:center">GYM</td>
               <td>와이드체스트 뒷판 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8243,7 +8245,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10L122FT</td>
               <td style="text-align:center">GY</td>
               <td>와이드체스트 철제다리류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8253,7 +8255,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10Y122PL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>와이드체스트 몸통 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8274,7 +8276,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="11">11</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="8"><span class="qty-ok">8</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8308,7 +8310,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10B122PL</td>
               <td style="text-align:center">GYM</td>
               <td>와이드체스트 뒷판 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8318,7 +8320,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10L122FT</td>
               <td style="text-align:center">GY</td>
               <td>와이드체스트 철제다리류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8328,7 +8330,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HDA10Y122PL</td>
               <td style="text-align:center">GYMGYM</td>
               <td>와이드체스트 몸통 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8349,7 +8351,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="13">13</td>
           <td style="text-align:right" data-val="18">18</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="3"><span class="qty-ok">3</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8363,7 +8365,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL70L12EVW</td>
               <td style="text-align:center">UM</td>
               <td>리프트업 원목다리(4EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8529,7 +8531,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="13"><span class="qty-ok">13</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">3.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8543,7 +8545,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL60L13EVW</td>
               <td style="text-align:center">IV</td>
               <td>원목 높은다리(3EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8619,7 +8621,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">3.5</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8633,7 +8635,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL60L13EVW</td>
               <td style="text-align:center">IV</td>
               <td>원목 높은다리(3EA)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8643,7 +8645,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL60T12ETL</td>
               <td style="text-align:center">IV</td>
               <td>레이어드 상판 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -8709,7 +8711,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -8733,7 +8735,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HL32T05ETL</td>
               <td style="text-align:center">SE</td>
               <td>소파테이블 원형 상판 500폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9054,7 +9056,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="17">17</td>
           <td style="text-align:right" data-val="17">17</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9088,7 +9090,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT90T16ETL</td>
               <td style="text-align:center">CZ</td>
               <td>패밀리테이블 상판 1600폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9109,7 +9111,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="4">4</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9123,7 +9125,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00F00EVU</td>
               <td style="text-align:center">BG</td>
               <td>원형 테이블 중심봉(H)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9133,7 +9135,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00F00LHU</td>
               <td style="text-align:center">BG</td>
               <td>원형 테이블 베이스 400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9143,7 +9145,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00T06ETL</td>
               <td style="text-align:center">CZ</td>
               <td>원형 테이블 상판 600폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9164,7 +9166,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="5">5</td>
           <td style="text-align:right" data-val="4">4</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9178,7 +9180,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00F00EHU</td>
               <td style="text-align:center">BG</td>
               <td>원형 테이블 베이스</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9188,7 +9190,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00F00EVU</td>
               <td style="text-align:center">BG</td>
               <td>원형 테이블 중심봉(H)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9198,7 +9200,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HT00T08ETL</td>
               <td style="text-align:center">CZ</td>
               <td>원형 테이블 상판 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9219,7 +9221,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9233,7 +9235,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0F12EEU</td>
               <td style="text-align:center">RGM</td>
               <td>1200폭 프레임류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9263,7 +9265,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0T12EEG</td>
               <td style="text-align:center">MYBK</td>
               <td>1200폭 상판(유리)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9284,7 +9286,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9298,7 +9300,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0F12EEU</td>
               <td style="text-align:center">RGM</td>
               <td>1200폭 프레임류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9328,7 +9330,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0T12EEG</td>
               <td style="text-align:center">MYF</td>
               <td>1200폭 상판(유리)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9609,7 +9611,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9623,7 +9625,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0F18EEU</td>
               <td style="text-align:center">RGM</td>
               <td>1800폭 프레임류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9674,7 +9676,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -9688,7 +9690,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0F18EEU</td>
               <td style="text-align:center">RGM</td>
               <td>1800폭 프레임류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -9718,7 +9720,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HTE0T18EEG</td>
               <td style="text-align:center">MYF</td>
               <td>1800폭 상판(유리)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -11779,7 +11781,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="47">47</td>
           <td style="text-align:right" data-val="50">50</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">10.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -11813,7 +11815,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HVSOP0313RA</td>
               <td style="text-align:center">GU</td>
               <td>책상서랍몸통</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -11929,7 +11931,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="6">6</td>
           <td style="text-align:right" data-val="20">20</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="15"><span class="qty-ok">15</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">5.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -11963,7 +11965,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOC0086V</td>
               <td style="text-align:center">GU</td>
               <td>6단 책장 측판류 800폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -12959,7 +12961,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.2</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -12983,7 +12985,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IDT60AY00A</td>
               <td style="text-align:center">GU</td>
               <td>베드테이블 상판 D600</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -12993,7 +12995,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IDV60AY00B</td>
               <td style="text-align:center">GU</td>
               <td>베드테이블 측판 D600</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13003,7 +13005,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">IDX00AY00A</td>
               <td style="text-align:center">MM</td>
               <td>베드테이블 상판브라켓</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13284,7 +13286,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="5"><span class="qty-ok">5</span></td>
-          <td style="text-align:center" data-val="14"><span class="qty-ok">14</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13308,7 +13310,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13349,7 +13351,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="7"><span class="qty-ok">7</span></td>
-          <td style="text-align:center" data-val="14"><span class="qty-ok">14</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13373,7 +13375,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13414,7 +13416,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
-          <td style="text-align:center" data-val="15"><span class="qty-ok">15</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.4</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13438,7 +13440,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13479,7 +13481,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="7"><span class="qty-ok">7</span></td>
-          <td style="text-align:center" data-val="15"><span class="qty-ok">15</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13503,7 +13505,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13804,7 +13806,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">2.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13828,7 +13830,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13869,7 +13871,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13883,7 +13885,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0004SL</td>
               <td style="text-align:center">HY</td>
               <td>[아울렛] 4단 책장 포인트손잡이(좌)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13893,7 +13895,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13934,7 +13936,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="3"><span class="qty-ok">3</span></td>
-          <td style="text-align:center" data-val="6"><span class="qty-ok">6</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -13958,7 +13960,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -13999,7 +14001,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14023,7 +14025,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14064,7 +14066,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14078,7 +14080,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0004SR</td>
               <td style="text-align:center">HY</td>
               <td>[아울렛] 4단 책장 포인트손잡이(우)</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14088,7 +14090,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14129,7 +14131,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="1">1</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14153,7 +14155,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSOB0005X</td>
               <td style="text-align:center">XX</td>
               <td>5단 책장도어 힌지류</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14253,7 +14255,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HSMD0012</td>
               <td style="text-align:center">GYM</td>
               <td>책상상판 1200폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14579,7 +14581,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="5">5</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
-          <td style="text-align:center" data-val="2"><span class="qty-ok">2</span></td>
+          <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14593,7 +14595,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HC50E06MBE</td>
               <td style="text-align:center">LD</td>
               <td>5단 사이드장 뒷판</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">사용</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14644,7 +14646,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:right" data-val="3">3</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.8</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14658,7 +14660,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5000SR</td>
               <td style="text-align:center">IV</td>
               <td>벤치 원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14668,7 +14670,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5114B</td>
               <td style="text-align:center">IV</td>
               <td>벤치상판 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14689,7 +14691,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14703,7 +14705,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5000SR</td>
               <td style="text-align:center">NCC</td>
               <td>벤치 원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14713,7 +14715,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5114B</td>
               <td style="text-align:center">NCC</td>
               <td>벤치상판 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">단종</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14734,7 +14736,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:right" data-val="0">-</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.7</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14748,7 +14750,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5000SR</td>
               <td style="text-align:center">IV</td>
               <td>벤치 원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14758,7 +14760,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5109B</td>
               <td style="text-align:center">IV</td>
               <td>벤치상판 930폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14779,7 +14781,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="8">8</td>
           <td style="text-align:right" data-val="8">8</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">0.6</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14793,7 +14795,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5000SR</td>
               <td style="text-align:center">NCC</td>
               <td>벤치 원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center">개발</td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14803,7 +14805,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5109B</td>
               <td style="text-align:center">NCC</td>
               <td>벤치상판 930폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14824,7 +14826,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:right" data-val="2">2</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="99999"><span class="qty-free">제약없음</span></td>
+          <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
@@ -14838,7 +14840,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5000S</td>
               <td style="text-align:center">WG</td>
               <td>벤치 원목다리</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -14848,7 +14850,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-family:Montserrat,monospace">HCH5114B</td>
               <td style="text-align:center">WGM</td>
               <td>벤치상판 1400폭</td>
-              <td style="text-align:center"></td>
+              <td style="text-align:center"><span class="badge badge-disc">단종예정</span></td>
               <td style="text-align:center"></td>
               <td style="text-align:center">비운영</td>
               <td style="text-align:right">1</td>
@@ -15103,7 +15105,12 @@ function sortTable(mode) {
     pairs.push({ main: row, det });
   });
 
-  if (mode !== 'default') {
+  if (mode === 'codeAsc' || mode === 'codeDesc') {
+    pairs.sort((a, b) => {
+      const cmp = (a.main.dataset.setcode || '').localeCompare(b.main.dataset.setcode || '', 'ko', { numeric: true });
+      return mode === 'codeAsc' ? cmp : -cmp;
+    });
+  } else if (mode !== 'default') {
     const colIdx = mode === 'qty' ? 6 : mode === 'pureQty' ? 7 : 5;
     pairs.sort((a, b) => {
       const va = parseFloat(a.main.querySelectorAll('td')[colIdx]?.dataset.val || '0');
