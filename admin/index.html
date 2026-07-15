@@ -122,7 +122,7 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
 <div class="admin-wrap">
 
   <!-- 권한신청 내역 -->
-  <div class="admin-section">
+  <div class="admin-section" id="reqSection" style="display:none">
     <h3>신청내역</h3>
     <p class="desc">'권한신청'으로 접수된 EP ID입니다. 승인하면 모든 사용자·브라우저에서 즉시 로그인할 수 있습니다.</p>
     <div id="reqList" class="id-list"></div>
@@ -184,7 +184,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxD11tQrCBou3cj
 
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-async function fetchSheet(name) {
+async function fetchSheet(name, requiredCols) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -192,6 +192,11 @@ async function fetchSheet(name) {
   const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
   if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
   const cols = json.table.cols.map(c => c.label);
+  // gviz는 존재하지 않는 시트명을 넘기면 에러 대신 첫 번째 탭 데이터를 조용히 반환하므로,
+  // 기대하는 컬럼이 실제로 있는지 확인해 엉뚱한 시트로 잘못 매핑되는 것을 막는다.
+  if (requiredCols && !requiredCols.every(c => cols.includes(c))) {
+    throw new Error(`'${name}' 시트를 찾을 수 없거나 컬럼이 다릅니다 (예상 컬럼: ${requiredCols.join(', ')})`);
+  }
   return (json.table.rows || []).map(row => {
     const obj = {};
     (row.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
@@ -201,7 +206,7 @@ async function fetchSheet(name) {
 
 async function fetchApprovedIds() {
   try {
-    const rows = await fetchSheet('권한신청');
+    const rows = await fetchSheet('권한관리', ['EP ID', '상태']);
     return rows.filter(r => String(r['상태'] || '').trim() === '승인').map(r => String(r['EP ID'] || '').trim()).filter(Boolean);
   } catch(e) { return []; }
 }
@@ -288,17 +293,21 @@ function updateAuthUI() {
 // ── 신청내역 ─────────────────────────────────────────────────────
 async function loadRequests() {
   const listEl = document.getElementById('reqList');
+  const section = document.getElementById('reqSection');
   try {
-    const rows = await fetchSheet('권한신청');
+    const rows = await fetchSheet('권한관리', ['EP ID', '상태']);
     renderRequests(rows);
   } catch(e) {
+    section.style.display = '';
     listEl.innerHTML = `<p class="desc" style="color:#c80a1e">신청내역 로딩 실패: ${esc(e.message)}</p>`;
   }
 }
 
 function renderRequests(rows) {
   const listEl = document.getElementById('reqList');
-  if (!rows.length) { listEl.innerHTML = '<p class="desc">신청 내역이 없습니다.</p>'; return; }
+  const section = document.getElementById('reqSection');
+  if (!rows.length) { section.style.display = 'none'; listEl.innerHTML = ''; return; }
+  section.style.display = '';
   listEl.innerHTML = rows.slice().reverse().map(r => {
     const epId = String(r['EP ID'] || '').trim();
     const status = String(r['상태'] || '대기').trim();

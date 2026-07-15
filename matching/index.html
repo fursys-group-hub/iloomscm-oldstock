@@ -1185,7 +1185,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxD11tQrCBou3cj
 
 async function fetchApprovedIds() {
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent('권한신청')}`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent('권한관리')}`;
     const resp = await fetch(url);
     if (!resp.ok) return [];
     const text = await resp.text();

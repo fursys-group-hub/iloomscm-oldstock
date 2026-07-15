@@ -1,5 +1,5 @@
 const SPREADSHEET_ID = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
-const REQUEST_SHEET_NAME = '권한신청';
+const REQUEST_SHEET_NAME = '권한관리';
 
 function doPost(e) {
   try {
