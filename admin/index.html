@@ -136,7 +136,7 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
       추가한 ID는 이 브라우저에서만 유효합니다. 다른 PC에서 허용하려면 해당 PC에서도 추가하세요.
       전역으로 적용하려면 위 '신청내역'에서 승인하세요.
     </div>
-    <p class="desc">기본 ID (k94rainy, wonsuk_kim, nakwon_choi)는 삭제할 수 없습니다.</p>
+    <p class="desc">기본 ID (k94rainy, wonsuk_kim, nakwon_choi)는 삭제할 수 없습니다. '(승인)' 표시는 위 신청내역에서 승인되어 전역으로 적용된 ID이며, 여기서는 삭제할 수 없고 구글시트의 '권한관리' 탭에서 상태를 직접 바꿔야 회수됩니다.</p>
     <div id="idList" class="id-list"></div>
     <div class="add-id-row">
       <input id="newIdInput" class="add-id-input" type="text" placeholder="추가할 EP ID 입력"
@@ -332,20 +332,22 @@ function reviewRequest(epId, decision, btn) {
   if (wrap) wrap.style.opacity = '.4';
   fetch(APPS_SCRIPT_URL, {method:'POST', mode:'no-cors',
     body: JSON.stringify({action: decision === 'approve' ? 'approveAccess' : 'rejectAccess', epId})});
-  setTimeout(loadRequests, 1200);
+  setTimeout(() => { loadRequests(); renderAdminPanel(); }, 1200);
 }
 
 // ── 관리 패널 ─────────────────────────────────────────────────────
-function renderAdminPanel() {
-  const allIds = getAllowedIds();
+async function renderAdminPanel() {
+  const localIds = getAllowedIds();
+  const approvedIds = await fetchApprovedIds();
   const listEl = document.getElementById('idList');
-  listEl.innerHTML = allIds.map(id => {
-    const isDef = EP_DEFAULT_IDS.includes(id);
-    return `<div class="id-item${isDef ? ' is-default' : ''}">
-      <span>${id}${isDef ? ' <span style="font-size:10px;color:#9CA3AF">(기본)</span>' : ''}</span>
-      ${isDef ? '' : `<button class="del-btn" onclick="deleteEpId('${id}')">삭제</button>`}
-    </div>`;
-  }).join('');
+  const rows = [
+    ...localIds.map(id => ({ id, tag: EP_DEFAULT_IDS.includes(id) ? '기본' : null, removable: !EP_DEFAULT_IDS.includes(id) })),
+    ...approvedIds.filter(id => !localIds.includes(id)).map(id => ({ id, tag: '승인', removable: false })),
+  ];
+  listEl.innerHTML = rows.map(({ id, tag, removable }) => `<div class="id-item${tag ? ' is-default' : ''}">
+      <span>${esc(id)}${tag ? ` <span style="font-size:10px;color:#9CA3AF">(${tag})</span>` : ''}</span>
+      ${removable ? `<button class="del-btn" onclick="deleteEpId('${esc(id)}')">삭제</button>` : ''}
+    </div>`).join('');
 }
 
 function addEpId() {
