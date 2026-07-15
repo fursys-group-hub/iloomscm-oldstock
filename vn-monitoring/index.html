@@ -43,6 +43,12 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
 .search-box:focus{border-color:#c80a1e}
 .btn-refresh{padding:6px 14px;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:12px;cursor:pointer;color:#374151}
 .btn-refresh:hover{background:#F9FAFB}
+.type-filter-bar{display:flex;align-items:center;gap:6px;padding:10px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.type-filter-label{font-size:12px;color:#6B7280;font-weight:600;margin-right:4px}
+.type-btn{padding:5px 12px;border:1px solid #D1D5DB;background:#F9FAFB;border-radius:14px;font-size:12px;cursor:pointer;color:#9CA3AF}
+.type-btn.active{background:#EEF2FF;border-color:#6366f1;color:#4338CA;font-weight:600}
+.type-btn-all{padding:5px 12px;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:11px;cursor:pointer;color:#374151;margin-left:8px}
+.type-btn-all:hover{background:#F9FAFB}
 .result-wrap{padding:24px;overflow-x:auto}
 .result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
@@ -123,18 +129,23 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color
   <span id="resultCount" style="font-size:12px;color:#6B7280"></span>
 </div>
 
+<div class="type-filter-bar" id="typeFilterBar">
+  <span class="type-filter-label">형태구분</span>
+</div>
+
 <div class="result-wrap">
 <table class="result-table" id="mainTable">
 <thead><tr>
   <th>코드</th>
   <th>명칭</th>
+  <th>형태구분</th>
   <th style="text-align:right">가용재고</th>
   <th style="text-align:right">해상재고</th>
   <th style="text-align:right">해상재고 포함 가용재고</th>
   <th>상태</th>
 </tr></thead>
 <tbody id="tableBody">
-<tr><td colspan="6" class="loading-msg">불러오는 중...</td></tr>
+<tr><td colspan="7" class="loading-msg">불러오는 중...</td></tr>
 </tbody>
 </table>
 </div>
@@ -241,7 +252,9 @@ async function fetchVnRows() {
 }
 
 // 열 위치: A=코드, C=명칭, O=가용재고, S=해상재고, U=해상재고 포함 가용재고
-const COL_CODE = 0, COL_NAME = 2, COL_AVAIL = 14, COL_SEA = 18, COL_TOTAL = 20;
+const COL_CODE = 0, COL_NAME = 2, COL_TYPE = 3, COL_AVAIL = 14, COL_SEA = 18, COL_TOTAL = 20;
+
+let activeTypes = null; // null = 전체 표시. 아니면 Set of 선택된 형태구분.
 
 function classifyRows(rows) {
   const out = [];
@@ -256,6 +269,7 @@ function classifyRows(rows) {
     if (avail >= 0) continue; // 1. 정상 — 모니터링에서 숨김
 
     const name = c[COL_NAME] && c[COL_NAME].v != null ? String(c[COL_NAME].v) : '';
+    const type = c[COL_TYPE] && c[COL_TYPE].v != null ? String(c[COL_TYPE].v).trim() : '(미분류)';
     const sea  = (c[COL_SEA]   && typeof c[COL_SEA].v   === 'number') ? c[COL_SEA].v   : 0;
     const total = (c[COL_TOTAL] && typeof c[COL_TOTAL].v === 'number') ? c[COL_TOTAL].v : (avail + sea);
 
@@ -263,9 +277,34 @@ function classifyRows(rows) {
       ? { key: 'arrival', label: '입고일 점검' }   // 2. 가용재고 음수, 해상재고 있어 U는 양수
       : { key: 'vn',      label: '베트남 출고 확인' }; // 3. 가용재고·U 모두 음수
 
-    out.push({ code, name, avail, sea, total, status });
+    out.push({ code, name, type, avail, sea, total, status });
   }
   return out;
+}
+
+function renderTypeFilterBar() {
+  const bar = document.getElementById('typeFilterBar');
+  const types = [...new Set(allItems.map(it => it.type))].sort();
+  const pills = types.map(t => {
+    const active = activeTypes === null || activeTypes.has(t);
+    return `<button class="type-btn${active ? ' active' : ''}" data-type="${esc(t)}" onclick="toggleType('${esc(t)}')">${esc(t)}</button>`;
+  }).join('');
+  bar.innerHTML = `<span class="type-filter-label">형태구분</span>${pills}<button class="type-btn-all" onclick="resetTypes()">전체 선택</button>`;
+}
+
+function toggleType(type) {
+  const types = [...new Set(allItems.map(it => it.type))];
+  if (activeTypes === null) activeTypes = new Set(types); // 처음 클릭 시 전체 상태에서 시작
+  if (activeTypes.has(type)) activeTypes.delete(type);
+  else activeTypes.add(type);
+  renderTypeFilterBar();
+  filterTable();
+}
+
+function resetTypes() {
+  activeTypes = null;
+  renderTypeFilterBar();
+  filterTable();
 }
 
 function fmt(n) {
@@ -276,7 +315,7 @@ function fmt(n) {
 function renderTable(items) {
   const body = document.getElementById('tableBody');
   if (!items.length) {
-    body.innerHTML = '<tr><td colspan="6" class="empty-msg">조건에 해당하는 품목이 없습니다.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="empty-msg">조건에 해당하는 품목이 없습니다.</td></tr>';
     return;
   }
   body.innerHTML = items.map(it => {
@@ -286,6 +325,7 @@ function renderTable(items) {
     return `<tr data-code="${esc(it.code.toLowerCase())}" data-name="${esc(it.name.toLowerCase())}">
       <td style="font-family:Montserrat,monospace;font-weight:600">${esc(it.code)}</td>
       <td>${esc(it.name)}</td>
+      <td>${esc(it.type)}</td>
       <td style="text-align:right" class="num-neg">${fmt(it.avail)}</td>
       <td style="text-align:right">${fmt(it.sea)}</td>
       <td style="text-align:right" class="${it.total > 0 ? 'num-pos' : 'num-neg'}">${fmt(it.total)}</td>
@@ -296,20 +336,23 @@ function renderTable(items) {
 
 function filterTable() {
   const q = document.getElementById('searchBox').value.trim().toLowerCase();
-  const filtered = !q ? allItems : allItems.filter(it =>
-    it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q)
-  );
+  const filtered = allItems.filter(it => {
+    const matchesQ = !q || it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q);
+    const matchesType = activeTypes === null || activeTypes.has(it.type);
+    return matchesQ && matchesType;
+  });
   renderTable(filtered);
-  document.getElementById('resultCount').textContent = q ? `${filtered.length} / ${allItems.length} 건` : '';
+  document.getElementById('resultCount').textContent = (q || activeTypes !== null) ? `${filtered.length} / ${allItems.length} 건` : '';
 }
 
 async function loadData() {
   const body = document.getElementById('tableBody');
-  body.innerHTML = '<tr><td colspan="6" class="loading-msg">불러오는 중...</td></tr>';
+  body.innerHTML = '<tr><td colspan="7" class="loading-msg">불러오는 중...</td></tr>';
   try {
     const rows = await fetchVnRows();
     allItems = classifyRows(rows);
     allItems.sort((a, b) => a.total - b.total);
+    activeTypes = null; // 새로고침 시 형태구분 필터 초기화(전체 표시)
 
     const arrivalCount = allItems.filter(it => it.status.key === 'arrival').length;
     const vnCount = allItems.filter(it => it.status.key === 'vn').length;
@@ -318,9 +361,10 @@ async function loadData() {
     document.getElementById('sumVn').textContent = vnCount;
     document.getElementById('sumFetchedAt').textContent = new Date().toLocaleString('ko-KR', { hour12: false });
 
+    renderTypeFilterBar();
     filterTable();
   } catch (e) {
-    body.innerHTML = `<tr><td colspan="6" class="empty-msg" style="color:#c80a1e">데이터 로딩 실패: ${esc(e.message)}</td></tr>`;
+    body.innerHTML = `<tr><td colspan="7" class="empty-msg" style="color:#c80a1e">데이터 로딩 실패: ${esc(e.message)}</td></tr>`;
   }
 }
 
