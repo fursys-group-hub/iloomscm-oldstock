@@ -84,7 +84,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </nav>
 <div class="page-header">
   <h1>아울렛 재고 현황</h1>
-  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-10 16:45</div>
+  <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-15 16:58</div>
 </div>
 
 
@@ -104,8 +104,6 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="toolbar">
   <input class="search-box" id="searchBox" type="text" placeholder="세트코드 / 세트명 검색..." oninput="filterTable()">
   <button class="sort-btn active" id="sortDefault" onclick="sortTable('default')">기본</button>
-  <button class="sort-btn" id="sortCodeAsc"  onclick="sortTable('codeAsc')">세트코드 오름차순</button>
-  <button class="sort-btn" id="sortCodeDesc" onclick="sortTable('codeDesc')">세트코드 내림차순</button>
   <button class="sort-btn" id="sortQty"     onclick="sortTable('qty')">계획대비잔여순</button>
   <button class="sort-btn" id="sortPureQty" onclick="sortTable('pureQty')">판매가능순</button>
   <button class="sort-btn" id="sortSold"    onclick="sortTable('sold')">판매수량순</button>
@@ -6417,7 +6415,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="548">548</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="125"><span class="qty-ok">125</span></td>
-          <td style="text-align:center" data-val="-4"><span style="color:#c80a1e;font-weight:600">▼4</span></td>
+          <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">24.1</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
         </tr><tr id="det-86" class="detail-row" style="display:none">
@@ -6452,7 +6450,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="501">501</td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
           <td style="text-align:center" data-val="360"><span class="qty-ok">360</span></td>
-          <td style="text-align:center" data-val="-1"><span style="color:#c80a1e;font-weight:600">▼1</span></td>
+          <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">26.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
         </tr><tr id="det-87" class="detail-row" style="display:none">
@@ -8667,7 +8665,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="13">13</td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
           <td style="text-align:center" data-val="0"><span class="qty-zero">0</span></td>
-          <td style="text-align:center" data-val="-1"><span style="color:#c80a1e;font-weight:600">▼1</span></td>
+          <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
         </tr><tr id="det-122" class="detail-row" style="display:none">
@@ -8982,7 +8980,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right" data-val="7">7</td>
           <td style="text-align:center" data-val="4"><span class="qty-ok">4</span></td>
           <td style="text-align:center" data-val="1"><span class="qty-ok">1</span></td>
-          <td style="text-align:center" data-val="-2"><span style="color:#c80a1e;font-weight:600">▼2</span></td>
+          <td style="text-align:center" data-val="0"><span style="color:#9ca3af">-</span></td>
           <td style="font-size:11px;color:#6b7280;text-align:center">1.3</td>
           <td style="text-align:center;color:#9ca3af;font-size:11px" class="expand-btn">▼</td>
         </tr><tr id="det-127" class="detail-row" style="display:none">
@@ -15075,50 +15073,6 @@ function toggleDetail(idx, row) {
 let currentSort = 'default';
 const originalOrder = Array.from(document.querySelectorAll('#tableBody .main-row'));
 
-// '재고소진 단종'과 마찬가지로 '비운영' 용도구분 단품도 재고 소진 시 더 이상 공급되지 않으므로
-// 판매가능수량 계산 시 가용재고를 상한으로 반영한다 (기존엔 '영업운영'과 동일하게 무제한 취급됨).
-const CONSTRAINED_PURPOSES = new Set(['재고소진 단종', '비운영']);
-
-function recalcSellable() {
-  let okCount = 0, zeroCount = 0, freeCount = 0;
-  document.querySelectorAll('#tableBody .main-row').forEach(row => {
-    const idx = row.dataset.idx;
-    const det = document.getElementById('det-' + idx);
-    const cell = row.querySelectorAll('td')[7];
-    if (!det || !cell) return;
-
-    let minCap = null;
-    det.querySelectorAll('.detail-table tbody tr').forEach(sub => {
-      const tds = sub.querySelectorAll('td');
-      const purpose = (tds[5]?.textContent || '').trim();
-      if (!CONSTRAINED_PURPOSES.has(purpose)) return;
-      const comboQty = parseFloat((tds[6]?.textContent || '').replace(/,/g,'')) || 1;
-      const avail = parseFloat((tds[8]?.textContent || '').replace(/,/g,'')) || 0;
-      const cap = Math.max(0, Math.floor(avail / comboQty));
-      if (minCap === null || cap < minCap) minCap = cap;
-    });
-
-    const finalVal = minCap === null ? 99999 : minCap;
-    cell.dataset.val = String(finalVal);
-    row.classList.toggle('row-zero', finalVal === 0);
-    if (finalVal === 99999) {
-      cell.innerHTML = '<span class="qty-free">제약없음</span>';
-      freeCount++;
-    } else if (finalVal === 0) {
-      cell.innerHTML = '<span class="qty-zero">0</span>';
-      zeroCount++;
-    } else {
-      cell.innerHTML = `<span class="qty-ok">${finalVal}</span>`;
-      okCount++;
-    }
-  });
-
-  const sumNums = document.querySelectorAll('.summary-bar .sum-item .sum-num');
-  if (sumNums[1]) sumNums[1].textContent = okCount;
-  if (sumNums[2]) sumNums[2].textContent = zeroCount;
-  if (sumNums[3]) sumNums[3].textContent = freeCount;
-}
-
 function filterTable() {
   const q = document.getElementById('searchBox').value.toLowerCase();
   let vis = 0;
@@ -15149,12 +15103,7 @@ function sortTable(mode) {
     pairs.push({ main: row, det });
   });
 
-  if (mode === 'codeAsc' || mode === 'codeDesc') {
-    pairs.sort((a, b) => {
-      const cmp = (a.main.dataset.setcode || '').localeCompare(b.main.dataset.setcode || '', 'ko', { numeric: true });
-      return mode === 'codeAsc' ? cmp : -cmp;
-    });
-  } else if (mode !== 'default') {
+  if (mode !== 'default') {
     const colIdx = mode === 'qty' ? 6 : mode === 'pureQty' ? 7 : 5;
     pairs.sort((a, b) => {
       const va = parseFloat(a.main.querySelectorAll('td')[colIdx]?.dataset.val || '0');
@@ -15172,7 +15121,7 @@ function sortTable(mode) {
   filterTable();
 }
 
-document.addEventListener('DOMContentLoaded', () => { recalcSellable(); filterTable(); });
+document.addEventListener('DOMContentLoaded', () => filterTable());
 
 function downloadExcel() {
   const xe = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
