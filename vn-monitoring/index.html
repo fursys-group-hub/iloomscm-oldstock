@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VN 간단 모니터링 | iloom SCM 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:#F4F5F7;color:#1F2937;font-size:14px}
+/* Nav */
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;display:inline-flex;align-items:center}
+.iloom-nav-logo .dv{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333}
+.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+/* Auth */
+.auth-hide{display:none}
+.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
+.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer}
+.btn-nav-login:hover{background:#a50818}
+.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer}
+.btn-nav-logout:hover{background:#E5E7EB}
+.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
+@media(max-width:700px){.iloom-nav-inner{gap:0}.iloom-tab{padding:10px;font-size:12px}}
+/* Page */
+.page-header{background:#fff;border-bottom:1px solid #E5E7EB;padding:20px 24px 16px}
+.page-header h1{font-size:20px;font-weight:700;color:#111827}
+.page-header .meta{font-size:12px;color:#6B7280;margin-top:4px}
+.summary-bar{display:flex;align-items:center;gap:24px;padding:14px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.sum-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.sum-num{font-size:22px;font-weight:700;line-height:1}
+.sum-lbl{font-size:11px;color:#6B7280}
+.sum-sep{width:1px;height:40px;background:#E5E7EB;margin:0 8px}
+.toolbar{display:flex;align-items:center;gap:12px;padding:12px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:220px;outline:none}
+.search-box:focus{border-color:#c80a1e}
+.btn-refresh{padding:6px 14px;border:1px solid #D1D5DB;background:#fff;border-radius:6px;font-size:12px;cursor:pointer;color:#374151}
+.btn-refresh:hover{background:#F9FAFB}
+.result-wrap{padding:24px;overflow-x:auto}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+.result-table tr:hover td{background:#FFFBEB}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-arrival{background:#FEF3C7;color:#92400E}
+.badge-vn{background:#FEE2E2;color:#991B1B}
+.num-neg{color:#c80a1e;font-weight:700}
+.num-pos{color:#059669;font-weight:700}
+.empty-msg{padding:60px 24px;text-align:center;color:#9CA3AF;font-size:14px}
+.loading-msg{padding:60px 24px;text-align:center;color:#6B7280;font-size:14px}
+</style>
+</head>
+<body>
+
+<div id="authOverlay" style="position:fixed;inset:0;background:#F4F5F7;z-index:9998;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:48px">🔒</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1F2937">로그인이 필요합니다</h2>
+    <p style="font-size:13px;color:#6B7280">허가된 사용자만 이용할 수 있습니다.</p>
+    <button onclick="showLoginModal()" style="padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">EP ID로 로그인</button>
+  </div>
+</div>
+<div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideLoginModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">로그인</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">허가된 EP ID를 입력하세요</p>
+    <input id="loginInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;margin-top:-4px"><input type="checkbox" id="saveIdChk" style="cursor:pointer"> ID 저장</label>
+    <div id="loginError" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
+    </div>
+  </div>
+</div>
+
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <span class="iloom-nav-logo">iloom<span class="dv"></span><span class="sub">SCM 대시보드</span></span>
+    <div class="iloom-nav-tabs">
+      <a class="iloom-tab auth-hide" href="../spec-change/">사양변경</a>
+      <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+      <a class="iloom-tab active auth-hide" href="../vn-monitoring/">VN 간단 모니터링</a>
+      <a class="iloom-tab auth-hide" href="../discontinued-sku/">단종(단품)</a>
+      <a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
+      <a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
+      <a class="iloom-tab auth-hide" href="../matching/">짝맞추기</a>
+      <a class="iloom-tab auth-hide" href="../admin/">관리</a>
+    </div>
+    <div class="nav-auth">
+      <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
+      <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>VN 간단 모니터링</h1>
+  <div class="meta">가용재고가 음수인 품목만 표시 · 원본: <a href="https://docs.google.com/spreadsheets/d/1xPsUnyf4qIEKTTDR36W--AdgIrzuFw_QAeOXdPielqY/edit#gid=0" target="_blank" rel="noopener">구글시트 '보고' 탭</a></div>
+</div>
+
+<div class="summary-bar">
+  <div class="sum-item"><span class="sum-num" id="sumTotal">-</span><span class="sum-lbl">표시 품목</span></div>
+  <div class="sum-item"><span class="sum-num" style="color:#92400E" id="sumArrival">-</span><span class="sum-lbl">입고일 점검</span></div>
+  <div class="sum-item"><span class="sum-num" style="color:#991B1B" id="sumVn">-</span><span class="sum-lbl">베트남 출고 확인</span></div>
+  <div class="sum-sep"></div>
+  <div class="sum-item"><span class="sum-num" id="sumFetchedAt" style="font-size:12px;font-weight:500;color:#6B7280">-</span><span class="sum-lbl">마지막 조회</span></div>
+</div>
+
+<div class="toolbar">
+  <input class="search-box" id="searchBox" type="text" placeholder="코드 / 명칭 검색..." oninput="filterTable()">
+  <button class="btn-refresh" onclick="loadData()">↻ 새로고침</button>
+  <span id="resultCount" style="font-size:12px;color:#6B7280"></span>
+</div>
+
+<div class="result-wrap">
+<table class="result-table" id="mainTable">
+<thead><tr>
+  <th>코드</th>
+  <th>명칭</th>
+  <th style="text-align:right">가용재고</th>
+  <th style="text-align:right">해상재고</th>
+  <th style="text-align:right">해상재고 포함 가용재고</th>
+  <th>상태</th>
+</tr></thead>
+<tbody id="tableBody">
+<tr><td colspan="6" class="loading-msg">불러오는 중...</td></tr>
+</tbody>
+</table>
+</div>
+
+<script>
+// ── 인증 ─────────────────────────────────────────────────────────
+const EP_DEFAULT_IDS = ['k94rainy','wonsuk_kim','nakwon_choi'];
+const LS_EP_IDS_KEY  = 'iloom_allowed_ep_ids';
+const SS_USER_KEY    = 'iloom_ep_session';
+const SHEET_ID        = '1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc';
+
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+async function fetchSheet(sheetId, name, requiredCols) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(name)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const text = await resp.text();
+  const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
+  if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
+  const cols = json.table.cols.map(c => c.label);
+  if (requiredCols && !requiredCols.every(c => cols.includes(c))) {
+    throw new Error(`'${name}' 시트를 찾을 수 없거나 컬럼이 다릅니다`);
+  }
+  return (json.table.rows || []).map(row => {
+    const obj = {};
+    (row.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.v ?? '') : ''; });
+    return obj;
+  });
+}
+
+async function fetchApprovedIds() {
+  try {
+    const rows = await fetchSheet(SHEET_ID, '권한관리', ['EP ID', '상태']);
+    return rows.filter(r => String(r['상태'] || '').trim() === '승인').map(r => String(r['EP ID'] || '').trim()).filter(Boolean);
+  } catch(e) { return []; }
+}
+
+function getAllowedIds() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(LS_EP_IDS_KEY) || 'null');
+    if (Array.isArray(stored)) return [...new Set([...EP_DEFAULT_IDS, ...stored])];
+  } catch(e) {}
+  return [...EP_DEFAULT_IDS];
+}
+function getLoggedInUser() { return sessionStorage.getItem(SS_USER_KEY) || null; }
+
+function showLoginModal() {
+  const saved = localStorage.getItem('iloom_saved_ep_id') || '';
+  document.getElementById('loginInput').value = saved;
+  const chk = document.getElementById('saveIdChk');
+  if (chk) chk.checked = !!saved;
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('loginInput').focus(), 50);
+}
+function hideLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+async function doLogin() {
+  const val = document.getElementById('loginInput').value.trim();
+  if (!val) { document.getElementById('loginError').textContent = 'ID를 입력하세요.'; return; }
+  document.getElementById('loginError').textContent = '확인 중...';
+  const approved = await fetchApprovedIds();
+  const allIds = [...new Set([...getAllowedIds(), ...approved])];
+  if (allIds.includes(val)) {
+    sessionStorage.setItem(SS_USER_KEY, val);
+    const chk = document.getElementById('saveIdChk');
+    if (chk && chk.checked) localStorage.setItem('iloom_saved_ep_id', val);
+    else localStorage.removeItem('iloom_saved_ep_id');
+    hideLoginModal();
+    updateAuthUI();
+  } else {
+    document.getElementById('loginError').textContent = '허용되지 않은 EP ID입니다.';
+  }
+}
+function doLogout() { sessionStorage.removeItem(SS_USER_KEY); updateAuthUI(); }
+
+function updateAuthUI() {
+  const user = getLoggedInUser();
+  document.getElementById('authOverlay').style.display = user ? 'none' : 'flex';
+  document.getElementById('btnNavLogin').style.display  = user ? 'none' : '';
+  document.getElementById('btnNavLogout').style.display = user ? '' : 'none';
+  const chip = document.getElementById('navUserChip');
+  chip.style.display = user ? '' : 'none';
+  chip.textContent   = user ? `👤 ${user}` : '';
+  document.querySelectorAll('.auth-hide').forEach(el => { el.style.display = user ? 'inline' : 'none'; });
+  if (user) loadData();
+}
+
+// ── VN 모니터링 데이터 ─────────────────────────────────────────────
+const VN_SHEET_ID = '1xPsUnyf4qIEKTTDR36W--AdgIrzuFw_QAeOXdPielqY';
+const VN_TAB_NAME = '보고';
+
+let allItems = [];
+
+async function fetchVnRows() {
+  const url = `https://docs.google.com/spreadsheets/d/${VN_SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(VN_TAB_NAME)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const text = await resp.text();
+  const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);\s*$/, ''));
+  if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets 오류');
+  return json.table.rows || [];
+}
+
+// 열 위치: A=코드, C=명칭, O=가용재고, S=해상재고, U=해상재고 포함 가용재고
+const COL_CODE = 0, COL_NAME = 2, COL_AVAIL = 14, COL_SEA = 18, COL_TOTAL = 20;
+
+function classifyRows(rows) {
+  const out = [];
+  for (const r of rows) {
+    const c = r.c;
+    if (!c) continue;
+    const code = c[COL_CODE] && typeof c[COL_CODE].v === 'string' ? c[COL_CODE].v.trim() : '';
+    if (!code) continue;
+    const availCell = c[COL_AVAIL];
+    if (!availCell || typeof availCell.v !== 'number') continue; // 병합헤더 잔여행 등 스킵
+    const avail = availCell.v;
+    if (avail >= 0) continue; // 1. 정상 — 모니터링에서 숨김
+
+    const name = c[COL_NAME] && c[COL_NAME].v != null ? String(c[COL_NAME].v) : '';
+    const sea  = (c[COL_SEA]   && typeof c[COL_SEA].v   === 'number') ? c[COL_SEA].v   : 0;
+    const total = (c[COL_TOTAL] && typeof c[COL_TOTAL].v === 'number') ? c[COL_TOTAL].v : (avail + sea);
+
+    const status = total > 0
+      ? { key: 'arrival', label: '입고일 점검' }   // 2. 가용재고 음수, 해상재고 있어 U는 양수
+      : { key: 'vn',      label: '베트남 출고 확인' }; // 3. 가용재고·U 모두 음수
+
+    out.push({ code, name, avail, sea, total, status });
+  }
+  return out;
+}
+
+function fmt(n) {
+  const v = Math.round(n * 10) / 10;
+  return v.toLocaleString('ko-KR');
+}
+
+function renderTable(items) {
+  const body = document.getElementById('tableBody');
+  if (!items.length) {
+    body.innerHTML = '<tr><td colspan="6" class="empty-msg">조건에 해당하는 품목이 없습니다.</td></tr>';
+    return;
+  }
+  body.innerHTML = items.map(it => {
+    const badge = it.status.key === 'arrival'
+      ? `<span class="badge badge-arrival">입고일 점검</span>`
+      : `<span class="badge badge-vn">베트남 출고 확인</span>`;
+    return `<tr data-code="${esc(it.code.toLowerCase())}" data-name="${esc(it.name.toLowerCase())}">
+      <td style="font-family:Montserrat,monospace;font-weight:600">${esc(it.code)}</td>
+      <td>${esc(it.name)}</td>
+      <td style="text-align:right" class="num-neg">${fmt(it.avail)}</td>
+      <td style="text-align:right">${fmt(it.sea)}</td>
+      <td style="text-align:right" class="${it.total > 0 ? 'num-pos' : 'num-neg'}">${fmt(it.total)}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable() {
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const filtered = !q ? allItems : allItems.filter(it =>
+    it.code.toLowerCase().includes(q) || it.name.toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+  document.getElementById('resultCount').textContent = q ? `${filtered.length} / ${allItems.length} 건` : '';
+}
+
+async function loadData() {
+  const body = document.getElementById('tableBody');
+  body.innerHTML = '<tr><td colspan="6" class="loading-msg">불러오는 중...</td></tr>';
+  try {
+    const rows = await fetchVnRows();
+    allItems = classifyRows(rows);
+    allItems.sort((a, b) => a.total - b.total);
+
+    const arrivalCount = allItems.filter(it => it.status.key === 'arrival').length;
+    const vnCount = allItems.filter(it => it.status.key === 'vn').length;
+    document.getElementById('sumTotal').textContent = allItems.length;
+    document.getElementById('sumArrival').textContent = arrivalCount;
+    document.getElementById('sumVn').textContent = vnCount;
+    document.getElementById('sumFetchedAt').textContent = new Date().toLocaleString('ko-KR', { hour12: false });
+
+    filterTable();
+  } catch (e) {
+    body.innerHTML = `<tr><td colspan="6" class="empty-msg" style="color:#c80a1e">데이터 로딩 실패: ${esc(e.message)}</td></tr>`;
+  }
+}
+
+updateAuthUI();
+</script>
+</body>
+</html>
