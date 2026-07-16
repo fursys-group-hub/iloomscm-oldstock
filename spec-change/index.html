@@ -97,6 +97,9 @@ tr.new-row:hover{background:#dcfce7}
 tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
 .badge-old{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#fee2e2;color:#dc2626}
 .badge-new{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;background:#d1fae5;color:#059669}
+.th-group-old{background:#7c2d2d!important}
+.th-group-new{background:#166534!important}
+.code{font-family:'SF Mono',Consolas,monospace;font-size:11px}
 .chk-danger{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#fee2e2;color:#dc2626}
 .chk-ok{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#d1fae5;color:#059669}
 .chk-none{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#f3f4f6;color:#9ca3af}
@@ -191,10 +194,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
     </div>
     <div class="header-meta">
       재고 기준일자: <strong>2026-07-16</strong><br>
-      생성시각: <strong>2026-07-16 12:29</strong>
+      생성시각: <strong>2026-07-16 12:36</strong>
     </div>
   </div>
-  <div class="notice">※ 이 페이지는 2026-07-16 12:29 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
+  <div class="notice">※ 이 페이지는 2026-07-16 12:36 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
 
   <!-- 상단 요약 -->
   <div class="summary-grid">
@@ -493,60 +496,44 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFX00AA01A-XX</td>
-  <td class="tl">IFX00AA01A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">110° 힌지 B(2조,댐핑1조)</td>
+  <td class="tl"><span class="code">IFX00AA01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA01A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">110° 힌지 B(4조,댐핑2조)</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">에픽</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">프레임도어 힌지 변</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA01A-XX</td>
-  <td class="tl">ICX00AA01A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">110° 힌지 B(2조,댐핑1조)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>56</td>
-  <td>0</td>
-  <td>0</td>
-  <td>49</td>
   <td>230</td>
+  <td>49</td>
   <td style="font-weight:700;">237</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">프레임도어 힌지 변</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
     </tbody>
   </table>
@@ -563,154 +550,84 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IAC00CN00A-6K2</td>
-  <td class="tl">IAC00CN00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">가드쿠션_똑딱이형</td>
+  <td class="tl"><span class="code">IAC00CN00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IAC00CN00B</span></td>
   <td class="tc">6K2</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">가드쿠션</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">올젠</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IAC00CN00B-6K2</td>
-  <td class="tl">IAC00CN00B</td>
-  <td class="tc">6K2</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">가드쿠션_똑딱이형</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">올젠</td>
   <td>6</td>
-  <td>0</td>
-  <td>0</td>
-  <td>7</td>
   <td>30</td>
+  <td>7</td>
   <td style="font-weight:700;">29</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IAC00CN00A','IAC00CN00B','6K2')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IAC00CN00A','IAC00CN00B','6K2')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBG20CN02A-NK</td>
-  <td class="tl">IBG20CN02A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭_똑딱이형</td>
+  <td class="tl"><span class="code">IBG20CN02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBG20CN02B</span></td>
   <td class="tc">NK</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭</td>
   <td class="tc">단종</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBG20CN02B-NK</td>
-  <td class="tl">IBG20CN02B</td>
-  <td class="tc">NK</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭_똑딱이형</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>37</td>
   <td>0</td>
-  <td>0</td>
   <td>8</td>
-  <td>0</td>
   <td style="font-weight:700;">29</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','NK')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','NK')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBG20CN02A-OATK</td>
-  <td class="tl">IBG20CN02A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭_똑딱이형</td>
+  <td class="tl"><span class="code">IBG20CN02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBG20CN02B</span></td>
   <td class="tc">OATK</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBG20CN02B-OATK</td>
-  <td class="tl">IBG20CN02B</td>
-  <td class="tc">OATK</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 가드 2000폭_똑딱이형</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>43</td>
   <td>0</td>
-  <td>0</td>
   <td>10</td>
-  <td>0</td>
   <td style="font-weight:700;">33</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">두들 침대 가드 쿠션 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','OATK')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','OATK')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -727,154 +644,84 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBN60CG01A-SO</td>
-  <td class="tl">IBN60CG01A</td>
-  <td class="tc">SO</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 600폭 선반형</td>
+  <td class="tl"><span class="code">IBN60CG01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBN60CG01B</span></td>
+  <td class="tc">SO</td>
   <td class="tc">개발</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBN60CG01B-SO</td>
-  <td class="tl">IBN60CG01B</td>
-  <td class="tc">SO</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 600폭 선반형</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
-  <td>3</td>
   <td>10</td>
+  <td>3</td>
   <td style="font-weight:700;">7</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBN60CG01A','IBN60CG01B','SO')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBN60CG01A','IBN60CG01B','SO')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBN60CG00A-SO</td>
-  <td class="tl">IBN60CG00A</td>
-  <td class="tc">SO</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 600폭</td>
+  <td class="tl"><span class="code">IBN60CG00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBN60CG00B</span></td>
+  <td class="tc">SO</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">송아퍼니처</td>
   <td>16</td>
   <td>0</td>
-  <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">15</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBN60CG00B-SO</td>
-  <td class="tl">IBN60CG00B</td>
-  <td class="tc">SO</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>10</td>
+  <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBN60CG00A','IBN60CG00B','SO')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBN60CG00A','IBN60CG00B','SO')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBN80CG00A-SO</td>
-  <td class="tl">IBN80CG00A</td>
-  <td class="tc">SO</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 800폭</td>
+  <td class="tl"><span class="code">IBN80CG00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBN80CG00B</span></td>
+  <td class="tc">SO</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">송아퍼니처</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBN80CG00B-SO</td>
-  <td class="tl">IBN80CG00B</td>
-  <td class="tc">SO</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">패널 800폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>9</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">9</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">토스티 패널 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBN80CG00A','IBN80CG00B','SO')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBN80CG00A','IBN80CG00B','SO')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -891,248 +738,124 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HB01U09EHU-MM</td>
-  <td class="tl">HB01U09EHU</td>
-  <td class="tc">MM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 900폭(2모터)</td>
+  <td class="tl"><span class="code">HB01U09EHU</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HB01U09EHUN</span></td>
+  <td class="tc">MM</td>
   <td class="tc">개발</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스안성</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HB01U09EHUN-MM</td>
-  <td class="tl">HB01U09EHUN</td>
-  <td class="tc">MM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 900폭(2모터)</td>
   <td class="tc">사용</td>
   <td class="tc">-</td>
-  <td class="tl">퍼시스안성</td>
   <td>2</td>
-  <td>8</td>
   <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">9</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HB01U09EHU','HB01U09EHUN','MM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U09EHU','HB01U09EHUN','MM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HB01U15EHU-MM</td>
-  <td class="tl">HB01U15EHU</td>
-  <td class="tc">MM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1500폭(2모터)</td>
+  <td class="tl"><span class="code">HB01U15EHU</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HB01U15EHUN</span></td>
+  <td class="tc">MM</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HB01U15EHUN-MM</td>
-  <td class="tl">HB01U15EHUN</td>
-  <td class="tc">MM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1500폭(2모터)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스안성</td>
   <td>2</td>
-  <td>8</td>
   <td>0</td>
   <td>3</td>
-  <td>0</td>
   <td style="font-weight:700;">7</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HB01U11EHU-MM</td>
-  <td class="tl">HB01U11EHU</td>
-  <td class="tc">MM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1100폭(2모터)</td>
+  <td class="tl"><span class="code">HB01U11EHU</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HB01U11EHUN</span></td>
+  <td class="tc">MM</td>
   <td class="tc">개발</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HB01U11EHUN-MM</td>
-  <td class="tl">HB01U11EHUN</td>
-  <td class="tc">MM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1100폭(2모터)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스안성</td>
   <td>34</td>
-  <td>24</td>
   <td>0</td>
   <td>66</td>
-  <td>0</td>
   <td style="font-weight:700;">-8</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HB01U09HHU-MM</td>
-  <td class="tl">HB01U09HHU</td>
-  <td class="tc">MM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 900폭(3모터)</td>
+  <td class="tl"><span class="code">HB01U09HHU</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HB01U09HHUN</span></td>
+  <td class="tc">MM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스안성</td>
-  <td>2</td>
-  <td>8</td>
-  <td>0</td>
   <td>2</td>
   <td>0</td>
+  <td>2</td>
   <td style="font-weight:700;">8</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HB01U09HHUN-MM</td>
-  <td class="tl">HB01U09HHUN</td>
-  <td class="tc">MM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 900폭(3모터)</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HB01U09HHU','HB01U09HHUN','MM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U09HHU','HB01U09HHUN','MM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HB01U11HHU-MM</td>
-  <td class="tl">HB01U11HHU</td>
-  <td class="tc">MM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1100폭(3모터)</td>
+  <td class="tl"><span class="code">HB01U11HHU</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HB01U11HHUN</span></td>
+  <td class="tc">MM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스안성</td>
   <td>5</td>
-  <td>40</td>
   <td>0</td>
   <td>3</td>
-  <td>0</td>
   <td style="font-weight:700;">42</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HB01U11HHUN-MM</td>
-  <td class="tl">HB01U11HHUN</td>
-  <td class="tc">MM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">모션베드메커니즘 1100폭(3모터)</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">모션베드 리모컨 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U11HHU','HB01U11HHUN','MM')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HB01U11HHU','HB01U11HHUN','MM')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -1149,248 +872,124 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0043LN-OS</td>
-  <td class="tl">HSOB0043LN</td>
-  <td class="tc">OS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌)</td>
+  <td class="tl"><span class="code">HSOB0043LN</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSOB0043LNA</span></td>
+  <td class="tc">OS</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSOB0043LNA-OS</td>
-  <td class="tl">HSOB0043LNA</td>
-  <td class="tc">OS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
   <td>10</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0063L-OS</td>
-  <td class="tl">HSOB0063L</td>
-  <td class="tc">OS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌) 600폭</td>
+  <td class="tl"><span class="code">HSOB0063L</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSOB0063LN</span></td>
+  <td class="tc">OS</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSOB0063LN-OS</td>
-  <td class="tl">HSOB0063LN</td>
-  <td class="tc">OS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌) 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
   <td>0</td>
-  <td>4</td>
   <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">3</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0063L-SP</td>
-  <td class="tl">HSOB0063L</td>
-  <td class="tc">SP</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌) 600폭</td>
+  <td class="tl"><span class="code">HSOB0063L</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSOB0063LN</span></td>
+  <td class="tc">SP</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충2</td>
   <td>4</td>
-  <td>0</td>
   <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSOB0063LN-SP</td>
-  <td class="tl">HSOB0063LN</td>
-  <td class="tc">SP</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(좌) 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSOB0063L','HSOB0063LN','SP')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0063L','HSOB0063LN','SP')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0063R-OS</td>
-  <td class="tl">HSOB0063R</td>
-  <td class="tc">OS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(우) 600폭</td>
+  <td class="tl"><span class="code">HSOB0063R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSOB0063RN</span></td>
+  <td class="tc">OS</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충2</td>
   <td>3</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">3</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSOB0063RN-OS</td>
-  <td class="tl">HSOB0063RN</td>
-  <td class="tc">OS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(우) 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
   <td>0</td>
-  <td>6</td>
   <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSOB0063R','HSOB0063RN','OS')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0063R','HSOB0063RN','OS')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0063R-SP</td>
-  <td class="tl">HSOB0063R</td>
-  <td class="tc">SP</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(우) 600폭</td>
+  <td class="tl"><span class="code">HSOB0063R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSOB0063RN</span></td>
+  <td class="tc">SP</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSOB0063RN-SP</td>
-  <td class="tl">HSOB0063RN</td>
-  <td class="tc">SP</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">3단 책장도어(우) 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
   <td>3</td>
   <td>0</td>
-  <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">로이 책장도어 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
     </tbody>
   </table>
@@ -1407,60 +1006,44 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBP00AP01A-IV</td>
-  <td class="tl">IBP00AP01A</td>
-  <td class="tc">IV</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">하부서랍(확장1EA)</td>
+  <td class="tl"><span class="code">IBP00AP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBP00AP01B</span></td>
+  <td class="tc">IV</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">제일퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">일방향 캐스터 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBP00AP01B-IV</td>
-  <td class="tl">IBP00AP01B</td>
-  <td class="tc">IV</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">하부서랍(확장1EA)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>5</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">일방향 캐스터 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
     </tbody>
   </table>
@@ -1477,671 +1060,304 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121R-IVRM</td>
-  <td class="tl">HSKB0121R</td>
-  <td class="tc">IVRM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
+  <td class="tl"><span class="code">HSKB0121R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121RA</span></td>
+  <td class="tc">IVRM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>22</td>
   <td>0</td>
-  <td>0</td>
   <td>20</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121RA-IVRM</td>
-  <td class="tl">HSKB0121RA</td>
-  <td class="tc">IVRM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVRM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVRM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121R-IVTM</td>
-  <td class="tl">HSKB0121R</td>
-  <td class="tc">IVTM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
+  <td class="tl"><span class="code">HSKB0121R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121RA</span></td>
+  <td class="tc">IVTM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>14</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121RA-IVTM</td>
-  <td class="tl">HSKB0121RA</td>
-  <td class="tc">IVTM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVTM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVTM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121R-IVLUW</td>
-  <td class="tl">HSKB0121R</td>
-  <td class="tc">IVLUW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
+  <td class="tl"><span class="code">HSKB0121R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121RA</span></td>
+  <td class="tc">IVLUW</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>12</td>
   <td>0</td>
-  <td>0</td>
   <td>10</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121RA-IVLUW</td>
-  <td class="tl">HSKB0121RA</td>
-  <td class="tc">IVLUW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVLUW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVLUW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121R-IVGYM</td>
-  <td class="tl">HSKB0121R</td>
-  <td class="tc">IVGYM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
+  <td class="tl"><span class="code">HSKB0121R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121RA</span></td>
+  <td class="tc">IVGYM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>55</td>
   <td>0</td>
-  <td>0</td>
   <td>10</td>
-  <td>0</td>
   <td style="font-weight:700;">45</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121RA-IVGYM</td>
-  <td class="tl">HSKB0121RA</td>
-  <td class="tc">IVGYM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVGYM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVGYM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0141R-IVRM</td>
-  <td class="tl">HSKB0141R</td>
-  <td class="tc">IVRM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
+  <td class="tl"><span class="code">HSKB0141R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0141RA</span></td>
+  <td class="tc">IVRM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>25</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">21</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0141RA-IVRM</td>
-  <td class="tl">HSKB0141RA</td>
-  <td class="tc">IVRM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVRM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVRM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0141R-IVTM</td>
-  <td class="tl">HSKB0141R</td>
-  <td class="tc">IVTM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
+  <td class="tl"><span class="code">HSKB0141R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0141RA</span></td>
+  <td class="tc">IVTM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>6</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0141RA-IVTM</td>
-  <td class="tl">HSKB0141RA</td>
-  <td class="tc">IVTM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVTM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVTM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0141R-IVLUW</td>
-  <td class="tl">HSKB0141R</td>
-  <td class="tc">IVLUW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
+  <td class="tl"><span class="code">HSKB0141R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0141RA</span></td>
+  <td class="tc">IVLUW</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>26</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">22</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0141RA-IVLUW</td>
-  <td class="tl">HSKB0141RA</td>
-  <td class="tc">IVLUW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVLUW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVLUW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0141R-IVGYM</td>
-  <td class="tl">HSKB0141R</td>
-  <td class="tc">IVGYM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
+  <td class="tl"><span class="code">HSKB0141R</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0141RA</span></td>
+  <td class="tc">IVGYM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>18</td>
   <td>0</td>
-  <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">17</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0141RA-IVGYM</td>
-  <td class="tl">HSKB0141RA</td>
-  <td class="tc">IVGYM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정-적층장 제외) 1단 상부도어 1400폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVGYM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVGYM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121F-IVRM</td>
-  <td class="tl">HSKB0121F</td>
-  <td class="tc">IVRM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
+  <td class="tl"><span class="code">HSKB0121F</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121FA</span></td>
+  <td class="tc">IVRM</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>11</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">9</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121FA-IVRM</td>
-  <td class="tl">HSKB0121FA</td>
-  <td class="tc">IVRM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>20</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">20</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVRM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVRM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121F-IVTM</td>
-  <td class="tl">HSKB0121F</td>
-  <td class="tc">IVTM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
+  <td class="tl"><span class="code">HSKB0121F</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121FA</span></td>
+  <td class="tc">IVTM</td>
   <td class="tc">개발</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>1</td>
   <td>0</td>
-  <td>0</td>
   <td>1</td>
-  <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121FA-IVTM</td>
-  <td class="tl">HSKB0121FA</td>
-  <td class="tc">IVTM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>17</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">17</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVTM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVTM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121F-IVLUW</td>
-  <td class="tl">HSKB0121F</td>
-  <td class="tc">IVLUW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
+  <td class="tl"><span class="code">HSKB0121F</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121FA</span></td>
+  <td class="tc">IVLUW</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>29</td>
   <td>0</td>
-  <td>0</td>
   <td>3</td>
-  <td>0</td>
   <td style="font-weight:700;">26</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121FA-IVLUW</td>
-  <td class="tl">HSKB0121FA</td>
-  <td class="tc">IVLUW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>20</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">20</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVLUW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVLUW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0121F-IVGYM</td>
-  <td class="tl">HSKB0121F</td>
-  <td class="tc">IVGYM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
+  <td class="tl"><span class="code">HSKB0121F</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKB0121FA</span></td>
+  <td class="tc">IVGYM</td>
   <td class="tc">개발</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충1</td>
   <td>2</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKB0121FA-IVGYM</td>
-  <td class="tl">HSKB0121FA</td>
-  <td class="tc">IVGYM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">(벽고정) 1단 상부도어 1200폭 (모션용)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>18</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">14</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVGYM')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVGYM')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDD10BP00A-IV</td>
-  <td class="tl">IDD10BP00A</td>
-  <td class="tc">IV</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 1000폭</td>
+  <td class="tl"><span class="code">IDD10BP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDD10BP00B</span></td>
+  <td class="tc">IV</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">제일퍼니처</td>
   <td>27</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">23</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDD10BP00B-IV</td>
-  <td class="tl">IDD10BP00B</td>
-  <td class="tc">IV</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 1000폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">제일퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDD10BP00A','IDD10BP00B','IV')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDD10BP00A','IDD10BP00B','IV')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDD12BP00A-IV</td>
-  <td class="tl">IDD12BP00A</td>
-  <td class="tc">IV</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 1200폭</td>
+  <td class="tl"><span class="code">IDD12BP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDD12BP00B</span></td>
+  <td class="tc">IV</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">제일퍼니처</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
-  <td>2</td>
   <td>24</td>
+  <td>2</td>
   <td style="font-weight:700;">23</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDD12BP00B-IV</td>
-  <td class="tl">IDD12BP00B</td>
-  <td class="tc">IV</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 1200폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">제일퍼니처</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>50</td>
+  <td>0</td>
   <td style="font-weight:700;">50</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">도어 두께 변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDD12BP00A','IDD12BP00B','IV')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDD12BP00A','IDD12BP00B','IV')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -2158,671 +1374,304 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0001XR-XX</td>
-  <td class="tl">HSKB0001XR</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑1조,일반1조,상부도어용)</td>
+  <td class="tl"><span class="code">HSKB0001XR</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA04A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 힌지류</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">에픽</td>
   <td>128</td>
   <td>0</td>
-  <td>0</td>
   <td>32</td>
-  <td>0</td>
   <td style="font-weight:700;">96</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA04A-XX</td>
-  <td class="tl">ICX00AA04A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑1조,일반1조,상부도어용)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>305</td>
-  <td>0</td>
-  <td>0</td>
-  <td>212</td>
   <td>240</td>
+  <td>212</td>
   <td style="font-weight:700;">333</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0001XR','ICX00AA04A','XX')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0001XR','ICX00AA04A','XX')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKB0002X-XX</td>
-  <td class="tl">HSKB0002X</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑1조,일반1조)</td>
+  <td class="tl"><span class="code">HSKB0002X</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA05A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">하부도어 힌지류</td>
   <td class="tc">개발</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">에픽</td>
   <td>10</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA05A-XX</td>
-  <td class="tl">ICX00AA05A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑1조,일반1조)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>339</td>
-  <td>0</td>
-  <td>0</td>
-  <td>780</td>
   <td>2,610</td>
+  <td>780</td>
   <td style="font-weight:700;">2,169</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKB0002X','ICX00AA05A','XX')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0002X','ICX00AA05A','XX')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0005X-XX</td>
-  <td class="tl">HSOB0005X</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,일반1조)</td>
+  <td class="tl"><span class="code">HSOB0005X</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA06A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">5단 책장도어 힌지류</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">올품퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA06A-XX</td>
-  <td class="tl">ICX00AA06A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,일반1조)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">올품퍼니처</td>
   <td>105</td>
-  <td>0</td>
-  <td>0</td>
-  <td>19</td>
   <td>70</td>
+  <td>19</td>
   <td style="font-weight:700;">156</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSOB0001XN-XX</td>
-  <td class="tl">HSOB0001XN</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,상부도어용A)</td>
+  <td class="tl"><span class="code">HSOB0001XN</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA07A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상부도어 힌지류</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">에픽</td>
   <td>78</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">78</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA07A-XX</td>
-  <td class="tl">ICX00AA07A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,상부도어용A)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>109</td>
-  <td>0</td>
-  <td>0</td>
-  <td>327</td>
   <td>1,317</td>
+  <td>327</td>
   <td style="font-weight:700;">1,099</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSOB0001XN','ICX00AA07A','XX')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0001XN','ICX00AA07A','XX')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">ICX00AA02A-XX</td>
-  <td class="tl">ICX00AA02A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,상부도어용B)</td>
+  <td class="tl"><span class="code">ICX00AA02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICX00AA08A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">110° 힌지(댐핑2조), 가스스프링(1조)</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">에픽</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICX00AA08A-XX</td>
-  <td class="tl">ICX00AA08A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">로지카 힌지(댐핑2조,상부도어용B)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>7</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ00A-IV</td>
-  <td class="tl">IFT00AQ00A</td>
-  <td class="tc">IV</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
+  <td class="tl"><span class="code">IFT00AQ00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ00B</span></td>
+  <td class="tc">IV</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ00B-IV</td>
-  <td class="tl">IFT00AQ00B</td>
-  <td class="tc">IV</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>5</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ00A-OS</td>
-  <td class="tl">IFT00AQ00A</td>
-  <td class="tc">OS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
+  <td class="tl"><span class="code">IFT00AQ00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ00B</span></td>
+  <td class="tc">OS</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ00B-OS</td>
-  <td class="tl">IFT00AQ00B</td>
-  <td class="tc">OS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>17</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">17</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ00A-SP</td>
-  <td class="tl">IFT00AQ00A</td>
-  <td class="tc">SP</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
+  <td class="tl"><span class="code">IFT00AQ00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ00B</span></td>
+  <td class="tc">SP</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ00B-SP</td>
-  <td class="tl">IFT00AQ00B</td>
-  <td class="tc">SP</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(좌)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>13</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">11</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ01A-IV</td>
-  <td class="tl">IFT00AQ01A</td>
-  <td class="tc">IV</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
+  <td class="tl"><span class="code">IFT00AQ01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ01B</span></td>
+  <td class="tc">IV</td>
   <td class="tc">단종</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">송아퍼니처</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ01B-IV</td>
-  <td class="tl">IFT00AQ01B</td>
-  <td class="tc">IV</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>10</td>
-  <td>0</td>
-  <td>0</td>
+  <td>10</td>
   <td>1</td>
-  <td>10</td>
   <td style="font-weight:700;">19</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ01A-OS</td>
-  <td class="tl">IFT00AQ01A</td>
-  <td class="tc">OS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
+  <td class="tl"><span class="code">IFT00AQ01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ01B</span></td>
+  <td class="tc">OS</td>
   <td class="tc">개발</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ01B-OS</td>
-  <td class="tl">IFT00AQ01B</td>
-  <td class="tc">OS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>4</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">4</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFT00AQ01A-SP</td>
-  <td class="tl">IFT00AQ01A</td>
-  <td class="tc">SP</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
+  <td class="tl"><span class="code">IFT00AQ01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFT00AQ01B</span></td>
+  <td class="tc">SP</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFT00AQ01B-SP</td>
-  <td class="tl">IFT00AQ01B</td>
-  <td class="tc">SP</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">멀티장 윗판류(우)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>15</td>
   <td>0</td>
-  <td>0</td>
   <td>6</td>
-  <td>0</td>
   <td style="font-weight:700;">9</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSFC5080H-IVGY</td>
-  <td class="tl">HSFC5080H</td>
-  <td class="tc">IVGY</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 선반류 800폭(손잡이포함)</td>
+  <td class="tl"><span class="code">HSFC5080H</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSFC5080HN</span></td>
+  <td class="tc">IVGY</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">엘디자인</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSFC5080HN-IVGY</td>
-  <td class="tl">HSFC5080HN</td>
-  <td class="tc">IVGY</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 선반류 800폭(손잡이포함)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">엘디자인</td>
   <td>119</td>
-  <td>0</td>
-  <td>0</td>
-  <td>105</td>
   <td>406</td>
+  <td>105</td>
   <td style="font-weight:700;">420</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSLB5080N-IVKP</td>
-  <td class="tl">HSLB5080N</td>
-  <td class="tc">IVKP</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 도어 800폭</td>
+  <td class="tl"><span class="code">HSLB5080N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSLB5080NA</span></td>
+  <td class="tc">IVKP</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충2</td>
   <td>15</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">13</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSLB5080NA-IVKP</td>
-  <td class="tl">HSLB5080NA</td>
-  <td class="tc">IVKP</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 도어 800폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKP')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKP')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSLB5080N-IVKS</td>
-  <td class="tl">HSLB5080N</td>
-  <td class="tc">IVKS</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 도어 800폭</td>
+  <td class="tl"><span class="code">HSLB5080N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSLB5080NA</span></td>
+  <td class="tc">IVKS</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">퍼시스충2</td>
   <td>6</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">4</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSLB5080NA-IVKS</td>
-  <td class="tl">HSLB5080NA</td>
-  <td class="tc">IVKS</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">옷장 도어 800폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">라피도힌지 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKS')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKS')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -2839,530 +1688,244 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN11CP00A-WW</td>
-  <td class="tl">IVN11CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대장세트용,L)</td>
+  <td class="tl"><span class="code">IVN11CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN11CP01A</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>13</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">13</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN11CP01A-WW</td>
-  <td class="tl">IVN11CP01A</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대장세트용,L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>8</td>
   <td>0</td>
-  <td>0</td>
   <td>12</td>
-  <td>0</td>
   <td style="font-weight:700;">-4</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN11CP00A','IVN11CP01A','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP00A','IVN11CP01A','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN11CP03A-WW</td>
-  <td class="tl">IVN11CP03A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대장세트용,R)</td>
+  <td class="tl"><span class="code">IVN11CP03A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN11CP05A</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>7</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">7</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN11CP05A-WW</td>
-  <td class="tl">IVN11CP05A</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대장세트용,R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>19</td>
   <td>0</td>
-  <td>0</td>
   <td>7</td>
-  <td>0</td>
   <td style="font-weight:700;">12</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN11CP03A','IVN11CP05A','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP03A','IVN11CP05A','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN14CP01A-WW</td>
-  <td class="tl">IVN14CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대단품용,L)</td>
+  <td class="tl"><span class="code">IVN14CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN12CP01A</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>2</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN12CP01A-WW</td>
-  <td class="tl">IVN12CP01A</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대단품용,L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>18</td>
   <td>0</td>
-  <td>0</td>
   <td>4</td>
-  <td>0</td>
   <td style="font-weight:700;">14</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN14CP01A','IVN12CP01A','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP01A','IVN12CP01A','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN14CP03A-WW</td>
-  <td class="tl">IVN14CP03A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대단품용,R)</td>
+  <td class="tl"><span class="code">IVN14CP03A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN12CP02A</span></td>
+  <td class="tc">WW</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN12CP02A-WW</td>
-  <td class="tl">IVN12CP02A</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 목재 파티션 (침대단품용,R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>16</td>
   <td>0</td>
-  <td>0</td>
   <td>12</td>
-  <td>0</td>
   <td style="font-weight:700;">4</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN14CP03A','IVN12CP02A','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP03A','IVN12CP02A','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN11CP02A-3W1</td>
-  <td class="tl">IVN11CP02A</td>
-  <td class="tc">3W1</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대장세트용,L)</td>
+  <td class="tl"><span class="code">IVN11CP02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN11CP06A</span></td>
+  <td class="tc">3W1</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN11CP06A-3W1</td>
-  <td class="tl">IVN11CP06A</td>
-  <td class="tc">3W1</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대장세트용,L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
   <td>2</td>
-  <td>0</td>
-  <td>0</td>
-  <td>5</td>
   <td>1</td>
+  <td>5</td>
   <td style="font-weight:700;">-2</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN11CP02A','IVN11CP06A','3W1')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP02A','IVN11CP06A','3W1')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN11CP04A-3W1</td>
-  <td class="tl">IVN11CP04A</td>
-  <td class="tc">3W1</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대장세트용,R)</td>
+  <td class="tl"><span class="code">IVN11CP04A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN11CP07A</span></td>
+  <td class="tc">3W1</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>1</td>
+  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN11CP07A-3W1</td>
-  <td class="tl">IVN11CP07A</td>
-  <td class="tc">3W1</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대장세트용,R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
-  <td>13</td>
   <td>3</td>
+  <td>13</td>
   <td style="font-weight:700;">-9</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN11CP04A','IVN11CP07A','3W1')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP04A','IVN11CP07A','3W1')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN14CP02A-3W1</td>
-  <td class="tl">IVN14CP02A</td>
-  <td class="tc">3W1</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대단품용,L)</td>
+  <td class="tl"><span class="code">IVN14CP02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN12CP03A</span></td>
+  <td class="tc">3W1</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN12CP03A-3W1</td>
-  <td class="tl">IVN12CP03A</td>
-  <td class="tc">3W1</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대단품용,L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
   <td>1</td>
-  <td>0</td>
   <td>0</td>
   <td>6</td>
-  <td>0</td>
   <td style="font-weight:700;">-5</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN14CP02A','IVN12CP03A','3W1')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP02A','IVN12CP03A','3W1')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IVN14CP04A-3W1</td>
-  <td class="tl">IVN14CP04A</td>
-  <td class="tc">3W1</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대단품용,R)</td>
+  <td class="tl"><span class="code">IVN14CP04A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IVN12CP04A</span></td>
+  <td class="tc">3W1</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>2</td>
+  <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IVN12CP04A-3W1</td>
-  <td class="tl">IVN12CP04A</td>
-  <td class="tc">3W1</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">뉴트 침대 패브릭 파티션 (침대단품용,R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">주식회사 인퍼니쳐</td>
   <td>1</td>
-  <td>0</td>
-  <td>0</td>
-  <td>7</td>
   <td>2</td>
+  <td>7</td>
   <td style="font-weight:700;">-4</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IVN14CP04A','IVN12CP04A','3W1')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP04A','IVN12CP04A','3W1')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBV00CP00A-WW</td>
-  <td class="tl">IBV00CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(가로수납형R)</td>
+  <td class="tl"><span class="code">IBV00CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBV00CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>52</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">52</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBV00CP00B-WW</td>
-  <td class="tl">IBV00CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(가로수납형R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>39</td>
   <td>0</td>
-  <td>0</td>
   <td>34</td>
-  <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBV00CP00A','IBV00CP00B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP00A','IBV00CP00B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBV00CP01A-WW</td>
-  <td class="tl">IBV00CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(가로수납형L)</td>
+  <td class="tl"><span class="code">IBV00CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBV00CP01B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBV00CP01B-WW</td>
-  <td class="tl">IBV00CP01B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(가로수납형L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>12</td>
-  <td>32</td>
   <td>0</td>
   <td>28</td>
-  <td>0</td>
   <td style="font-weight:700;">16</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBV00CP01A','IBV00CP01B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP01A','IBV00CP01B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IBV00CP02A-WW</td>
-  <td class="tl">IBV00CP02A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(세로수납형)</td>
+  <td class="tl"><span class="code">IBV00CP02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IBV00CP02B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>12</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IBV00CP02B-WW</td>
-  <td class="tl">IBV00CP02B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">침대 측판류(세로수납형)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>37</td>
-  <td>165</td>
   <td>0</td>
   <td>150</td>
-  <td>0</td>
   <td style="font-weight:700;">52</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 리뉴얼</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP02A','IBV00CP02B','WW')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IBV00CP02A','IBV00CP02B','WW')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -3379,154 +1942,84 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFS80CP00A-WW</td>
-  <td class="tl">IFS80CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">2단 서랍옷장 선반류 800폭,손잡이</td>
+  <td class="tl"><span class="code">IFS80CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFS80CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">제일퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFS80CP00B-WW</td>
-  <td class="tl">IFS80CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">2단 서랍옷장 선반류 800폭,손잡이</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">제일퍼니처</td>
   <td>31</td>
-  <td>0</td>
-  <td>0</td>
-  <td>94</td>
   <td>156</td>
+  <td>94</td>
   <td style="font-weight:700;">93</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFV00CP02A-WW</td>
-  <td class="tl">IFV00CP02A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">서랍형옷장(2단서랍)측판류,뒷판</td>
+  <td class="tl"><span class="code">IFV00CP02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFV00CP02B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">제일퍼니처</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFV00CP02B-WW</td>
-  <td class="tl">IFV00CP02B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">서랍형옷장(2단서랍)측판류,뒷판</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">제일퍼니처</td>
   <td>158</td>
-  <td>0</td>
-  <td>0</td>
-  <td>87</td>
   <td>61</td>
+  <td>87</td>
   <td style="font-weight:700;">132</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IFV00CP02A','IFV00CP02B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IFV00CP02A','IFV00CP02B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFN00CP00A-WW</td>
-  <td class="tl">IFN00CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">2단서랍 앞판 (뉴트 손잡이용)</td>
+  <td class="tl"><span class="code">IFN00CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFN00CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>8</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">8</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFN00CP00B-WW</td>
-  <td class="tl">IFN00CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">2단서랍 앞판 (뉴트 손잡이용)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>49</td>
-  <td>50</td>
   <td>0</td>
   <td>89</td>
-  <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">서랍옷장 바닥판 보강</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IFN00CP00A','IFN00CP00B','WW')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IFN00CP00A','IFN00CP00B','WW')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -3543,342 +2036,164 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFS00CP00A-WW</td>
-  <td class="tl">IFS00CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 선반류 (R)</td>
+  <td class="tl"><span class="code">IFS00CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFS00CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFS00CP00B-WW</td>
-  <td class="tl">IFS00CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 선반류 (R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>14</td>
-  <td>0</td>
-  <td>0</td>
   <td>14</td>
   <td>30</td>
+  <td>14</td>
   <td style="font-weight:700;">30</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IFS00CP00A','IFS00CP00B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IFS00CP00A','IFS00CP00B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFS00CP01A-WW</td>
-  <td class="tl">IFS00CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 선반류 (L)</td>
+  <td class="tl"><span class="code">IFS00CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFS00CP01B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFS00CP01B-WW</td>
-  <td class="tl">IFS00CP01B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 선반류 (L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>17</td>
-  <td>0</td>
-  <td>0</td>
-  <td>9</td>
   <td>12</td>
+  <td>9</td>
   <td style="font-weight:700;">20</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFB00CP00A-WW</td>
-  <td class="tl">IFB00CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 측판류,뒷판 (R)</td>
+  <td class="tl"><span class="code">IFB00CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFB00CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>1</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFB00CP00B-WW</td>
-  <td class="tl">IFB00CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 측판류,뒷판 (R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>34</td>
-  <td>0</td>
-  <td>0</td>
-  <td>14</td>
   <td>10</td>
+  <td>14</td>
   <td style="font-weight:700;">30</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IFB00CP00A','IFB00CP00B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IFB00CP00A','IFB00CP00B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFB00CP01A-WW</td>
-  <td class="tl">IFB00CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 측판류,뒷판 (L)</td>
+  <td class="tl"><span class="code">IFB00CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFB00CP01B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFB00CP01B-WW</td>
-  <td class="tl">IFB00CP01B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 측판류,뒷판 (L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>13</td>
-  <td>0</td>
-  <td>0</td>
-  <td>9</td>
   <td>16</td>
+  <td>9</td>
   <td style="font-weight:700;">20</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">ICV00CP02A-WW</td>
-  <td class="tl">ICV00CP02A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">6단 책장 측판류 (코너옷장용,R)</td>
+  <td class="tl"><span class="code">ICV00CP02A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICV00CP02B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">송아퍼니처</td>
   <td>2</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICV00CP02B-WW</td>
-  <td class="tl">ICV00CP02B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">6단 책장 측판류 (코너옷장용,R)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>24</td>
-  <td>0</td>
-  <td>0</td>
-  <td>14</td>
   <td>20</td>
+  <td>14</td>
   <td style="font-weight:700;">30</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'ICV00CP02A','ICV00CP02B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'ICV00CP02A','ICV00CP02B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">ICV00CP05A-WW</td>
-  <td class="tl">ICV00CP05A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">6단 책장 측판류 (코너옷장용,L)</td>
+  <td class="tl"><span class="code">ICV00CP05A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICV00CP05B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">송아퍼니처</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICV00CP05B-WW</td>
-  <td class="tl">ICV00CP05B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">6단 책장 측판류 (코너옷장용,L)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">송아퍼니처</td>
   <td>2</td>
-  <td>0</td>
-  <td>0</td>
-  <td>9</td>
   <td>27</td>
+  <td>9</td>
   <td style="font-weight:700;">20</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+  <td class="tc"><span class="badge-done" style="font-size:11px">✓ 완료</span></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IFD60CP00A-WW</td>
-  <td class="tl">IFD60CP00A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 도어 600폭</td>
+  <td class="tl"><span class="code">IFD60CP00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IFD60CP00B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">개발</td>
   <td class="tc">A/S비축</td>
-  <td class="tl">퍼시스충1</td>
   <td>4</td>
   <td>0</td>
   <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td style="font-weight:700;">4</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IFD60CP00B-WW</td>
-  <td class="tl">IFD60CP00B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">코너옷장 도어 600폭</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>33</td>
-  <td>1</td>
   <td>0</td>
   <td>22</td>
-  <td>0</td>
   <td style="font-weight:700;">12</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IFD60CP00A','IFD60CP00B','WW')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IFD60CP00A','IFD60CP00B','WW')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -3895,201 +2210,104 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">ICS60CP04A-WW</td>
-  <td class="tl">ICS60CP04A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류 600폭</td>
+  <td class="tl"><span class="code">ICS60CP04A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICS60CP04B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼니엠</td>
   <td>70</td>
-  <td>0</td>
-  <td>0</td>
-  <td>46</td>
   <td>100</td>
+  <td>46</td>
   <td style="font-weight:700;">124</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICS60CP04B-WW</td>
-  <td class="tl">ICS60CP04B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류 600폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼니엠</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'ICS60CP04A','ICS60CP04B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'ICS60CP04A','ICS60CP04B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">ICB60CP04B-WW</td>
-  <td class="tl">ICB60CP04B</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 뒷판 600폭</td>
+  <td class="tl"><span class="code">ICB60CP04B</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ICB60CP04C</span></td>
+  <td class="tc">WW</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>92</td>
   <td>0</td>
-  <td>0</td>
   <td>46</td>
-  <td>0</td>
   <td style="font-weight:700;">46</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ICB60CP04C-WW</td>
-  <td class="tl">ICB60CP04C</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 뒷판 600폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'ICB60CP04B','ICB60CP04C','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'ICB60CP04B','ICB60CP04C','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IHS40CP01A-WW</td>
-  <td class="tl">IHS40CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류,뒷판 400폭</td>
+  <td class="tl"><span class="code">IHS40CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IHS40CP01B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼니엠</td>
   <td>75</td>
-  <td>0</td>
-  <td>0</td>
-  <td>62</td>
   <td>120</td>
+  <td>62</td>
   <td style="font-weight:700;">133</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IHS40CP01B-WW</td>
-  <td class="tl">IHS40CP01B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류,뒷판 400폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼니엠</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IHS40CP01A','IHS40CP01B','WW')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IHS40CP01A','IHS40CP01B','WW')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IHS29CP01A-WW</td>
-  <td class="tl">IHS29CP01A</td>
-  <td class="tc">WW</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류,뒷판 290폭</td>
+  <td class="tl"><span class="code">IHS29CP01A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IHS29CP01B</span></td>
+  <td class="tc">WW</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
   <td>51</td>
-  <td>1</td>
   <td>0</td>
   <td>31</td>
-  <td>0</td>
   <td style="font-weight:700;">21</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IHS29CP01B-WW</td>
-  <td class="tl">IHS29CP01B</td>
-  <td class="tc">WW</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">4단 적층장 선반류,뒷판 290폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">퍼시스충1</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">뉴트 적층장 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IHS29CP01A','IHS29CP01B','WW')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IHS29CP01A','IHS29CP01B','WW')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -4106,342 +2324,164 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDL00AD00A-CZ</td>
-  <td class="tl">IDL00AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 식탁 다리</td>
+  <td class="tl"><span class="code">IDL00AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDL00AD00B</span></td>
   <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">식탁 다리</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>149</td>
   <td>0</td>
-  <td>0</td>
   <td>46</td>
-  <td>0</td>
   <td style="font-weight:700;">103</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDL00AD00B-CZ</td>
-  <td class="tl">IDL00AD00B</td>
-  <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 식탁 다리</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>44</td>
+  <td>0</td>
   <td style="font-weight:700;">44</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','CZ')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','CZ')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDL00AD00A-BNT</td>
-  <td class="tl">IDL00AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 식탁 다리</td>
+  <td class="tl"><span class="code">IDL00AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDL00AD00B</span></td>
   <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">식탁 다리</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>53</td>
   <td>0</td>
-  <td>0</td>
   <td>11</td>
-  <td>0</td>
   <td style="font-weight:700;">42</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDL00AD00B-BNT</td>
-  <td class="tl">IDL00AD00B</td>
-  <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 식탁 다리</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','BNT')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','BNT')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDF09AD00A-CZ</td>
-  <td class="tl">IDF09AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 900폭</td>
+  <td class="tl"><span class="code">IDF09AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDF09AD00B</span></td>
   <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상판프레임 900폭</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>28</td>
   <td>0</td>
-  <td>0</td>
   <td>13</td>
-  <td>0</td>
   <td style="font-weight:700;">15</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDF09AD00B-CZ</td>
-  <td class="tl">IDF09AD00B</td>
-  <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 900폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>25</td>
+  <td>0</td>
   <td style="font-weight:700;">25</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','CZ')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','CZ')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDF09AD00A-BNT</td>
-  <td class="tl">IDF09AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 900폭</td>
+  <td class="tl"><span class="code">IDF09AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDF09AD00B</span></td>
   <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상판프레임 900폭</td>
   <td class="tc">개발</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>3</td>
   <td>0</td>
-  <td>0</td>
   <td>2</td>
-  <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDF09AD00B-BNT</td>
-  <td class="tl">IDF09AD00B</td>
-  <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 900폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>5</td>
+  <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','BNT')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','BNT')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDF12AD00A-CZ</td>
-  <td class="tl">IDF12AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 1200폭</td>
+  <td class="tl"><span class="code">IDF12AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDF12AD00B</span></td>
   <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상판프레임 1200폭</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>108</td>
   <td>0</td>
-  <td>0</td>
   <td>34</td>
-  <td>0</td>
   <td style="font-weight:700;">74</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDF12AD00B-CZ</td>
-  <td class="tl">IDF12AD00B</td>
-  <td class="tc">CZ</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','CZ')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','CZ')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDF12AD00A-BNT</td>
-  <td class="tl">IDF12AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 1200폭</td>
+  <td class="tl"><span class="code">IDF12AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDF12AD00B</span></td>
   <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">상판프레임 1200폭</td>
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
-  <td class="tl">CERUBO</td>
   <td>47</td>
   <td>0</td>
-  <td>0</td>
   <td>9</td>
-  <td>0</td>
   <td style="font-weight:700;">38</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDF12AD00B-BNT</td>
-  <td class="tl">IDF12AD00B</td>
-  <td class="tc">BNT</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 상판프레임 1200폭</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">CERUBO</td>
-  <td>0</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>14</td>
+  <td>0</td>
   <td style="font-weight:700;">14</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','BNT')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','BNT')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">IDX00AD00A-XX</td>
-  <td class="tl">IDX00AD00A</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 세라믹 식탁 조립철물류</td>
+  <td class="tl"><span class="code">IDX00AD00A</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">IDX00AD02A</span></td>
   <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">세라믹 상판 고정철물류 (4EA)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
   <td>191</td>
-  <td>0</td>
-  <td>0</td>
-  <td>94</td>
   <td>200</td>
+  <td>94</td>
   <td style="font-weight:700;">297</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">IDX00AD02A-XX</td>
-  <td class="tl">IDX00AD02A</td>
-  <td class="tc">XX</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">블릭 세라믹 식탁 조립철물류</td>
   <td class="tc">개발</td>
   <td class="tc">영업운영</td>
-  <td class="tl">에픽</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">블릭 식탁 흔들림 개선</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'IDX00AD00A','IDX00AD02A','XX')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'IDX00AD00A','IDX00AD02A','XX')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -4458,60 +2498,44 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HSKD1420LN-IVM</td>
-  <td class="tl">HSKD1420LN</td>
-  <td class="tc">IVM</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">링키플러스 익스텐션 책상 다리</td>
+  <td class="tl"><span class="code">HSKD1420LN</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">HSKD1420LR</span></td>
+  <td class="tc">IVM</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">(주)제일금속</td>
   <td>44</td>
-  <td>0</td>
-  <td>0</td>
-  <td>35</td>
   <td>30</td>
+  <td>35</td>
   <td style="font-weight:700;">39</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">HSKD1420LR-IVM</td>
-  <td class="tl">HSKD1420LR</td>
-  <td class="tc">IVM</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">링키플러스 익스텐션 책상 다리</td>
   <td class="tc">단종</td>
   <td class="tc">비운영</td>
-  <td class="tl">(주)제일금속</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HSKD1420LN','HSKD1420LR','IVM')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HSKD1420LN','HSKD1420LR','IVM')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
@@ -4528,436 +2552,204 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <table>
     <thead>
       <tr>
-        <th>구/신</th><th>단품조합</th><th>단품코드</th><th>색상</th><th>단품명</th>
-        <th>사용구분</th><th>용도구분</th><th>공급업체</th>
-        <th>현재고</th><th>사업장재고</th><th>VN재고</th><th>출고예정량</th><th>입고예정량</th><th>가용재고</th>
-        <th>재고확인</th><th>예상소진</th><th>월평출(6개월)</th><th>월평출(1년)</th>
-        <th>사양변경 내용</th>
+        <th rowspan="2">단품명칭</th>
+        <th rowspan="2">구사양코드</th>
+        <th rowspan="2"></th>
+        <th rowspan="2">신사양코드</th>
+        <th rowspan="2">색상</th>
+        <th colspan="6" class="th-group-old">구사양</th>
+        <th colspan="6" class="th-group-new">신사양</th>
+        <th rowspan="2">완료</th>
+      </tr>
+      <tr>
+        <th class="th-group-old">사용구분</th><th class="th-group-old">용도구분</th>
+        <th class="th-group-old">현재고</th><th class="th-group-old">입고예정</th>
+        <th class="th-group-old">출고예정</th><th class="th-group-old">가용재고</th>
+        <th class="th-group-new">사용구분</th><th class="th-group-new">용도구분</th>
+        <th class="th-group-new">현재고</th><th class="th-group-new">입고예정</th>
+        <th class="th-group-new">출고예정</th><th class="th-group-new">가용재고</th>
       </tr>
     </thead>
     <tbody>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800N-L841L</td>
-  <td class="tl">HCS8800N</td>
-  <td class="tc">L841L</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
+  <td class="tl"><span class="code">HCS8800N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ILC00DW00A</span></td>
+  <td class="tc">L841L</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>5</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ILC00DW00A-L841L</td>
-  <td class="tl">ILC00DW00A</td>
-  <td class="tc">L841L</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L841L')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L841L')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800N-L844L</td>
-  <td class="tl">HCS8800N</td>
-  <td class="tc">L844L</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
+  <td class="tl"><span class="code">HCS8800N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ILC00DW00A</span></td>
+  <td class="tc">L844L</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>1</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">1</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ILC00DW00A-L844L</td>
-  <td class="tl">ILC00DW00A</td>
-  <td class="tc">L844L</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L844L')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L844L')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800N-L845</td>
-  <td class="tl">HCS8800N</td>
-  <td class="tc">L845</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
+  <td class="tl"><span class="code">HCS8800N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ILC00DW00A</span></td>
+  <td class="tc">L845</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>13</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">13</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ILC00DW00A-L845</td>
-  <td class="tl">ILC00DW00A</td>
-  <td class="tc">L845</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L845')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L845')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800N-L846</td>
-  <td class="tl">HCS8800N</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
+  <td class="tl"><span class="code">HCS8800N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ILC00DW00A</span></td>
   <td class="tc">L846</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-danger">⚠ 준비필요</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ILC00DW00A-L846</td>
-  <td class="tl">ILC00DW00A</td>
-  <td class="tc">L846</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L846')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L846')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800N-L849L</td>
-  <td class="tl">HCS8800N</td>
+<tr>
+  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
+  <td class="tl"><span class="code">HCS8800N</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ILC00DW00A</span></td>
   <td class="tc">L849L</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>3</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">3</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ILC00DW00A-L849L</td>
-  <td class="tl">ILC00DW00A</td>
-  <td class="tc">L849L</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(가죽)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L849L')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L849L')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800NF-4R2</td>
-  <td class="tl">HCS8800NF</td>
-  <td class="tc">4R2</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
+  <td class="tl"><span class="code">HCS8800NF</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ISC00DW01A</span></td>
+  <td class="tc">4R2</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>5</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">5</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ISC00DW01A-4R2</td>
-  <td class="tl">ISC00DW01A</td>
-  <td class="tc">4R2</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>3</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">3</td>
-  <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R2')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R2')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800NF-4R8</td>
-  <td class="tl">HCS8800NF</td>
-  <td class="tc">4R8</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
+  <td class="tl"><span class="code">HCS8800NF</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ISC00DW01A</span></td>
+  <td class="tc">4R8</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>10</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">10</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ISC00DW01A-4R8</td>
-  <td class="tl">ISC00DW01A</td>
-  <td class="tc">4R8</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R8')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R8')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800NFA-4U0</td>
-  <td class="tl">HCS8800NFA</td>
-  <td class="tc">4U0</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
+  <td class="tl"><span class="code">HCS8800NFA</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ISC00DW02A</span></td>
+  <td class="tc">4U0</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>14</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">14</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ISC00DW02A-4U0</td>
-  <td class="tl">ISC00DW02A</td>
-  <td class="tc">4U0</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U0')">완료 처리</button></td>
 </tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U0')">완료 처리</button>
-  </td>
-</tr>
-<tr class="old-row">
-  <td class="tc"><span class="badge-old">구</span></td>
-  <td class="tl">HCS8800NFA-4U4L</td>
-  <td class="tl">HCS8800NFA</td>
-  <td class="tc">4U4L</td>
+<tr>
   <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
+  <td class="tl"><span class="code">HCS8800NFA</span></td>
+  <td class="tc" style="color:#9ca3af">→</td>
+  <td class="tl"><span class="code">ISC00DW02A</span></td>
+  <td class="tc">4U4L</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>2</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">2</td>
-  <td class="tc"><span class="chk-ok">✓ 여유</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="new-row">
-  <td class="tc"><span class="badge-new">신</span></td>
-  <td class="tl">ISC00DW02A-4U4L</td>
-  <td class="tl">ISC00DW02A</td>
-  <td class="tc">4U4L</td>
-  <td class="tl" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">밴쿠버 헤드레스트(패브릭)</td>
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
-  <td class="tl">시디즈안성</td>
-  <td>0</td>
-  <td>0</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">0</td>
-  <td class="tc"><span class="chk-none">○ 미입고</span></td>
-  <td class="tc">-</td>
-  <td>-</td>
-  <td>-</td>
-  <td class="tl">밴쿠버 헤드레스트 사양변경</td>
-</tr>
-<tr class="pair-action">
-  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
-    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U4L')">완료 처리</button>
-  </td>
+  <td class="tc"><button class="complete-btn" style="padding:3px 10px;font-size:11px" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U4L')">완료 처리</button></td>
 </tr>
     </tbody>
   </table>
