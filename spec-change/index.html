@@ -77,6 +77,9 @@ body{font-family:'Noto Sans KR','Montserrat',sans-serif;background:var(--bg-alt)
 .group-sub{font-size:11px;opacity:.65}
 .group-date{font-size:11px;opacity:.5;margin-left:auto}
 .badge-done{display:inline-flex;align-items:center;gap:3px;background:#10b981;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.complete-btn{padding:5px 14px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.complete-btn:hover{background:#4f46e5}
+.complete-btn:disabled{opacity:.5;cursor:default}
 
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;white-space:nowrap;background:#fff}
@@ -106,8 +109,41 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
 }
 .group-wrap.flash{animation:groupFlash 1.4s ease-out}
 </style>
+<style>
+.auth-hide{display:none}
+.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
+.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-nav-login:hover{background:#a50818}
+.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-nav-logout:hover{background:#E5E7EB}
+.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
+</style>
 </head>
 <body>
+<div id="authOverlay" style="position:fixed;inset:0;background:#F4F5F7;z-index:9998;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:48px">&#128274;</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1F2937">로그인이 필요합니다</h2>
+    <p style="font-size:13px;color:#6B7280">허가된 사용자만 이용할 수 있습니다.</p>
+    <button onclick="showLoginModal()" style="padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">EP ID로 로그인</button>
+    <button onclick="location.href='../outlet/'" style="padding:10px 28px;background:#fff;color:#374151;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">아울렛 재고 확인</button>
+  </div>
+</div>
+<div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideLoginModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">로그인</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">허가된 EP ID를 입력하세요</p>
+    <input id="loginInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;margin-top:-4px"><input type="checkbox" id="saveIdChk" style="cursor:pointer"> ID 저장</label>
+    <div id="loginError" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
+    </div>
+  </div>
+</div>
 
 <style>
 .iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
@@ -132,14 +168,19 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <div class="iloom-nav-inner">
     <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
     <div class="iloom-nav-tabs">
-<a class="iloom-tab active" href="../spec-change/">사양변경</a>
+<a class="iloom-tab active auth-hide" href="../spec-change/">사양변경</a>
 <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
-<a class="iloom-tab" href="../vn-monitoring/">VN 간단 모니터링</a>
-<a class="iloom-tab" href="../shortage-check/">부족분 간단 점검</a>
-<a class="iloom-tab" href="../discontinued-sku/">단종(단품)</a>
-<a class="iloom-tab" href="../cumulative/">누적재고관리</a>
-<a class="iloom-tab" href="../sku-status/">운영품목 현황</a>
-<a class="iloom-tab" href="../matching/">짝맞추기</a>
+<a class="iloom-tab auth-hide" href="../vn-monitoring/">VN 간단 모니터링</a>
+<a class="iloom-tab auth-hide" href="../shortage-check/">부족분 간단 점검</a>
+<a class="iloom-tab auth-hide" href="../discontinued-sku/">단종(단품)</a>
+<a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
+<a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
+<a class="iloom-tab auth-hide" href="../matching/">짝맞추기</a>
+    </div>
+    <div class="nav-auth">
+      <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
+      <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
 </nav>
@@ -150,19 +191,19 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
     </div>
     <div class="header-meta">
       재고 기준일자: <strong>2026-07-16</strong><br>
-      생성시각: <strong>2026-07-16 10:39</strong>
+      생성시각: <strong>2026-07-16 12:29</strong>
     </div>
   </div>
-  <div class="notice">※ 이 페이지는 2026-07-16 10:39 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
+  <div class="notice">※ 이 페이지는 2026-07-16 12:29 기준 읽기 전용 스냅샷입니다. 등록·수정·완료처리는 사내 대시보드(`/spec-change`)에서 하세요.</div>
 
   <!-- 상단 요약 -->
   <div class="summary-grid">
     <div class="kpi-card" id="kpi-active" onclick="setView('active')">
-      <div class="kpi-value">15</div>
+      <div class="kpi-value">13</div>
       <div class="kpi-label">진행중</div>
     </div>
     <div class="kpi-card" id="kpi-done" onclick="setView('done')">
-      <div class="kpi-value">0</div>
+      <div class="kpi-value">2</div>
       <div class="kpi-label">완료</div>
     </div>
     <div class="kpi-card" id="kpi-this_month" onclick="setView('this_month')">
@@ -170,17 +211,17 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
       <div class="kpi-label">이번 달 등록</div>
     </div>
     <div class="kpi-card urgent" id="kpi-urgent" onclick="setView('urgent')">
-      <div class="kpi-value">3</div>
+      <div class="kpi-value">2</div>
       <div class="kpi-label">🔴 긴급</div>
       <div class="kpi-sub">구재고 소진 임박 + 신사양 미입고</div>
     </div>
     <div class="kpi-card monitor" id="kpi-monitor" onclick="setView('monitor')">
-      <div class="kpi-value">6</div>
+      <div class="kpi-value">7</div>
       <div class="kpi-label">🟡 모니터링</div>
       <div class="kpi-sub">구재고 여유 + 신사양 미입고</div>
     </div>
     <div class="kpi-card ready" id="kpi-ready" onclick="setView('ready')">
-      <div class="kpi-value">6</div>
+      <div class="kpi-value">4</div>
       <div class="kpi-label">🟢 전환 가능</div>
       <div class="kpi-sub">신사양 입고 완료</div>
     </div>
@@ -196,10 +237,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
     </div>
     <div class="quick-list" id="quickList">
 <a class="quick-item" href="#group-g0" onclick="goTo(event, 'g0')"
-   data-status="진행중"
-   data-risk="ready"
+   data-status="완료"
+   data-risk=""
    data-this-month="0">
-  <span class="q-badge">🟢</span>
+  <span class="q-badge"><span class="q-status-done">✓</span></span>
   <div class="q-body">
     <div class="q-title">프레임도어 힌지 변</div>
     
@@ -245,9 +286,9 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
 </a>
 <a class="quick-item" href="#group-g3" onclick="goTo(event, 'g3')"
    data-status="진행중"
-   data-risk="urgent"
+   data-risk="monitor"
    data-this-month="0">
-  <span class="q-badge">🔴</span>
+  <span class="q-badge">🟡</span>
   <div class="q-body">
     <div class="q-title">모션베드 리모컨 사양변경</div>
     
@@ -276,10 +317,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   </div>
 </a>
 <a class="quick-item" href="#group-g5" onclick="goTo(event, 'g5')"
-   data-status="진행중"
-   data-risk="ready"
+   data-status="완료"
+   data-risk=""
    data-this-month="0">
-  <span class="q-badge">🟢</span>
+  <span class="q-badge"><span class="q-status-done">✓</span></span>
   <div class="q-body">
     <div class="q-title">일방향 캐스터 사양변경</div>
     
@@ -441,9 +482,9 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
 
   <!-- 상세 그룹 -->
   <div id="group-list">
-<div class="group-wrap" id="group-g0" data-status="진행중">
+<div class="group-wrap" id="group-g0" data-status="완료">
   <div class="group-header">
-    
+    <span class="badge-done">✓ 완료</span>
     <span class="group-title">프레임도어 힌지 변</span>
     
     <span class="group-date"></span>
@@ -490,10 +531,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">에픽</td>
-  <td>62</td>
+  <td>56</td>
   <td>0</td>
   <td>0</td>
-  <td>55</td>
+  <td>49</td>
   <td>230</td>
   <td style="font-weight:700;">237</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -501,6 +542,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">프레임도어 힌지 변</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -567,6 +613,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">두들 침대 가드 쿠션 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IAC00CN00A','IAC00CN00B','6K2')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBG20CN02A-NK</td>
@@ -609,6 +660,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">두들 침대 가드 쿠션 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','NK')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBG20CN02A-OATK</td>
@@ -642,14 +698,19 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>43</td>
   <td>0</td>
   <td>0</td>
-  <td>9</td>
+  <td>10</td>
   <td>0</td>
-  <td style="font-weight:700;">34</td>
+  <td style="font-weight:700;">33</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">두들 침대 가드 쿠션 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBG20CN02A','IBG20CN02B','OATK')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -716,6 +777,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">토스티 패널 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBN60CG01A','IBN60CG01B','SO')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBN60CG00A-SO</td>
@@ -758,6 +824,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">토스티 패널 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBN60CG00A','IBN60CG00B','SO')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBN80CG00A-SO</td>
@@ -799,6 +870,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">토스티 패널 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBN80CG00A','IBN80CG00B','SO')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -865,6 +941,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">모션베드 리모컨 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U09EHU','HB01U09EHUN','MM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HB01U15EHU-MM</td>
@@ -907,6 +988,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">모션베드 리모컨 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HB01U11EHU-MM</td>
@@ -940,14 +1026,19 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>34</td>
   <td>24</td>
   <td>0</td>
-  <td>69</td>
-  <td>4</td>
-  <td style="font-weight:700;">-7</td>
+  <td>66</td>
+  <td>0</td>
+  <td style="font-weight:700;">-8</td>
   <td class="tc"><span class="chk-none">○ 미입고</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">모션베드 리모컨 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -991,6 +1082,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">모션베드 리모컨 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U09HHU','HB01U09HHUN','MM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HB01U11HHU-MM</td>
@@ -1032,6 +1128,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">모션베드 리모컨 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HB01U11HHU','HB01U11HHUN','MM')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -1086,10 +1187,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충2</td>
-  <td>11</td>
+  <td>10</td>
   <td>0</td>
   <td>0</td>
-  <td>1</td>
+  <td>0</td>
   <td>0</td>
   <td style="font-weight:700;">10</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -1097,6 +1198,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">로이 책장도어 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1140,6 +1246,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">로이 책장도어 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSOB0063L-SP</td>
@@ -1181,6 +1292,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">로이 책장도어 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0063L','HSOB0063LN','SP')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1224,6 +1340,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">로이 책장도어 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0063R','HSOB0063RN','OS')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSOB0063R-SP</td>
@@ -1266,13 +1387,18 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">로이 책장도어 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
     </tbody>
   </table>
   </div>
 </div>
-<div class="group-wrap" id="group-g5" data-status="진행중">
+<div class="group-wrap" id="group-g5" data-status="완료">
   <div class="group-header">
-    
+    <span class="badge-done">✓ 완료</span>
     <span class="group-title">일방향 캐스터 사양변경</span>
     
     <span class="group-date"></span>
@@ -1319,10 +1445,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>7</td>
+  <td>5</td>
   <td>0</td>
   <td>0</td>
-  <td>6</td>
+  <td>4</td>
   <td>0</td>
   <td style="font-weight:700;">1</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -1330,6 +1456,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">일방향 캐스터 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -1396,6 +1527,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVRM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0121R-IVTM</td>
@@ -1437,6 +1573,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVTM')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1480,6 +1621,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVLUW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0121R-IVGYM</td>
@@ -1489,10 +1635,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">퍼시스충1</td>
-  <td>56</td>
+  <td>55</td>
   <td>0</td>
   <td>0</td>
-  <td>11</td>
+  <td>10</td>
   <td>0</td>
   <td style="font-weight:700;">45</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -1521,6 +1667,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121R','HSKB0121RA','IVGYM')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1564,6 +1715,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVRM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0141R-IVTM</td>
@@ -1573,10 +1729,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">퍼시스충1</td>
-  <td>7</td>
+  <td>6</td>
   <td>0</td>
   <td>0</td>
-  <td>5</td>
+  <td>4</td>
   <td>0</td>
   <td style="font-weight:700;">2</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -1605,6 +1761,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVTM')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1648,6 +1809,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVLUW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0141R-IVGYM</td>
@@ -1690,6 +1856,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0141R','HSKB0141RA','IVGYM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0121F-IVRM</td>
@@ -1699,10 +1870,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">퍼시스충1</td>
-  <td>12</td>
+  <td>11</td>
   <td>0</td>
   <td>0</td>
-  <td>3</td>
+  <td>2</td>
   <td>0</td>
   <td style="font-weight:700;">9</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -1731,6 +1902,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVRM')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1774,6 +1950,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVTM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSKB0121F-IVLUW</td>
@@ -1815,6 +1996,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVLUW')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1858,6 +2044,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0121F','HSKB0121FA','IVGYM')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IDD10BP00A-IV</td>
@@ -1899,6 +2090,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDD10BP00A','IDD10BP00B','IV')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -1942,6 +2138,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">도어 두께 변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDD12BP00A','IDD12BP00B','IV')">완료 처리</button>
+  </td>
+</tr>
     </tbody>
   </table>
   </div>
@@ -1974,10 +2175,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">에픽</td>
-  <td>129</td>
+  <td>128</td>
   <td>0</td>
   <td>0</td>
-  <td>33</td>
+  <td>32</td>
   <td>0</td>
   <td style="font-weight:700;">96</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -1995,10 +2196,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">에픽</td>
-  <td>311</td>
+  <td>305</td>
   <td>0</td>
   <td>0</td>
-  <td>218</td>
+  <td>212</td>
   <td>240</td>
   <td style="font-weight:700;">333</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -2006,6 +2207,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0001XR','ICX00AA04A','XX')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2037,17 +2243,22 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">에픽</td>
-  <td>363</td>
+  <td>339</td>
   <td>0</td>
   <td>0</td>
-  <td>793</td>
+  <td>780</td>
   <td>2,610</td>
-  <td style="font-weight:700;">2,180</td>
+  <td style="font-weight:700;">2,169</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKB0002X','ICX00AA05A','XX')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2079,10 +2290,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">올품퍼니처</td>
-  <td>107</td>
+  <td>105</td>
   <td>0</td>
   <td>0</td>
-  <td>21</td>
+  <td>19</td>
   <td>70</td>
   <td style="font-weight:700;">156</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -2090,6 +2301,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2121,10 +2337,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">에픽</td>
-  <td>132</td>
+  <td>109</td>
   <td>0</td>
   <td>0</td>
-  <td>350</td>
+  <td>327</td>
   <td>1,317</td>
   <td style="font-weight:700;">1,099</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -2132,6 +2348,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSOB0001XN','ICX00AA07A','XX')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2175,6 +2396,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFT00AQ00A-IV</td>
@@ -2216,6 +2442,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2259,6 +2490,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFT00AQ00A-SP</td>
@@ -2300,6 +2536,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2343,6 +2584,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFT00AQ01A-OS</td>
@@ -2384,6 +2630,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2427,6 +2678,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSFC5080H-IVGY</td>
@@ -2457,10 +2713,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">엘디자인</td>
-  <td>125</td>
+  <td>119</td>
   <td>0</td>
   <td>0</td>
-  <td>111</td>
+  <td>105</td>
   <td>406</td>
   <td style="font-weight:700;">420</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -2468,6 +2724,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2511,6 +2772,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKP')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HSLB5080N-IVKS</td>
@@ -2552,6 +2818,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">라피도힌지 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSLB5080N','HSLB5080NA','IVKS')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -2618,6 +2889,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP00A','IVN11CP01A','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IVN11CP03A-WW</td>
@@ -2648,10 +2924,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>20</td>
+  <td>19</td>
   <td>0</td>
   <td>0</td>
-  <td>8</td>
+  <td>7</td>
   <td>0</td>
   <td style="font-weight:700;">12</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -2659,6 +2935,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP03A','IVN11CP05A','WW')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2702,6 +2983,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP01A','IVN12CP01A','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IVN14CP03A-WW</td>
@@ -2743,6 +3029,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP03A','IVN12CP02A','WW')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2786,6 +3077,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP02A','IVN11CP06A','3W1')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IVN11CP04A-3W1</td>
@@ -2827,6 +3123,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN11CP04A','IVN11CP07A','3W1')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2870,6 +3171,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP02A','IVN12CP03A','3W1')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IVN14CP04A-3W1</td>
@@ -2900,17 +3206,22 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">주식회사 인퍼니쳐</td>
-  <td>2</td>
-  <td>0</td>
-  <td>0</td>
-  <td>8</td>
   <td>1</td>
-  <td style="font-weight:700;">-5</td>
+  <td>0</td>
+  <td>0</td>
+  <td>7</td>
+  <td>2</td>
+  <td style="font-weight:700;">-4</td>
   <td class="tc"><span class="chk-none">○ 미입고</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IVN14CP04A','IVN12CP04A','3W1')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -2954,6 +3265,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP00A','IBV00CP00B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBV00CP01A-WW</td>
@@ -2996,6 +3312,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP01A','IBV00CP01B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IBV00CP02A-WW</td>
@@ -3026,17 +3347,22 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>44</td>
+  <td>37</td>
   <td>165</td>
   <td>0</td>
-  <td>156</td>
+  <td>150</td>
   <td>0</td>
-  <td style="font-weight:700;">53</td>
+  <td style="font-weight:700;">52</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 리뉴얼</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IBV00CP02A','IBV00CP02B','WW')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -3091,10 +3417,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">제일퍼니처</td>
-  <td>33</td>
+  <td>31</td>
   <td>0</td>
   <td>0</td>
-  <td>96</td>
+  <td>94</td>
   <td>156</td>
   <td style="font-weight:700;">93</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -3102,6 +3428,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">서랍옷장 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3133,10 +3464,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">제일퍼니처</td>
-  <td>160</td>
+  <td>158</td>
   <td>0</td>
   <td>0</td>
-  <td>89</td>
+  <td>87</td>
   <td>61</td>
   <td style="font-weight:700;">132</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -3144,6 +3475,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">서랍옷장 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IFV00CP02A','IFV00CP02B','WW')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3175,10 +3511,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>51</td>
+  <td>49</td>
   <td>50</td>
   <td>0</td>
-  <td>91</td>
+  <td>89</td>
   <td>0</td>
   <td style="font-weight:700;">10</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
@@ -3186,6 +3522,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">서랍옷장 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IFN00CP00A','IFN00CP00B','WW')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -3252,6 +3593,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IFS00CP00A','IFS00CP00B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFS00CP01A-WW</td>
@@ -3293,6 +3639,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3336,6 +3687,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IFB00CP00A','IFB00CP00B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFB00CP01A-WW</td>
@@ -3377,6 +3733,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3420,6 +3781,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'ICV00CP02A','ICV00CP02B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">ICV00CP05A-WW</td>
@@ -3462,6 +3828,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IFD60CP00A-WW</td>
@@ -3492,17 +3863,22 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>4</td>
+  <td>33</td>
   <td>1</td>
   <td>0</td>
   <td>22</td>
-  <td>29</td>
+  <td>0</td>
   <td style="font-weight:700;">12</td>
   <td class="tc"><span class="chk-ok">✓ 입고됨</span></td>
   <td class="tc">-</td>
   <td>-</td>
   <td>-</td>
   <td class="tl">코너옷장 도어높이변경 및 바닥판 보강</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IFD60CP00A','IFD60CP00B','WW')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -3536,10 +3912,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼니엠</td>
-  <td>71</td>
+  <td>70</td>
   <td>0</td>
   <td>0</td>
-  <td>47</td>
+  <td>46</td>
   <td>100</td>
   <td style="font-weight:700;">124</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -3569,6 +3945,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 적층장 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'ICS60CP04A','ICS60CP04B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">ICB60CP04B-WW</td>
@@ -3578,10 +3959,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>93</td>
+  <td>92</td>
   <td>0</td>
   <td>0</td>
-  <td>47</td>
+  <td>46</td>
   <td>0</td>
   <td style="font-weight:700;">46</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -3611,6 +3992,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 적층장 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'ICB60CP04B','ICB60CP04C','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IHS40CP01A-WW</td>
@@ -3620,12 +4006,12 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼니엠</td>
-  <td>78</td>
+  <td>75</td>
   <td>0</td>
   <td>0</td>
-  <td>64</td>
+  <td>62</td>
   <td>120</td>
-  <td style="font-weight:700;">134</td>
+  <td style="font-weight:700;">133</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -3653,6 +4039,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">뉴트 적층장 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IHS40CP01A','IHS40CP01B','WW')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IHS29CP01A-WW</td>
@@ -3662,12 +4053,12 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">퍼시스충1</td>
-  <td>25</td>
+  <td>51</td>
   <td>1</td>
   <td>0</td>
-  <td>29</td>
-  <td>26</td>
-  <td style="font-weight:700;">23</td>
+  <td>31</td>
+  <td>0</td>
+  <td style="font-weight:700;">21</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -3694,6 +4085,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">뉴트 적층장 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IHS29CP01A','IHS29CP01B','WW')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -3727,12 +4123,12 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">CERUBO</td>
-  <td>150</td>
+  <td>149</td>
   <td>0</td>
   <td>0</td>
   <td>46</td>
   <td>0</td>
-  <td style="font-weight:700;">104</td>
+  <td style="font-weight:700;">103</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -3759,6 +4155,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','CZ')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3802,6 +4203,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDL00AD00A','IDL00AD00B','BNT')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IDF09AD00A-CZ</td>
@@ -3811,10 +4217,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">재고소진 단종</td>
   <td class="tl">CERUBO</td>
-  <td>29</td>
+  <td>28</td>
   <td>0</td>
   <td>0</td>
-  <td>14</td>
+  <td>13</td>
   <td>0</td>
   <td style="font-weight:700;">15</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -3843,6 +4249,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','CZ')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3886,6 +4297,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDF09AD00A','IDF09AD00B','BNT')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IDF12AD00A-CZ</td>
@@ -3898,9 +4314,9 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>108</td>
   <td>0</td>
   <td>0</td>
-  <td>33</td>
+  <td>34</td>
   <td>0</td>
-  <td style="font-weight:700;">75</td>
+  <td style="font-weight:700;">74</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -3927,6 +4343,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','CZ')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -3970,6 +4391,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDF12AD00A','IDF12AD00B','BNT')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">IDX00AD00A-XX</td>
@@ -3979,12 +4405,12 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">에픽</td>
-  <td>193</td>
+  <td>191</td>
   <td>0</td>
   <td>0</td>
-  <td>95</td>
+  <td>94</td>
   <td>200</td>
-  <td style="font-weight:700;">298</td>
+  <td style="font-weight:700;">297</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -4011,6 +4437,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">블릭 식탁 흔들림 개선</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'IDX00AD00A','IDX00AD02A','XX')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -4044,10 +4475,10 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">사용</td>
   <td class="tc">영업운영</td>
   <td class="tl">(주)제일금속</td>
-  <td>45</td>
+  <td>44</td>
   <td>0</td>
   <td>0</td>
-  <td>36</td>
+  <td>35</td>
   <td>30</td>
   <td style="font-weight:700;">39</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
@@ -4076,6 +4507,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HSKD1420LN','HSKD1420LR','IVM')">완료 처리</button>
+  </td>
 </tr>
     </tbody>
   </table>
@@ -4142,6 +4578,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L841L')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HCS8800N-L844L</td>
@@ -4184,6 +4625,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L844L')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HCS8800N-L845</td>
@@ -4194,11 +4640,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">영업운영</td>
   <td class="tl">시디즈안성</td>
   <td>0</td>
-  <td>14</td>
+  <td>13</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
-  <td style="font-weight:700;">14</td>
+  <td style="font-weight:700;">13</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -4225,6 +4671,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L845')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -4268,6 +4719,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L846')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HCS8800N-L849L</td>
@@ -4278,11 +4734,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">영업운영</td>
   <td class="tl">시디즈안성</td>
   <td>0</td>
-  <td>5</td>
+  <td>3</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
-  <td style="font-weight:700;">5</td>
+  <td style="font-weight:700;">3</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -4310,6 +4766,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800N','ILC00DW00A','L849L')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HCS8800NF-4R2</td>
@@ -4320,11 +4781,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td class="tc">영업운영</td>
   <td class="tl">시디즈안성</td>
   <td>0</td>
-  <td>7</td>
+  <td>5</td>
   <td>0</td>
   <td>0</td>
   <td>0</td>
-  <td style="font-weight:700;">7</td>
+  <td style="font-weight:700;">5</td>
   <td class="tc"><span class="chk-ok">✓ 여유</span></td>
   <td class="tc">-</td>
   <td>-</td>
@@ -4351,6 +4812,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R2')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -4394,6 +4860,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NF','ISC00DW01A','4R8')">완료 처리</button>
+  </td>
+</tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
   <td class="tl">HCS8800NFA-4U0</td>
@@ -4435,6 +4906,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
+</tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U0')">완료 처리</button>
+  </td>
 </tr>
 <tr class="old-row">
   <td class="tc"><span class="badge-old">구</span></td>
@@ -4478,6 +4954,11 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
   <td>-</td>
   <td class="tl">밴쿠버 헤드레스트 사양변경</td>
 </tr>
+<tr class="pair-action">
+  <td colspan="19" style="text-align:right;padding:6px 14px;background:#F9FAFB">
+    <button class="complete-btn" onclick="completeSpecPair(this,'HCS8800NFA','ISC00DW02A','4U4L')">완료 처리</button>
+  </td>
+</tr>
     </tbody>
   </table>
   </div>
@@ -4486,7 +4967,34 @@ tr.missing{background:#f9fafb;color:#9ca3af;font-style:italic}
 </div>
 
 <script>
-const EXPORT_ROWS = [{"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFX00AA01A-XX", "단품코드": "IFX00AA01A", "색상": "XX", "단품명": "110° 힌지 B(4조,댐핑2조)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "프레임도어 힌지 변"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA01A-XX", "단품코드": "ICX00AA01A", "색상": "XX", "단품명": "110° 힌지 B(2조,댐핑1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 62, "사업장재고": 0, "VN재고": 0, "출고예정량": 55, "입고예정량": 230, "가용재고": 237, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "프레임도어 힌지 변"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IAC00CN00A-6K2", "단품코드": "IAC00CN00A", "색상": "6K2", "단품명": "가드쿠션", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "올젠", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IAC00CN00B-6K2", "단품코드": "IAC00CN00B", "색상": "6K2", "단품명": "가드쿠션_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "올젠", "현재고": 6, "사업장재고": 0, "VN재고": 0, "출고예정량": 7, "입고예정량": 30, "가용재고": 29, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBG20CN02A-NK", "단품코드": "IBG20CN02A", "색상": "NK", "단품명": "침대 가드 2000폭", "사용구분": "단종", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBG20CN02B-NK", "단품코드": "IBG20CN02B", "색상": "NK", "단품명": "침대 가드 2000폭_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 37, "사업장재고": 0, "VN재고": 0, "출고예정량": 8, "입고예정량": 0, "가용재고": 29, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBG20CN02A-OATK", "단품코드": "IBG20CN02A", "색상": "OATK", "단품명": "침대 가드 2000폭", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBG20CN02B-OATK", "단품코드": "IBG20CN02B", "색상": "OATK", "단품명": "침대 가드 2000폭_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 43, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 0, "가용재고": 34, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN60CG01A-SO", "단품코드": "IBN60CG01A", "색상": "SO", "단품명": "패널 600폭 선반형", "사용구분": "개발", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN60CG01B-SO", "단품코드": "IBN60CG01B", "색상": "SO", "단품명": "패널 600폭 선반형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 3, "입고예정량": 10, "가용재고": 7, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN60CG00A-SO", "단품코드": "IBN60CG00A", "색상": "SO", "단품명": "패널 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 16, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 15, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN60CG00B-SO", "단품코드": "IBN60CG00B", "색상": "SO", "단품명": "패널 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 10, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN80CG00A-SO", "단품코드": "IBN80CG00A", "색상": "SO", "단품명": "패널 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN80CG00B-SO", "단품코드": "IBN80CG00B", "색상": "SO", "단품명": "패널 800폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 9, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U09EHU-MM", "단품코드": "HB01U09EHU", "색상": "MM", "단품명": "모션베드메커니즘 900폭(2모터)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U09EHUN-MM", "단품코드": "HB01U09EHUN", "색상": "MM", "단품명": "모션베드메커니즘 900폭(2모터)", "사용구분": "사용", "용도구분": "", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U15EHU-MM", "단품코드": "HB01U15EHU", "색상": "MM", "단품명": "모션베드메커니즘 1500폭(2모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U15EHUN-MM", "단품코드": "HB01U15EHUN", "색상": "MM", "단품명": "모션베드메커니즘 1500폭(2모터)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 7, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U11EHU-MM", "단품코드": "HB01U11EHU", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(2모터)", "사용구분": "개발", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U11EHUN-MM", "단품코드": "HB01U11EHUN", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(2모터)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스안성", "현재고": 34, "사업장재고": 24, "VN재고": 0, "출고예정량": 69, "입고예정량": 4, "가용재고": -7, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U09HHU-MM", "단품코드": "HB01U09HHU", "색상": "MM", "단품명": "모션베드메커니즘 900폭(3모터)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 8, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U09HHUN-MM", "단품코드": "HB01U09HHUN", "색상": "MM", "단품명": "모션베드메커니즘 900폭(3모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U11HHU-MM", "단품코드": "HB01U11HHU", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(3모터)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 5, "사업장재고": 40, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 42, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U11HHUN-MM", "단품코드": "HB01U11HHUN", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(3모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0043LN-OS", "단품코드": "HSOB0043LN", "색상": "OS", "단품명": "3단 책장도어(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0043LNA-OS", "단품코드": "HSOB0043LNA", "색상": "OS", "단품명": "3단 책장도어(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 11, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063L-OS", "단품코드": "HSOB0063L", "색상": "OS", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063LN-OS", "단품코드": "HSOB0063LN", "색상": "OS", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 4, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063L-SP", "단품코드": "HSOB0063L", "색상": "SP", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063LN-SP", "단품코드": "HSOB0063LN", "색상": "SP", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063R-OS", "단품코드": "HSOB0063R", "색상": "OS", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063RN-OS", "단품코드": "HSOB0063RN", "색상": "OS", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 6, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063R-SP", "단품코드": "HSOB0063R", "색상": "SP", "단품명": "3단 책장도어(우) 600폭", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063RN-SP", "단품코드": "HSOB0063RN", "색상": "SP", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBP00AP01A-IV", "단품코드": "IBP00AP01A", "색상": "IV", "단품명": "하부서랍(확장1EA)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "일방향 캐스터 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBP00AP01B-IV", "단품코드": "IBP00AP01B", "색상": "IV", "단품명": "하부서랍(확장1EA)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 6, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "일방향 캐스터 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVRM", "단품코드": "HSKB0121R", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 22, "사업장재고": 0, "VN재고": 0, "출고예정량": 20, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVRM", "단품코드": "HSKB0121RA", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVTM", "단품코드": "HSKB0121R", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 14, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVTM", "단품코드": "HSKB0121RA", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVLUW", "단품코드": "HSKB0121R", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 0, "VN재고": 0, "출고예정량": 10, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVLUW", "단품코드": "HSKB0121RA", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVGYM", "단품코드": "HSKB0121R", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 56, "사업장재고": 0, "VN재고": 0, "출고예정량": 11, "입고예정량": 0, "가용재고": 45, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVGYM", "단품코드": "HSKB0121RA", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVRM", "단품코드": "HSKB0141R", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 25, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 21, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVRM", "단품코드": "HSKB0141RA", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVTM", "단품코드": "HSKB0141R", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 5, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVTM", "단품코드": "HSKB0141RA", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVLUW", "단품코드": "HSKB0141R", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 26, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 22, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVLUW", "단품코드": "HSKB0141RA", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVGYM", "단품코드": "HSKB0141R", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVGYM", "단품코드": "HSKB0141RA", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVRM", "단품코드": "HSKB0121F", "색상": "IVRM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 0, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVRM", "단품코드": "HSKB0121FA", "색상": "IVRM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 20, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVTM", "단품코드": "HSKB0121F", "색상": "IVTM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVTM", "단품코드": "HSKB0121FA", "색상": "IVTM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVLUW", "단품코드": "HSKB0121F", "색상": "IVLUW", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 29, "사업장재고": 0, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 26, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVLUW", "단품코드": "HSKB0121FA", "색상": "IVLUW", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 20, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVGYM", "단품코드": "HSKB0121F", "색상": "IVGYM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVGYM", "단품코드": "HSKB0121FA", "색상": "IVGYM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDD10BP00A-IV", "단품코드": "IDD10BP00A", "색상": "IV", "단품명": "상부도어 1000폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "제일퍼니처", "현재고": 27, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 23, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDD10BP00B-IV", "단품코드": "IDD10BP00B", "색상": "IV", "단품명": "상부도어 1000폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDD12BP00A-IV", "단품코드": "IDD12BP00A", "색상": "IV", "단품명": "상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "제일퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 24, "가용재고": 23, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDD12BP00B-IV", "단품코드": "IDD12BP00B", "색상": "IV", "단품명": "상부도어 1200폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 50, "가용재고": 50, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0001XR-XX", "단품코드": "HSKB0001XR", "색상": "XX", "단품명": "상부도어 힌지류", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 129, "사업장재고": 0, "VN재고": 0, "출고예정량": 33, "입고예정량": 0, "가용재고": 96, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA04A-XX", "단품코드": "ICX00AA04A", "색상": "XX", "단품명": "로지카 힌지(댐핑1조,일반1조,상부도어용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 311, "사업장재고": 0, "VN재고": 0, "출고예정량": 218, "입고예정량": 240, "가용재고": 333, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0002X-XX", "단품코드": "HSKB0002X", "색상": "XX", "단품명": "하부도어 힌지류", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 10, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA05A-XX", "단품코드": "ICX00AA05A", "색상": "XX", "단품명": "로지카 힌지(댐핑1조,일반1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 363, "사업장재고": 0, "VN재고": 0, "출고예정량": 793, "입고예정량": 2610, "가용재고": 2180, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0005X-XX", "단품코드": "HSOB0005X", "색상": "XX", "단품명": "5단 책장도어 힌지류", "사용구분": "단종", "용도구분": "비운영", "공급업체": "올품퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA06A-XX", "단품코드": "ICX00AA06A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,일반1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "올품퍼니처", "현재고": 107, "사업장재고": 0, "VN재고": 0, "출고예정량": 21, "입고예정량": 70, "가용재고": 156, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0001XN-XX", "단품코드": "HSOB0001XN", "색상": "XX", "단품명": "상부도어 힌지류", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 78, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 78, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA07A-XX", "단품코드": "ICX00AA07A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,상부도어용A)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 132, "사업장재고": 0, "VN재고": 0, "출고예정량": 350, "입고예정량": 1317, "가용재고": 1099, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICX00AA02A-XX", "단품코드": "ICX00AA02A", "색상": "XX", "단품명": "110° 힌지(댐핑2조), 가스스프링(1조)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA08A-XX", "단품코드": "ICX00AA08A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,상부도어용B)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-IV", "단품코드": "IFT00AQ00A", "색상": "IV", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-IV", "단품코드": "IFT00AQ00B", "색상": "IV", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 5, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-OS", "단품코드": "IFT00AQ00A", "색상": "OS", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-OS", "단품코드": "IFT00AQ00B", "색상": "OS", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-SP", "단품코드": "IFT00AQ00A", "색상": "SP", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-SP", "단품코드": "IFT00AQ00B", "색상": "SP", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 11, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-IV", "단품코드": "IFT00AQ01A", "색상": "IV", "단품명": "멀티장 윗판류(우)", "사용구분": "단종", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-IV", "단품코드": "IFT00AQ01B", "색상": "IV", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 10, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 10, "가용재고": 19, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-OS", "단품코드": "IFT00AQ01A", "색상": "OS", "단품명": "멀티장 윗판류(우)", "사용구분": "개발", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-OS", "단품코드": "IFT00AQ01B", "색상": "OS", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-SP", "단품코드": "IFT00AQ01A", "색상": "SP", "단품명": "멀티장 윗판류(우)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-SP", "단품코드": "IFT00AQ01B", "색상": "SP", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 15, "사업장재고": 0, "VN재고": 0, "출고예정량": 6, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSFC5080H-IVGY", "단품코드": "HSFC5080H", "색상": "IVGY", "단품명": "옷장 선반류 800폭(손잡이포함)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "엘디자인", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSFC5080HN-IVGY", "단품코드": "HSFC5080HN", "색상": "IVGY", "단품명": "옷장 선반류 800폭(손잡이포함)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "엘디자인", "현재고": 125, "사업장재고": 0, "VN재고": 0, "출고예정량": 111, "입고예정량": 406, "가용재고": 420, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSLB5080N-IVKP", "단품코드": "HSLB5080N", "색상": "IVKP", "단품명": "옷장 도어 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 15, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 13, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSLB5080NA-IVKP", "단품코드": "HSLB5080NA", "색상": "IVKP", "단품명": "옷장 도어 800폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSLB5080N-IVKS", "단품코드": "HSLB5080N", "색상": "IVKS", "단품명": "옷장 도어 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 6, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSLB5080NA-IVKS", "단품코드": "HSLB5080NA", "색상": "IVKS", "단품명": "옷장 도어 800폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP00A-WW", "단품코드": "IVN11CP00A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 13, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP01A-WW", "단품코드": "IVN11CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 8, "사업장재고": 0, "VN재고": 0, "출고예정량": 12, "입고예정량": 0, "가용재고": -4, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP03A-WW", "단품코드": "IVN11CP03A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 7, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP05A-WW", "단품코드": "IVN11CP05A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 20, "사업장재고": 0, "VN재고": 0, "출고예정량": 8, "입고예정량": 0, "가용재고": 12, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP01A-WW", "단품코드": "IVN14CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP01A-WW", "단품코드": "IVN12CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP03A-WW", "단품코드": "IVN14CP03A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP02A-WW", "단품코드": "IVN12CP02A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 16, "사업장재고": 0, "VN재고": 0, "출고예정량": 12, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP02A-3W1", "단품코드": "IVN11CP02A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP06A-3W1", "단품코드": "IVN11CP06A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 5, "입고예정량": 1, "가용재고": -2, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP04A-3W1", "단품코드": "IVN11CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 1, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP07A-3W1", "단품코드": "IVN11CP07A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 13, "입고예정량": 3, "가용재고": -9, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP02A-3W1", "단품코드": "IVN14CP02A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP03A-3W1", "단품코드": "IVN12CP03A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 6, "입고예정량": 0, "가용재고": -5, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP04A-3W1", "단품코드": "IVN14CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 2, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP04A-3W1", "단품코드": "IVN12CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 8, "입고예정량": 1, "가용재고": -5, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP00A-WW", "단품코드": "IBV00CP00A", "색상": "WW", "단품명": "침대 측판류(가로수납형R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 52, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 52, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP00B-WW", "단품코드": "IBV00CP00B", "색상": "WW", "단품명": "침대 측판류(가로수납형R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 39, "사업장재고": 0, "VN재고": 0, "출고예정량": 34, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP01A-WW", "단품코드": "IBV00CP01A", "색상": "WW", "단품명": "침대 측판류(가로수납형L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP01B-WW", "단품코드": "IBV00CP01B", "색상": "WW", "단품명": "침대 측판류(가로수납형L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 32, "VN재고": 0, "출고예정량": 28, "입고예정량": 0, "가용재고": 16, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP02A-WW", "단품코드": "IBV00CP02A", "색상": "WW", "단품명": "침대 측판류(세로수납형)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP02B-WW", "단품코드": "IBV00CP02B", "색상": "WW", "단품명": "침대 측판류(세로수납형)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 44, "사업장재고": 165, "VN재고": 0, "출고예정량": 156, "입고예정량": 0, "가용재고": 53, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS80CP00A-WW", "단품코드": "IFS80CP00A", "색상": "WW", "단품명": "2단 서랍옷장 선반류 800폭,손잡이", "사용구분": "단종", "용도구분": "비운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS80CP00B-WW", "단품코드": "IFS80CP00B", "색상": "WW", "단품명": "2단 서랍옷장 선반류 800폭,손잡이", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 33, "사업장재고": 0, "VN재고": 0, "출고예정량": 96, "입고예정량": 156, "가용재고": 93, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFV00CP02A-WW", "단품코드": "IFV00CP02A", "색상": "WW", "단품명": "서랍형옷장(2단서랍)측판류,뒷판", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "제일퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFV00CP02B-WW", "단품코드": "IFV00CP02B", "색상": "WW", "단품명": "서랍형옷장(2단서랍)측판류,뒷판", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 160, "사업장재고": 0, "VN재고": 0, "출고예정량": 89, "입고예정량": 61, "가용재고": 132, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFN00CP00A-WW", "단품코드": "IFN00CP00A", "색상": "WW", "단품명": "2단서랍 앞판 (뉴트 손잡이용)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 8, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 8, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFN00CP00B-WW", "단품코드": "IFN00CP00B", "색상": "WW", "단품명": "2단서랍 앞판 (뉴트 손잡이용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 51, "사업장재고": 50, "VN재고": 0, "출고예정량": 91, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS00CP00A-WW", "단품코드": "IFS00CP00A", "색상": "WW", "단품명": "코너옷장 선반류 (R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS00CP00B-WW", "단품코드": "IFS00CP00B", "색상": "WW", "단품명": "코너옷장 선반류 (R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 14, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 30, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS00CP01A-WW", "단품코드": "IFS00CP01A", "색상": "WW", "단품명": "코너옷장 선반류 (L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS00CP01B-WW", "단품코드": "IFS00CP01B", "색상": "WW", "단품명": "코너옷장 선반류 (L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 12, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFB00CP00A-WW", "단품코드": "IFB00CP00A", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFB00CP00B-WW", "단품코드": "IFB00CP00B", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 34, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 10, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFB00CP01A-WW", "단품코드": "IFB00CP01A", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFB00CP01B-WW", "단품코드": "IFB00CP01B", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 16, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICV00CP02A-WW", "단품코드": "ICV00CP02A", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICV00CP02B-WW", "단품코드": "ICV00CP02B", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 24, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 20, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICV00CP05A-WW", "단품코드": "ICV00CP05A", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICV00CP05B-WW", "단품코드": "ICV00CP05B", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 27, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFD60CP00A-WW", "단품코드": "IFD60CP00A", "색상": "WW", "단품명": "코너옷장 도어 600폭", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFD60CP00B-WW", "단품코드": "IFD60CP00B", "색상": "WW", "단품명": "코너옷장 도어 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 4, "사업장재고": 1, "VN재고": 0, "출고예정량": 22, "입고예정량": 29, "가용재고": 12, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICS60CP04A-WW", "단품코드": "ICS60CP04A", "색상": "WW", "단품명": "4단 적층장 선반류 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 71, "사업장재고": 0, "VN재고": 0, "출고예정량": 47, "입고예정량": 100, "가용재고": 124, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICS60CP04B-WW", "단품코드": "ICS60CP04B", "색상": "WW", "단품명": "4단 적층장 선반류 600폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICB60CP04B-WW", "단품코드": "ICB60CP04B", "색상": "WW", "단품명": "4단 적층장 뒷판 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 93, "사업장재고": 0, "VN재고": 0, "출고예정량": 47, "입고예정량": 0, "가용재고": 46, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICB60CP04C-WW", "단품코드": "ICB60CP04C", "색상": "WW", "단품명": "4단 적층장 뒷판 600폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IHS40CP01A-WW", "단품코드": "IHS40CP01A", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 400폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 78, "사업장재고": 0, "VN재고": 0, "출고예정량": 64, "입고예정량": 120, "가용재고": 134, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IHS40CP01B-WW", "단품코드": "IHS40CP01B", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IHS29CP01A-WW", "단품코드": "IHS29CP01A", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 290폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 25, "사업장재고": 1, "VN재고": 0, "출고예정량": 29, "입고예정량": 26, "가용재고": 23, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IHS29CP01B-WW", "단품코드": "IHS29CP01B", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 290폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDL00AD00A-CZ", "단품코드": "IDL00AD00A", "색상": "CZ", "단품명": "식탁 다리", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 150, "사업장재고": 0, "VN재고": 0, "출고예정량": 46, "입고예정량": 0, "가용재고": 104, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDL00AD00B-CZ", "단품코드": "IDL00AD00B", "색상": "CZ", "단품명": "블릭 식탁 다리", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 44, "가용재고": 44, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDL00AD00A-BNT", "단품코드": "IDL00AD00A", "색상": "BNT", "단품명": "식탁 다리", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 53, "사업장재고": 0, "VN재고": 0, "출고예정량": 11, "입고예정량": 0, "가용재고": 42, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDL00AD00B-BNT", "단품코드": "IDL00AD00B", "색상": "BNT", "단품명": "블릭 식탁 다리", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF09AD00A-CZ", "단품코드": "IDF09AD00A", "색상": "CZ", "단품명": "상판프레임 900폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 29, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 0, "가용재고": 15, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF09AD00B-CZ", "단품코드": "IDF09AD00B", "색상": "CZ", "단품명": "블릭 상판프레임 900폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 25, "가용재고": 25, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF09AD00A-BNT", "단품코드": "IDF09AD00A", "색상": "BNT", "단품명": "상판프레임 900폭", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF09AD00B-BNT", "단품코드": "IDF09AD00B", "색상": "BNT", "단품명": "블릭 상판프레임 900폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 5, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF12AD00A-CZ", "단품코드": "IDF12AD00A", "색상": "CZ", "단품명": "상판프레임 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 108, "사업장재고": 0, "VN재고": 0, "출고예정량": 33, "입고예정량": 0, "가용재고": 75, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF12AD00B-CZ", "단품코드": "IDF12AD00B", "색상": "CZ", "단품명": "블릭 상판프레임 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF12AD00A-BNT", "단품코드": "IDF12AD00A", "색상": "BNT", "단품명": "상판프레임 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 47, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 0, "가용재고": 38, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF12AD00B-BNT", "단품코드": "IDF12AD00B", "색상": "BNT", "단품명": "블릭 상판프레임 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 14, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDX00AD00A-XX", "단품코드": "IDX00AD00A", "색상": "XX", "단품명": "세라믹 상판 고정철물류 (4EA)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 193, "사업장재고": 0, "VN재고": 0, "출고예정량": 95, "입고예정량": 200, "가용재고": 298, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDX00AD02A-XX", "단품코드": "IDX00AD02A", "색상": "XX", "단품명": "블릭 세라믹 식탁 조립철물류", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKD1420LN-IVM", "단품코드": "HSKD1420LN", "색상": "IVM", "단품명": "링키플러스 익스텐션 책상 다리", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "(주)제일금속", "현재고": 45, "사업장재고": 0, "VN재고": 0, "출고예정량": 36, "입고예정량": 30, "가용재고": 39, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKD1420LR-IVM", "단품코드": "HSKD1420LR", "색상": "IVM", "단품명": "링키플러스 익스텐션 책상 다리", "사용구분": "단종", "용도구분": "비운영", "공급업체": "(주)제일금속", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L841L", "단품코드": "HCS8800N", "색상": "L841L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 5, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L841L", "단품코드": "ILC00DW00A", "색상": "L841L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L844L", "단품코드": "HCS8800N", "색상": "L844L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 1, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L844L", "단품코드": "ILC00DW00A", "색상": "L844L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L845", "단품코드": "HCS8800N", "색상": "L845", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 14, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L845", "단품코드": "ILC00DW00A", "색상": "L845", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L846", "단품코드": "HCS8800N", "색상": "L846", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L846", "단품코드": "ILC00DW00A", "색상": "L846", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L849L", "단품코드": "HCS8800N", "색상": "L849L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 5, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L849L", "단품코드": "ILC00DW00A", "색상": "L849L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NF-4R2", "단품코드": "HCS8800NF", "색상": "4R2", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 7, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 7, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW01A-4R2", "단품코드": "ISC00DW01A", "색상": "4R2", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 3, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NF-4R8", "단품코드": "HCS8800NF", "색상": "4R8", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 10, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW01A-4R8", "단품코드": "ISC00DW01A", "색상": "4R8", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NFA-4U0", "단품코드": "HCS8800NFA", "색상": "4U0", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 14, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW02A-4U0", "단품코드": "ISC00DW02A", "색상": "4U0", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NFA-4U4L", "단품코드": "HCS8800NFA", "색상": "4U4L", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 2, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW02A-4U4L", "단품코드": "ISC00DW02A", "색상": "4U4L", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}];
+const SPEC_SHEET_ID = "1sAvWHksA3hhlDRvGsXqHdbSvO07MFTCrebuVoRk9LSc";
+const SPEC_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxD11tQrCBou3cjIVfrvaS1HA3kmzn9TuKmX6FImU2EGYyAKQ9WdfIRSSwjWrF00uaTBQ/exec";
+
+async function completeSpecPair(btn, oldCode, newCode, color) {
+  if (!confirm(`${oldCode} → ${newCode} (${color}) 완료 처리하시겠습니까?`)) return;
+  btn.disabled = true;
+  btn.textContent = '처리 중...';
+  try {
+    await fetch(SPEC_APPS_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({
+        sheet: '사양변경',
+        keys: [
+          { col: '구사양코드', val: oldCode },
+          { col: '신사양코드', val: newCode },
+          { col: '색상', val: color },
+        ],
+      }),
+    });
+    btn.outerHTML = '<span class="badge-done" style="font-size:11px">✓ 완료 처리됨</span>';
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = '완료 처리';
+    alert('처리 실패: ' + e.message);
+  }
+}
+
+const EXPORT_ROWS = [{"상태": "완료", "특이사항": "", "구/신": "구", "단품조합": "IFX00AA01A-XX", "단품코드": "IFX00AA01A", "색상": "XX", "단품명": "110° 힌지 B(4조,댐핑2조)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "프레임도어 힌지 변"}, {"상태": "완료", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA01A-XX", "단품코드": "ICX00AA01A", "색상": "XX", "단품명": "110° 힌지 B(2조,댐핑1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 56, "사업장재고": 0, "VN재고": 0, "출고예정량": 49, "입고예정량": 230, "가용재고": 237, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "프레임도어 힌지 변"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IAC00CN00A-6K2", "단품코드": "IAC00CN00A", "색상": "6K2", "단품명": "가드쿠션", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "올젠", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IAC00CN00B-6K2", "단품코드": "IAC00CN00B", "색상": "6K2", "단품명": "가드쿠션_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "올젠", "현재고": 6, "사업장재고": 0, "VN재고": 0, "출고예정량": 7, "입고예정량": 30, "가용재고": 29, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBG20CN02A-NK", "단품코드": "IBG20CN02A", "색상": "NK", "단품명": "침대 가드 2000폭", "사용구분": "단종", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBG20CN02B-NK", "단품코드": "IBG20CN02B", "색상": "NK", "단품명": "침대 가드 2000폭_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 37, "사업장재고": 0, "VN재고": 0, "출고예정량": 8, "입고예정량": 0, "가용재고": 29, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBG20CN02A-OATK", "단품코드": "IBG20CN02A", "색상": "OATK", "단품명": "침대 가드 2000폭", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBG20CN02B-OATK", "단품코드": "IBG20CN02B", "색상": "OATK", "단품명": "침대 가드 2000폭_똑딱이형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 43, "사업장재고": 0, "VN재고": 0, "출고예정량": 10, "입고예정량": 0, "가용재고": 33, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "두들 침대 가드 쿠션 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN60CG01A-SO", "단품코드": "IBN60CG01A", "색상": "SO", "단품명": "패널 600폭 선반형", "사용구분": "개발", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN60CG01B-SO", "단품코드": "IBN60CG01B", "색상": "SO", "단품명": "패널 600폭 선반형", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 3, "입고예정량": 10, "가용재고": 7, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN60CG00A-SO", "단품코드": "IBN60CG00A", "색상": "SO", "단품명": "패널 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 16, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 15, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN60CG00B-SO", "단품코드": "IBN60CG00B", "색상": "SO", "단품명": "패널 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 10, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBN80CG00A-SO", "단품코드": "IBN80CG00A", "색상": "SO", "단품명": "패널 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBN80CG00B-SO", "단품코드": "IBN80CG00B", "색상": "SO", "단품명": "패널 800폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 9, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "토스티 패널 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U09EHU-MM", "단품코드": "HB01U09EHU", "색상": "MM", "단품명": "모션베드메커니즘 900폭(2모터)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U09EHUN-MM", "단품코드": "HB01U09EHUN", "색상": "MM", "단품명": "모션베드메커니즘 900폭(2모터)", "사용구분": "사용", "용도구분": "", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U15EHU-MM", "단품코드": "HB01U15EHU", "색상": "MM", "단품명": "모션베드메커니즘 1500폭(2모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U15EHUN-MM", "단품코드": "HB01U15EHUN", "색상": "MM", "단품명": "모션베드메커니즘 1500폭(2모터)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 7, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U11EHU-MM", "단품코드": "HB01U11EHU", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(2모터)", "사용구분": "개발", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U11EHUN-MM", "단품코드": "HB01U11EHUN", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(2모터)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스안성", "현재고": 34, "사업장재고": 24, "VN재고": 0, "출고예정량": 66, "입고예정량": 0, "가용재고": -8, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U09HHU-MM", "단품코드": "HB01U09HHU", "색상": "MM", "단품명": "모션베드메커니즘 900폭(3모터)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 2, "사업장재고": 8, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 8, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U09HHUN-MM", "단품코드": "HB01U09HHUN", "색상": "MM", "단품명": "모션베드메커니즘 900폭(3모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HB01U11HHU-MM", "단품코드": "HB01U11HHU", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(3모터)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스안성", "현재고": 5, "사업장재고": 40, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 42, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HB01U11HHUN-MM", "단품코드": "HB01U11HHUN", "색상": "MM", "단품명": "모션베드메커니즘 1100폭(3모터)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "모션베드 리모컨 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0043LN-OS", "단품코드": "HSOB0043LN", "색상": "OS", "단품명": "3단 책장도어(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0043LNA-OS", "단품코드": "HSOB0043LNA", "색상": "OS", "단품명": "3단 책장도어(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 10, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063L-OS", "단품코드": "HSOB0063L", "색상": "OS", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063LN-OS", "단품코드": "HSOB0063LN", "색상": "OS", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 4, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063L-SP", "단품코드": "HSOB0063L", "색상": "SP", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063LN-SP", "단품코드": "HSOB0063LN", "색상": "SP", "단품명": "3단 책장도어(좌) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063R-OS", "단품코드": "HSOB0063R", "색상": "OS", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063RN-OS", "단품코드": "HSOB0063RN", "색상": "OS", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 6, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0063R-SP", "단품코드": "HSOB0063R", "색상": "SP", "단품명": "3단 책장도어(우) 600폭", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSOB0063RN-SP", "단품코드": "HSOB0063RN", "색상": "SP", "단품명": "3단 책장도어(우) 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "로이 책장도어 사양변경"}, {"상태": "완료", "특이사항": "", "구/신": "구", "단품조합": "IBP00AP01A-IV", "단품코드": "IBP00AP01A", "색상": "IV", "단품명": "하부서랍(확장1EA)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "일방향 캐스터 사양변경"}, {"상태": "완료", "특이사항": "", "구/신": "신", "단품조합": "IBP00AP01B-IV", "단품코드": "IBP00AP01B", "색상": "IV", "단품명": "하부서랍(확장1EA)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 5, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "일방향 캐스터 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVRM", "단품코드": "HSKB0121R", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 22, "사업장재고": 0, "VN재고": 0, "출고예정량": 20, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVRM", "단품코드": "HSKB0121RA", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVTM", "단품코드": "HSKB0121R", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 14, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVTM", "단품코드": "HSKB0121RA", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVLUW", "단품코드": "HSKB0121R", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 0, "VN재고": 0, "출고예정량": 10, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVLUW", "단품코드": "HSKB0121RA", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121R-IVGYM", "단품코드": "HSKB0121R", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 55, "사업장재고": 0, "VN재고": 0, "출고예정량": 10, "입고예정량": 0, "가용재고": 45, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121RA-IVGYM", "단품코드": "HSKB0121RA", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVRM", "단품코드": "HSKB0141R", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 25, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 21, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVRM", "단품코드": "HSKB0141RA", "색상": "IVRM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVTM", "단품코드": "HSKB0141R", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 6, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVTM", "단품코드": "HSKB0141RA", "색상": "IVTM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVLUW", "단품코드": "HSKB0141R", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 26, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 22, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVLUW", "단품코드": "HSKB0141RA", "색상": "IVLUW", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0141R-IVGYM", "단품코드": "HSKB0141R", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0141RA-IVGYM", "단품코드": "HSKB0141RA", "색상": "IVGYM", "단품명": "(벽고정-적층장 제외) 1단 상부도어 1400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVRM", "단품코드": "HSKB0121F", "색상": "IVRM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 11, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVRM", "단품코드": "HSKB0121FA", "색상": "IVRM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 20, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVTM", "단품코드": "HSKB0121F", "색상": "IVTM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVTM", "단품코드": "HSKB0121FA", "색상": "IVTM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVLUW", "단품코드": "HSKB0121F", "색상": "IVLUW", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 29, "사업장재고": 0, "VN재고": 0, "출고예정량": 3, "입고예정량": 0, "가용재고": 26, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVLUW", "단품코드": "HSKB0121FA", "색상": "IVLUW", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 20, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0121F-IVGYM", "단품코드": "HSKB0121F", "색상": "IVGYM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "퍼시스충1", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKB0121FA-IVGYM", "단품코드": "HSKB0121FA", "색상": "IVGYM", "단품명": "(벽고정) 1단 상부도어 1200폭 (모션용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDD10BP00A-IV", "단품코드": "IDD10BP00A", "색상": "IV", "단품명": "상부도어 1000폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "제일퍼니처", "현재고": 27, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 23, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDD10BP00B-IV", "단품코드": "IDD10BP00B", "색상": "IV", "단품명": "상부도어 1000폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDD12BP00A-IV", "단품코드": "IDD12BP00A", "색상": "IV", "단품명": "상부도어 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "제일퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 24, "가용재고": 23, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDD12BP00B-IV", "단품코드": "IDD12BP00B", "색상": "IV", "단품명": "상부도어 1200폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 50, "가용재고": 50, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "도어 두께 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0001XR-XX", "단품코드": "HSKB0001XR", "색상": "XX", "단품명": "상부도어 힌지류", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 128, "사업장재고": 0, "VN재고": 0, "출고예정량": 32, "입고예정량": 0, "가용재고": 96, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA04A-XX", "단품코드": "ICX00AA04A", "색상": "XX", "단품명": "로지카 힌지(댐핑1조,일반1조,상부도어용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 305, "사업장재고": 0, "VN재고": 0, "출고예정량": 212, "입고예정량": 240, "가용재고": 333, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKB0002X-XX", "단품코드": "HSKB0002X", "색상": "XX", "단품명": "하부도어 힌지류", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 10, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA05A-XX", "단품코드": "ICX00AA05A", "색상": "XX", "단품명": "로지카 힌지(댐핑1조,일반1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 339, "사업장재고": 0, "VN재고": 0, "출고예정량": 780, "입고예정량": 2610, "가용재고": 2169, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0005X-XX", "단품코드": "HSOB0005X", "색상": "XX", "단품명": "5단 책장도어 힌지류", "사용구분": "단종", "용도구분": "비운영", "공급업체": "올품퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA06A-XX", "단품코드": "ICX00AA06A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,일반1조)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "올품퍼니처", "현재고": 105, "사업장재고": 0, "VN재고": 0, "출고예정량": 19, "입고예정량": 70, "가용재고": 156, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSOB0001XN-XX", "단품코드": "HSOB0001XN", "색상": "XX", "단품명": "상부도어 힌지류", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "에픽", "현재고": 78, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 78, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA07A-XX", "단품코드": "ICX00AA07A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,상부도어용A)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 109, "사업장재고": 0, "VN재고": 0, "출고예정량": 327, "입고예정량": 1317, "가용재고": 1099, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICX00AA02A-XX", "단품코드": "ICX00AA02A", "색상": "XX", "단품명": "110° 힌지(댐핑2조), 가스스프링(1조)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICX00AA08A-XX", "단품코드": "ICX00AA08A", "색상": "XX", "단품명": "로지카 힌지(댐핑2조,상부도어용B)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-IV", "단품코드": "IFT00AQ00A", "색상": "IV", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-IV", "단품코드": "IFT00AQ00B", "색상": "IV", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 5, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-OS", "단품코드": "IFT00AQ00A", "색상": "OS", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-OS", "단품코드": "IFT00AQ00B", "색상": "OS", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 17, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ00A-SP", "단품코드": "IFT00AQ00A", "색상": "SP", "단품명": "멀티장 윗판류(좌)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ00B-SP", "단품코드": "IFT00AQ00B", "색상": "SP", "단품명": "멀티장 윗판류(좌)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 11, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-IV", "단품코드": "IFT00AQ01A", "색상": "IV", "단품명": "멀티장 윗판류(우)", "사용구분": "단종", "용도구분": "재고소진 단종", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-IV", "단품코드": "IFT00AQ01B", "색상": "IV", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 10, "사업장재고": 0, "VN재고": 0, "출고예정량": 1, "입고예정량": 10, "가용재고": 19, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-OS", "단품코드": "IFT00AQ01A", "색상": "OS", "단품명": "멀티장 윗판류(우)", "사용구분": "개발", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-OS", "단품코드": "IFT00AQ01B", "색상": "OS", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFT00AQ01A-SP", "단품코드": "IFT00AQ01A", "색상": "SP", "단품명": "멀티장 윗판류(우)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFT00AQ01B-SP", "단품코드": "IFT00AQ01B", "색상": "SP", "단품명": "멀티장 윗판류(우)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 15, "사업장재고": 0, "VN재고": 0, "출고예정량": 6, "입고예정량": 0, "가용재고": 9, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSFC5080H-IVGY", "단품코드": "HSFC5080H", "색상": "IVGY", "단품명": "옷장 선반류 800폭(손잡이포함)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "엘디자인", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSFC5080HN-IVGY", "단품코드": "HSFC5080HN", "색상": "IVGY", "단품명": "옷장 선반류 800폭(손잡이포함)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "엘디자인", "현재고": 119, "사업장재고": 0, "VN재고": 0, "출고예정량": 105, "입고예정량": 406, "가용재고": 420, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSLB5080N-IVKP", "단품코드": "HSLB5080N", "색상": "IVKP", "단품명": "옷장 도어 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 15, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 13, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSLB5080NA-IVKP", "단품코드": "HSLB5080NA", "색상": "IVKP", "단품명": "옷장 도어 800폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSLB5080N-IVKS", "단품코드": "HSLB5080N", "색상": "IVKS", "단품명": "옷장 도어 800폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "퍼시스충2", "현재고": 6, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSLB5080NA-IVKS", "단품코드": "HSLB5080NA", "색상": "IVKS", "단품명": "옷장 도어 800폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충2", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "라피도힌지 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP00A-WW", "단품코드": "IVN11CP00A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 13, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP01A-WW", "단품코드": "IVN11CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 8, "사업장재고": 0, "VN재고": 0, "출고예정량": 12, "입고예정량": 0, "가용재고": -4, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP03A-WW", "단품코드": "IVN11CP03A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 7, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 7, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP05A-WW", "단품코드": "IVN11CP05A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대장세트용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 19, "사업장재고": 0, "VN재고": 0, "출고예정량": 7, "입고예정량": 0, "가용재고": 12, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP01A-WW", "단품코드": "IVN14CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP01A-WW", "단품코드": "IVN12CP01A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 18, "사업장재고": 0, "VN재고": 0, "출고예정량": 4, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP03A-WW", "단품코드": "IVN14CP03A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP02A-WW", "단품코드": "IVN12CP02A", "색상": "WW", "단품명": "뉴트 침대 목재 파티션 (침대단품용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 16, "사업장재고": 0, "VN재고": 0, "출고예정량": 12, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP02A-3W1", "단품코드": "IVN11CP02A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP06A-3W1", "단품코드": "IVN11CP06A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 5, "입고예정량": 1, "가용재고": -2, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN11CP04A-3W1", "단품코드": "IVN11CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 1, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN11CP07A-3W1", "단품코드": "IVN11CP07A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대장세트용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 13, "입고예정량": 3, "가용재고": -9, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP02A-3W1", "단품코드": "IVN14CP02A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP03A-3W1", "단품코드": "IVN12CP03A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 6, "입고예정량": 0, "가용재고": -5, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IVN14CP04A-3W1", "단품코드": "IVN14CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,R)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 2, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IVN12CP04A-3W1", "단품코드": "IVN12CP04A", "색상": "3W1", "단품명": "뉴트 침대 패브릭 파티션 (침대단품용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "주식회사 인퍼니쳐", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 7, "입고예정량": 2, "가용재고": -4, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP00A-WW", "단품코드": "IBV00CP00A", "색상": "WW", "단품명": "침대 측판류(가로수납형R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 52, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 52, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP00B-WW", "단품코드": "IBV00CP00B", "색상": "WW", "단품명": "침대 측판류(가로수납형R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 39, "사업장재고": 0, "VN재고": 0, "출고예정량": 34, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP01A-WW", "단품코드": "IBV00CP01A", "색상": "WW", "단품명": "침대 측판류(가로수납형L)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP01B-WW", "단품코드": "IBV00CP01B", "색상": "WW", "단품명": "침대 측판류(가로수납형L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 32, "VN재고": 0, "출고예정량": 28, "입고예정량": 0, "가용재고": 16, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IBV00CP02A-WW", "단품코드": "IBV00CP02A", "색상": "WW", "단품명": "침대 측판류(세로수납형)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 12, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IBV00CP02B-WW", "단품코드": "IBV00CP02B", "색상": "WW", "단품명": "침대 측판류(세로수납형)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 37, "사업장재고": 165, "VN재고": 0, "출고예정량": 150, "입고예정량": 0, "가용재고": 52, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 리뉴얼"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS80CP00A-WW", "단품코드": "IFS80CP00A", "색상": "WW", "단품명": "2단 서랍옷장 선반류 800폭,손잡이", "사용구분": "단종", "용도구분": "비운영", "공급업체": "제일퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS80CP00B-WW", "단품코드": "IFS80CP00B", "색상": "WW", "단품명": "2단 서랍옷장 선반류 800폭,손잡이", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 31, "사업장재고": 0, "VN재고": 0, "출고예정량": 94, "입고예정량": 156, "가용재고": 93, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFV00CP02A-WW", "단품코드": "IFV00CP02A", "색상": "WW", "단품명": "서랍형옷장(2단서랍)측판류,뒷판", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "제일퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFV00CP02B-WW", "단품코드": "IFV00CP02B", "색상": "WW", "단품명": "서랍형옷장(2단서랍)측판류,뒷판", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "제일퍼니처", "현재고": 158, "사업장재고": 0, "VN재고": 0, "출고예정량": 87, "입고예정량": 61, "가용재고": 132, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFN00CP00A-WW", "단품코드": "IFN00CP00A", "색상": "WW", "단품명": "2단서랍 앞판 (뉴트 손잡이용)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 8, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 8, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFN00CP00B-WW", "단품코드": "IFN00CP00B", "색상": "WW", "단품명": "2단서랍 앞판 (뉴트 손잡이용)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 49, "사업장재고": 50, "VN재고": 0, "출고예정량": 89, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "서랍옷장 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS00CP00A-WW", "단품코드": "IFS00CP00A", "색상": "WW", "단품명": "코너옷장 선반류 (R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS00CP00B-WW", "단품코드": "IFS00CP00B", "색상": "WW", "단품명": "코너옷장 선반류 (R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 14, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 30, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFS00CP01A-WW", "단품코드": "IFS00CP01A", "색상": "WW", "단품명": "코너옷장 선반류 (L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFS00CP01B-WW", "단품코드": "IFS00CP01B", "색상": "WW", "단품명": "코너옷장 선반류 (L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 17, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 12, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFB00CP00A-WW", "단품코드": "IFB00CP00A", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 1, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFB00CP00B-WW", "단품코드": "IFB00CP00B", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 34, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 10, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFB00CP01A-WW", "단품코드": "IFB00CP01A", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFB00CP01B-WW", "단품코드": "IFB00CP01B", "색상": "WW", "단품명": "코너옷장 측판류,뒷판 (L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 13, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 16, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICV00CP02A-WW", "단품코드": "ICV00CP02A", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,R)", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "송아퍼니처", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICV00CP02B-WW", "단품코드": "ICV00CP02B", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,R)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 24, "사업장재고": 0, "VN재고": 0, "출고예정량": 14, "입고예정량": 20, "가용재고": 30, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICV00CP05A-WW", "단품코드": "ICV00CP05A", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,L)", "사용구분": "단종", "용도구분": "비운영", "공급업체": "송아퍼니처", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICV00CP05B-WW", "단품코드": "ICV00CP05B", "색상": "WW", "단품명": "6단 책장 측판류 (코너옷장용,L)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "송아퍼니처", "현재고": 2, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 27, "가용재고": 20, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IFD60CP00A-WW", "단품코드": "IFD60CP00A", "색상": "WW", "단품명": "코너옷장 도어 600폭", "사용구분": "개발", "용도구분": "A/S비축", "공급업체": "퍼시스충1", "현재고": 4, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 4, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IFD60CP00B-WW", "단품코드": "IFD60CP00B", "색상": "WW", "단품명": "코너옷장 도어 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 33, "사업장재고": 1, "VN재고": 0, "출고예정량": 22, "입고예정량": 0, "가용재고": 12, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "코너옷장 도어높이변경 및 바닥판 보강"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICS60CP04A-WW", "단품코드": "ICS60CP04A", "색상": "WW", "단품명": "4단 적층장 선반류 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 70, "사업장재고": 0, "VN재고": 0, "출고예정량": 46, "입고예정량": 100, "가용재고": 124, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICS60CP04B-WW", "단품코드": "ICS60CP04B", "색상": "WW", "단품명": "4단 적층장 선반류 600폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "ICB60CP04B-WW", "단품코드": "ICB60CP04B", "색상": "WW", "단품명": "4단 적층장 뒷판 600폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 92, "사업장재고": 0, "VN재고": 0, "출고예정량": 46, "입고예정량": 0, "가용재고": 46, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ICB60CP04C-WW", "단품코드": "ICB60CP04C", "색상": "WW", "단품명": "4단 적층장 뒷판 600폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IHS40CP01A-WW", "단품코드": "IHS40CP01A", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 400폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 75, "사업장재고": 0, "VN재고": 0, "출고예정량": 62, "입고예정량": 120, "가용재고": 133, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IHS40CP01B-WW", "단품코드": "IHS40CP01B", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 400폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼니엠", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IHS29CP01A-WW", "단품코드": "IHS29CP01A", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 290폭", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 51, "사업장재고": 1, "VN재고": 0, "출고예정량": 31, "입고예정량": 0, "가용재고": 21, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IHS29CP01B-WW", "단품코드": "IHS29CP01B", "색상": "WW", "단품명": "4단 적층장 선반류,뒷판 290폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "퍼시스충1", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "뉴트 적층장 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDL00AD00A-CZ", "단품코드": "IDL00AD00A", "색상": "CZ", "단품명": "식탁 다리", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 149, "사업장재고": 0, "VN재고": 0, "출고예정량": 46, "입고예정량": 0, "가용재고": 103, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDL00AD00B-CZ", "단품코드": "IDL00AD00B", "색상": "CZ", "단품명": "블릭 식탁 다리", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 44, "가용재고": 44, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDL00AD00A-BNT", "단품코드": "IDL00AD00A", "색상": "BNT", "단품명": "식탁 다리", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 53, "사업장재고": 0, "VN재고": 0, "출고예정량": 11, "입고예정량": 0, "가용재고": 42, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDL00AD00B-BNT", "단품코드": "IDL00AD00B", "색상": "BNT", "단품명": "블릭 식탁 다리", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF09AD00A-CZ", "단품코드": "IDF09AD00A", "색상": "CZ", "단품명": "상판프레임 900폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 28, "사업장재고": 0, "VN재고": 0, "출고예정량": 13, "입고예정량": 0, "가용재고": 15, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF09AD00B-CZ", "단품코드": "IDF09AD00B", "색상": "CZ", "단품명": "블릭 상판프레임 900폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 25, "가용재고": 25, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF09AD00A-BNT", "단품코드": "IDF09AD00A", "색상": "BNT", "단품명": "상판프레임 900폭", "사용구분": "개발", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 3, "사업장재고": 0, "VN재고": 0, "출고예정량": 2, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF09AD00B-BNT", "단품코드": "IDF09AD00B", "색상": "BNT", "단품명": "블릭 상판프레임 900폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 5, "가용재고": 5, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF12AD00A-CZ", "단품코드": "IDF12AD00A", "색상": "CZ", "단품명": "상판프레임 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 108, "사업장재고": 0, "VN재고": 0, "출고예정량": 34, "입고예정량": 0, "가용재고": 74, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF12AD00B-CZ", "단품코드": "IDF12AD00B", "색상": "CZ", "단품명": "블릭 상판프레임 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDF12AD00A-BNT", "단품코드": "IDF12AD00A", "색상": "BNT", "단품명": "상판프레임 1200폭", "사용구분": "사용", "용도구분": "재고소진 단종", "공급업체": "CERUBO", "현재고": 47, "사업장재고": 0, "VN재고": 0, "출고예정량": 9, "입고예정량": 0, "가용재고": 38, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDF12AD00B-BNT", "단품코드": "IDF12AD00B", "색상": "BNT", "단품명": "블릭 상판프레임 1200폭", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "CERUBO", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 14, "가용재고": 14, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "IDX00AD00A-XX", "단품코드": "IDX00AD00A", "색상": "XX", "단품명": "세라믹 상판 고정철물류 (4EA)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 191, "사업장재고": 0, "VN재고": 0, "출고예정량": 94, "입고예정량": 200, "가용재고": 297, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "IDX00AD02A-XX", "단품코드": "IDX00AD02A", "색상": "XX", "단품명": "블릭 세라믹 식탁 조립철물류", "사용구분": "개발", "용도구분": "영업운영", "공급업체": "에픽", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "블릭 식탁 흔들림 개선"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HSKD1420LN-IVM", "단품코드": "HSKD1420LN", "색상": "IVM", "단품명": "링키플러스 익스텐션 책상 다리", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "(주)제일금속", "현재고": 44, "사업장재고": 0, "VN재고": 0, "출고예정량": 35, "입고예정량": 30, "가용재고": 39, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "HSKD1420LR-IVM", "단품코드": "HSKD1420LR", "색상": "IVM", "단품명": "링키플러스 익스텐션 책상 다리", "사용구분": "단종", "용도구분": "비운영", "공급업체": "(주)제일금속", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "링키플러스 익스텐션 책상 다리(HSKD1420LR) 사양 변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L841L", "단품코드": "HCS8800N", "색상": "L841L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 5, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L841L", "단품코드": "ILC00DW00A", "색상": "L841L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L844L", "단품코드": "HCS8800N", "색상": "L844L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 1, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 1, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L844L", "단품코드": "ILC00DW00A", "색상": "L844L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L845", "단품코드": "HCS8800N", "색상": "L845", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 13, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 13, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L845", "단품코드": "ILC00DW00A", "색상": "L845", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L846", "단품코드": "HCS8800N", "색상": "L846", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "⚠ 준비필요", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L846", "단품코드": "ILC00DW00A", "색상": "L846", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800N-L849L", "단품코드": "HCS8800N", "색상": "L849L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 3, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ILC00DW00A-L849L", "단품코드": "ILC00DW00A", "색상": "L849L", "단품명": "밴쿠버 헤드레스트(가죽)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NF-4R2", "단품코드": "HCS8800NF", "색상": "4R2", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 5, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 5, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW01A-4R2", "단품코드": "ISC00DW01A", "색상": "4R2", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 3, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 3, "재고확인": "✓ 입고됨", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NF-4R8", "단품코드": "HCS8800NF", "색상": "4R8", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 10, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 10, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW01A-4R8", "단품코드": "ISC00DW01A", "색상": "4R8", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NFA-4U0", "단품코드": "HCS8800NFA", "색상": "4U0", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 14, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 14, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW02A-4U0", "단품코드": "ISC00DW02A", "색상": "4U0", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "구", "단품조합": "HCS8800NFA-4U4L", "단품코드": "HCS8800NFA", "색상": "4U4L", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 2, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 2, "재고확인": "✓ 여유", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}, {"상태": "진행중", "특이사항": "", "구/신": "신", "단품조합": "ISC00DW02A-4U4L", "단품코드": "ISC00DW02A", "색상": "4U4L", "단품명": "밴쿠버 헤드레스트(패브릭)", "사용구분": "사용", "용도구분": "영업운영", "공급업체": "시디즈안성", "현재고": 0, "사업장재고": 0, "VN재고": 0, "출고예정량": 0, "입고예정량": 0, "가용재고": 0, "재고확인": "○ 미입고", "예상소진": "-", "월평출(6개월)": "", "월평출(1년)": "", "사양변경내용": "밴쿠버 헤드레스트 사양변경"}];
 const VIEW_TITLES = {
   active:'진행중 사양변경', done:'완료된 사양변경', this_month:'이번 달 등록된 사양변경',
   urgent:'🔴 긴급 대응 필요', monitor:'🟡 모니터링', ready:'🟢 전환 가능 (완료처리 대기)',
@@ -4571,6 +5079,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const valid = ['done','this_month','urgent','monitor','ready','all'];
   setView(valid.includes(hash) ? hash : 'active');
 });
+</script>
+<script>
+const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
+const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
+const SS_USER_KEY='iloom_ep_session';
+function getAllowedIds(){try{const s=JSON.parse(localStorage.getItem(LS_EP_IDS_KEY)||'null');if(Array.isArray(s))return[...new Set([...EP_DEFAULT_IDS,...s])];}catch(e){}return[...EP_DEFAULT_IDS];}
+function getLoggedInUser(){return sessionStorage.getItem(SS_USER_KEY)||null;}
+function showLoginModal(){const saved=localStorage.getItem('iloom_saved_ep_id')||'';document.getElementById('loginInput').value=saved;const chk=document.getElementById('saveIdChk');if(chk)chk.checked=!!saved;document.getElementById('loginError').textContent='';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('loginInput').focus(),50);}
+function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
+function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}if(getAllowedIds().includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
+function doLogout(){sessionStorage.removeItem(SS_USER_KEY);updateAuthUI();}
+function updateAuthUI(){const user=getLoggedInUser();const ov=document.getElementById('authOverlay');if(ov)ov.style.display=user?'none':'flex';const bl=document.getElementById('btnNavLogin');if(bl)bl.style.display=user?'none':'';const bo=document.getElementById('btnNavLogout');if(bo)bo.style.display=user?'':'none';const chip=document.getElementById('navUserChip');if(chip){chip.style.display=user?'':'none';chip.textContent=user?('👤 '+user):'';}document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'inline':'none';});}
+updateAuthUI();
 </script>
 </body>
 </html>
