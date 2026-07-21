@@ -40,6 +40,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 .gs-row{cursor:pointer}
 .gs-row:hover{background:#FFFBEB}
 .gs-total td{background:#F9FAFB;font-weight:700;border-top:2px solid #E5E7EB}
+.badge-gs-done{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#2563eb;padding:1px 7px;border-radius:10px;margin-left:4px;vertical-align:middle}
 @media(max-width:768px){
   .result-wrap{padding:12px}
   .summary-bar{gap:14px;padding:10px 12px}
@@ -123,7 +124,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 </nav>
 <div class="page-header">
   <h1>단종(단품) 재고 현황</h1>
-  <div class="meta">기준: BigQuery 최신 기준일자 &nbsp;|&nbsp; 생성: 2026-07-21 12:11</div>
+  <div class="meta">기준: BigQuery 최신 기준일자 &nbsp;|&nbsp; 생성: 2026-07-21 12:15</div>
 </div>
 
 <div class="summary-bar">
@@ -147,6 +148,13 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
       <th>가용재고(사업장 포함)</th>
     </tr></thead>
     <tbody>
+<tr class="gs-row" onclick="scrollToGroup('모드 파티션, 전용 악세서리 단종')">
+          <td class="tl"><span style="color:#2563eb;font-weight:700">모드 파티션, 전용 악세서리 단종</span> <span class="badge-gs-done">완료</span></td>
+          <td style="text-align:right">10</td>
+          <td style="text-align:right;font-weight:700;color:#111827">10</td>
+          <td style="text-align:right;font-weight:700;color:#c80a1e">0</td>
+          <td style="text-align:right;font-weight:700;color:#c80a1e">0</td>
+        </tr>
 <tr class="gs-row" onclick="scrollToGroup('일룸 LDK 품목 사양 단종(다이닝 3종+펫 1종)')">
           <td class="tl">일룸 LDK 품목 사양 단종(다이닝 3종+펫 1종)</td>
           <td style="text-align:right">14</td>
@@ -174,13 +182,6 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right;font-weight:700;color:#111827">9</td>
           <td style="text-align:right;font-weight:700;color:#111827">91</td>
           <td style="text-align:right;font-weight:700;color:#111827">2,143</td>
-        </tr>
-<tr class="gs-row" onclick="scrollToGroup('모드 파티션, 전용 악세서리 단종')">
-          <td class="tl">모드 파티션, 전용 악세서리 단종</td>
-          <td style="text-align:right">10</td>
-          <td style="text-align:right;font-weight:700;color:#111827">10</td>
-          <td style="text-align:right;font-weight:700;color:#c80a1e">0</td>
-          <td style="text-align:right;font-weight:700;color:#c80a1e">0</td>
         </tr>
 <tr class="gs-row" onclick="scrollToGroup('26년 품목정비 2차 단종 품목(26년 10월까지 운영)')">
           <td class="tl">26년 품목정비 2차 단종 품목(26년 10월까지 운영)</td>
