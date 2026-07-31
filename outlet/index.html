@@ -112,7 +112,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
 <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
   <div>
     <h1>아울렛 재고 현황</h1>
-    <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-31 14:09</div>
+    <div class="meta">기준: Google Sheets 동기화 &nbsp;|&nbsp; 생성: 2026-07-31 14:36</div>
   </div>
   <div class="nav-auth">
     <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
@@ -159,7 +159,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <th style="text-align:right">판매수량</th>
   <th style="text-align:center">계획 대비<br>잔여수량</th>
   <th style="text-align:center">최대 판매가능수량</th>
-  <th style="text-align:center">공유단품 안분 판매수량</th>
+  <th style="text-align:center">판매가능수량</th>
   <th style="text-align:center">전일대비</th>
   <th style="text-align:center">25년 평출</th>
   <th style="width:28px"></th>
@@ -16367,7 +16367,7 @@ function downloadExcel() {
   const pureQCell = dv => loggedIn ? qCell(dv) : sCell('로그인 필요');
   const diffStr = dv => (!dv || dv === '0') ? '-' : (parseInt(dv) > 0 ? '▲' + dv : '▼' + Math.abs(parseInt(dv)));
 
-  const mainH = ['#','세트코드','색상','세트명','목표판매량','판매수량','계획대비잔여수량','최대판매가능수량','공유단품안분판매수량','전일대비','25년평출'];
+  const mainH = ['#','세트코드','색상','세트명','목표판매량','판매수량','계획대비잔여수량','최대판매가능수량','판매가능수량','전일대비','25년평출'];
   const subH  = ['단품코드','단품색상','단품명','공급업체','단종예정','사용구분','용도구분','구성수량','사업장재고','가용재고'];
 
   const sh1 = [mkRow(mainH.map(sCell))];
