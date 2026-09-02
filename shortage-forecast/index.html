@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>부족일자 예측 | iloom SCM 대시보드</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F5F7;color:#1F2937}
+.page-header{background:#fff;border-bottom:1px solid #E5E7EB;padding:20px 24px 16px}
+.page-header h1{font-size:20px;font-weight:700;color:#111827}
+.page-header .meta{font-size:12px;color:#6B7280;margin-top:4px}
+.page-header .note{font-size:11px;color:#9CA3AF;margin-top:6px;line-height:1.5}
+.summary-bar{display:flex;align-items:center;gap:24px;padding:14px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.sum-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.sum-num{font-size:22px;font-weight:700;line-height:1}
+.sum-lbl{font-size:11px;color:#6B7280}
+.toolbar{display:flex;align-items:center;gap:12px;padding:12px 24px;background:#fff;border-bottom:1px solid #E5E7EB;flex-wrap:wrap}
+.search-box{padding:6px 12px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;width:240px;outline:none}
+.search-box:focus{border-color:#c80a1e}
+.result-wrap{padding:24px;overflow-x:auto}
+.result-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.result-table th{background:#F9FAFB;border-bottom:2px solid #E5E7EB;padding:10px 12px;font-size:12px;font-weight:600;color:#374151;text-align:left;white-space:nowrap}
+.result-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+.result-table tr:hover td{background:#FFFBEB}
+.num-neg{color:#c80a1e;font-weight:700}
+.empty-msg{padding:60px 24px;text-align:center;color:#9CA3AF;font-size:14px}
+@media(max-width:768px){
+  .result-wrap{padding:12px}
+  .summary-bar{gap:14px;padding:10px 12px}
+  .toolbar{padding:8px 12px}
+}
+</style>
+<style>
+.auth-hide{display:none}
+.nav-auth{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 4px}
+.btn-nav-login{padding:5px 14px;background:#c80a1e;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-nav-login:hover{background:#a50818}
+.btn-nav-logout{padding:5px 12px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-nav-logout:hover{background:#E5E7EB}
+.nav-user-chip{font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 9px;border-radius:10px;font-weight:600}
+</style>
+</head>
+<body>
+<div id="authOverlay" style="position:fixed;inset:0;background:#F4F5F7;z-index:9998;display:flex;align-items:center;justify-content:center">
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div style="font-size:48px">&#128274;</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1F2937">로그인이 필요합니다</h2>
+    <p style="font-size:13px;color:#6B7280">허가된 사용자만 이용할 수 있습니다.</p>
+    <button onclick="showLoginModal()" style="padding:12px 32px;background:#c80a1e;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">EP ID로 로그인</button>
+    <button onclick="location.href='../outlet/'" style="padding:10px 28px;background:#fff;color:#374151;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">아울렛 재고 확인</button>
+  </div>
+</div>
+<div id="loginModal" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center" onclick="if(event.target===this)hideLoginModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 36px;min-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:16px">
+    <h3 style="font-size:17px;font-weight:700;color:#1F2937">로그인</h3>
+    <p style="font-size:13px;color:#6B7280;margin-top:-8px">허가된 EP ID를 입력하세요</p>
+    <input id="loginInput" type="text" placeholder="EP ID" autocomplete="off"
+           style="padding:10px 14px;border:1px solid #D1D5DB;border-radius:7px;font-size:14px;outline:none;width:100%;font-family:inherit"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;margin-top:-4px"><input type="checkbox" id="saveIdChk" style="cursor:pointer"> ID 저장</label>
+    <div id="loginError" style="font-size:12px;color:#c80a1e;min-height:16px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="hideLoginModal()" style="padding:8px 16px;background:#F3F4F6;color:#374151;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+      <button onclick="doLogin()" style="padding:8px 22px;background:#c80a1e;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">로그인</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
+.iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.iloom-nav-logo{font-family:Montserrat,'Noto Sans KR',sans-serif;font-weight:700;font-size:22px;color:#c80a1e;text-decoration:none;padding:14px 0;letter-spacing:-0.5px;line-height:1;display:inline-flex;align-items:center}
+.iloom-nav-logo .iloom-nav-divider{display:inline-block;width:1px;height:14px;background:#E0E0E0;margin:0 10px;vertical-align:middle}
+.iloom-nav-logo .iloom-nav-sub{font-family:'Noto Sans KR',sans-serif;font-weight:500;font-size:13px;color:#333;letter-spacing:0}
+.iloom-nav-tabs{display:flex;gap:0;flex-wrap:wrap}
+.iloom-tab{padding:16px 18px;font-size:13px;color:#666;text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-weight:500;white-space:nowrap}
+.iloom-tab:hover{color:#333}
+.iloom-tab.active{color:#c80a1e;border-bottom-color:#c80a1e;font-weight:700}
+.iloom-tab.placeholder{color:#bbb;cursor:not-allowed}
+.iloom-tab.placeholder:hover{color:#bbb}
+.iloom-tab .badge-soon{font-size:9px;background:#F8F8F8;color:#999;padding:1px 5px;margin-left:4px;border-radius:0;font-weight:500;letter-spacing:0.3px}
+@media(max-width:700px){
+  .iloom-nav-inner{gap:0}
+  .iloom-nav-logo{padding:10px 0;font-size:18px}
+  .iloom-tab{padding:10px 10px;font-size:12px}
+}
+</style>
+<nav class="iloom-nav">
+  <div class="iloom-nav-inner">
+    <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
+    <div class="iloom-nav-tabs">
+<a class="iloom-tab auth-hide" href="../spec-change/">사양변경</a>
+<a class="iloom-tab" href="../outlet/">아울렛 재고</a>
+<a class="iloom-tab auth-hide" href="../coupang/">쿠팡가능수량 계산</a>
+<a class="iloom-tab auth-hide" href="../vn-monitoring/">VN 간단 모니터링</a>
+<a class="iloom-tab auth-hide" href="../shortage-check/">부족분 간단 점검</a>
+<a class="iloom-tab active auth-hide" href="../shortage-forecast/">부족일자 예측</a>
+<a class="iloom-tab auth-hide" href="../discontinued-sku/">단종(단품)</a>
+<a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
+<a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
+<a class="iloom-tab auth-hide" href="../matching/">짝맞추기</a>
+<a class="iloom-tab auth-hide" href="../admin/">관리</a>
+    </div>
+    <div class="nav-auth">
+      <span id="navUserChip" class="nav-user-chip" style="display:none"></span>
+      <button id="btnNavLogin" class="btn-nav-login" onclick="showLoginModal()">로그인</button>
+      <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
+    </div>
+  </div>
+</nav>
+<div class="page-header">
+  <h1>부족일자 예측</h1>
+  <div class="meta">기준: 일룸양지+일룸양지3 합산(BigQuery) + fgdw 확정납기(향후 90일) &nbsp;|&nbsp; 생성: 2026-09-02 15:58</div>
+  <div class="note">잔고 = 현재고 + 입고예정량(날짜 무관, 즉시 도착 가정) − 확정납기 순 누적 미출고 수주량. 사업장재고까지 합쳐 흑자인 건은 제외.</div>
+</div>
+
+<div class="summary-bar">
+  <div class="sum-item"><span class="sum-num" style="color:#c80a1e">123</span><span class="sum-lbl">부족 예상 단품</span></div>
+</div>
+
+<div class="toolbar">
+  <input class="search-box" id="searchBox" type="text" placeholder="단품코드 / 색상 / 단품명 검색..." oninput="filterTable()">
+  <span id="resultCount" style="font-size:12px;color:#6B7280"></span>
+</div>
+
+<div class="result-wrap">
+<table class="result-table" id="mainTable">
+<thead><tr>
+  <th>D-day</th><th>부족예상일</th><th>단품코드</th><th>색상</th><th>단품명칭</th>
+  <th style="text-align:right">현재고</th>
+  <th style="text-align:right">입고예정량</th>
+  <th style="text-align:right">부족예상수량</th>
+  <th style="text-align:right">사업장재고</th>
+  <th>공급처</th>
+</tr></thead>
+<tbody id="tableBody">
+<tr data-code="hcs4006a" data-color="a440p" data-name="폴라아코">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-1</td>
+      <td style="text-align:center">2026-09-03</td>
+      <td style="font-family:Montserrat,monospace">HCS4006A</td>
+      <td style="text-align:center">A440P</td>
+      <td>폴라아코</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>(주)웰시트</td>
+    </tr>
+<tr data-code="hlc0l05eeu" data-color="fk" data-name="사이드테이블 다리">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-1</td>
+      <td style="text-align:center">2026-09-03</td>
+      <td style="font-family:Montserrat,monospace">HLC0L05EEU</td>
+      <td style="text-align:center">FK</td>
+      <td>사이드테이블 다리</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>전한슬라이</td>
+    </tr>
+<tr data-code="ibg20aw00a" data-color="a441d" data-name="쿠시노 벽가드 2000폭(인조)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-1</td>
+      <td style="text-align:center">2026-09-03</td>
+      <td style="font-family:Montserrat,monospace">IBG20AW00A</td>
+      <td style="text-align:center">A441D</td>
+      <td>쿠시노 벽가드 2000폭(인조)</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsse2000fr" data-color="a444d" data-name="링키플러스/로이/이타카네오 헤드쿠션">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-1</td>
+      <td style="text-align:center">2026-09-03</td>
+      <td style="font-family:Montserrat,monospace">HSSE2000FR</td>
+      <td style="text-align:center">A444D</td>
+      <td>링키플러스/로이/이타카네오 헤드쿠션</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hp90y065plr" data-color="nccbgm" data-name="5단서랍몸통(앞판포함) 600폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-2</td>
+      <td style="text-align:center">2026-09-04</td>
+      <td style="font-family:Montserrat,monospace">HP90Y065PLR</td>
+      <td style="text-align:center">NCCBGM</td>
+      <td>5단서랍몸통(앞판포함) 600폭</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="ity00bs01a" data-color="451l" data-name="에가 스위블(글라이드)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-2</td>
+      <td style="text-align:center">2026-09-04</td>
+      <td style="font-family:Montserrat,monospace">ITY00BS01A</td>
+      <td style="text-align:center">451L</td>
+      <td>에가 스위블(글라이드)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>시디즈양지</td>
+    </tr>
+<tr data-code="ivn12cp04a" data-color="3w1" data-name="뉴트 침대 패브릭 파티션 (침대단품용,r)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-2</td>
+      <td style="text-align:center">2026-09-04</td>
+      <td style="font-family:Montserrat,monospace">IVN12CP04A</td>
+      <td style="text-align:center">3W1</td>
+      <td>뉴트 침대 패브릭 파티션 (침대단품용,R)</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ha72s00eea" data-color="a481c" data-name="쿠시노 라운드 스툴">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-5</td>
+      <td style="text-align:center">2026-09-07</td>
+      <td style="font-family:Montserrat,monospace">HA72S00EEA</td>
+      <td style="text-align:center">A481C</td>
+      <td>쿠시노 라운드 스툴</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsse2000fr" data-color="a449p" data-name="링키플러스/로이/이타카네오 헤드쿠션">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-5</td>
+      <td style="text-align:center">2026-09-07</td>
+      <td style="font-family:Montserrat,monospace">HSSE2000FR</td>
+      <td style="text-align:center">A449P</td>
+      <td>링키플러스/로이/이타카네오 헤드쿠션</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ity40an00a" data-color="5m2" data-name="론다 원형 스툴(패브릭)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-5</td>
+      <td style="text-align:center">2026-09-07</td>
+      <td style="font-family:Montserrat,monospace">ITY40AN00A</td>
+      <td style="text-align:center">5M2</td>
+      <td>론다 원형 스툴(패브릭)</td>
+      <td style="text-align:right">6</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y11eaa" data-color="a441d" data-name="침대 헤드보드 1100폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-5</td>
+      <td style="text-align:center">2026-09-07</td>
+      <td style="font-family:Montserrat,monospace">HB72Y11EAA</td>
+      <td style="text-align:center">A441D</td>
+      <td>침대 헤드보드 1100폭</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right">12</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y16eaa" data-color="a4810" data-name="헤드/풋보드 1650폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HB72Y16EAA</td>
+      <td style="text-align:center">A4810</td>
+      <td>헤드/풋보드 1650폭</td>
+      <td style="text-align:right">6</td>
+      <td style="text-align:right">5</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsfa0009a" data-color="a481c" data-name="벤치쿠션 950폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HSFA0009A</td>
+      <td style="text-align:center">A481C</td>
+      <td>벤치쿠션 950폭</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">11</td>
+      <td style="text-align:right" class="num-neg">-4</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsla5063vn" data-color="ivkp" data-name="장난감 수납장 측판">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HSLA5063VN</td>
+      <td style="text-align:center">IVKP</td>
+      <td>장난감 수납장 측판</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hb72y15eba" data-color="a4810" data-name="침대 가드 1500폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HB72Y15EBA</td>
+      <td style="text-align:center">A4810</td>
+      <td>침대 가드 1500폭</td>
+      <td style="text-align:right">29</td>
+      <td style="text-align:right">20</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ity00br00a" data-color="cz" data-name="베라 암체어">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">ITY00BR00A</td>
+      <td style="text-align:center">CZ</td>
+      <td>베라 암체어</td>
+      <td style="text-align:right">83</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-13</td>
+      <td style="text-align:right">0</td>
+      <td>CERUBO</td>
+    </tr>
+<tr data-code="ibg11ap00a" data-color="a444d" data-name="상부 쿠션 가드">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">IBG11AP00A</td>
+      <td style="text-align:center">A444D</td>
+      <td>상부 쿠션 가드</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hvsld1008n" data-color="ivtss" data-name="피넛형 책상상판 800폭(포밍범퍼)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HVSLD1008N</td>
+      <td style="text-align:center">IVTSS</td>
+      <td>피넛형 책상상판 800폭(포밍범퍼)</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">98</td>
+      <td style="text-align:right" class="num-neg">-29</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hb72y05eba" data-color="a482m" data-name="침대 가드 500폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">HB72Y05EBA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 가드 500폭</td>
+      <td style="text-align:right">18</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibg11ap00a" data-color="a443d" data-name="상부 쿠션 가드">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-6</td>
+      <td style="text-align:center">2026-09-08</td>
+      <td style="font-family:Montserrat,monospace">IBG11AP00A</td>
+      <td style="text-align:center">A443D</td>
+      <td>상부 쿠션 가드</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibh15aw01a" data-color="2v2l" data-name="침대 헤드/가드 1500폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-7</td>
+      <td style="text-align:center">2026-09-09</td>
+      <td style="font-family:Montserrat,monospace">IBH15AW01A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>침대 헤드/가드 1500폭(실리콘패브릭)</td>
+      <td style="text-align:right">66</td>
+      <td style="text-align:right">171</td>
+      <td style="text-align:right" class="num-neg">-29</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y16eaa" data-color="a482m" data-name="헤드/풋보드 1650폭">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-7</td>
+      <td style="text-align:center">2026-09-09</td>
+      <td style="font-family:Montserrat,monospace">HB72Y16EAA</td>
+      <td style="text-align:center">A482M</td>
+      <td>헤드/풋보드 1650폭</td>
+      <td style="text-align:right">9</td>
+      <td style="text-align:right">5</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibg10aw01a" data-color="2v2l" data-name="침대 가드 1000폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#c80a1e">D-7</td>
+      <td style="text-align:center">2026-09-09</td>
+      <td style="font-family:Montserrat,monospace">IBG10AW01A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>침대 가드 1000폭(실리콘패브릭)</td>
+      <td style="text-align:right">40</td>
+      <td style="text-align:right">48</td>
+      <td style="text-align:right" class="num-neg">-12</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibg20aw02a" data-color="2v2l" data-name="쿠시노코지 벽가드 2000폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">IBG20AW02A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>쿠시노코지 벽가드 2000폭(실리콘패브릭)</td>
+      <td style="text-align:right">67</td>
+      <td style="text-align:right">94</td>
+      <td style="text-align:right" class="num-neg">-5</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsse2000fr" data-color="a441d" data-name="링키플러스/로이/이타카네오 헤드쿠션">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">HSSE2000FR</td>
+      <td style="text-align:center">A441D</td>
+      <td>링키플러스/로이/이타카네오 헤드쿠션</td>
+      <td style="text-align:right">8</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ihs40cp01a" data-color="ww" data-name="4단 적층장 선반류,뒷판 400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">IHS40CP01A</td>
+      <td style="text-align:center">WW</td>
+      <td>4단 적층장 선반류,뒷판 400폭</td>
+      <td style="text-align:right">30</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼니엠</td>
+    </tr>
+<tr data-code="ity40an00a" data-color="5k1l" data-name="론다 원형 스툴(패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">ITY40AN00A</td>
+      <td style="text-align:center">5K1L</td>
+      <td>론다 원형 스툴(패브릭)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hch7100" data-color="a612a" data-name="휴스턴 인조가죽 의자 (2ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">HCH7100</td>
+      <td style="text-align:center">A612A</td>
+      <td>휴스턴 인조가죽 의자 (2ea)</td>
+      <td style="text-align:right">9</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>KODA LTD</td>
+    </tr>
+<tr data-code="ibc11cp00a" data-color="3w1" data-name="헤드보드 쿠션">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">IBC11CP00A</td>
+      <td style="text-align:center">3W1</td>
+      <td>헤드보드 쿠션</td>
+      <td style="text-align:right">45</td>
+      <td style="text-align:right">13</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibh11aw01a" data-color="2v2l" data-name="침대 헤드보드 1100폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">IBH11AW01A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>침대 헤드보드 1100폭(실리콘패브릭)</td>
+      <td style="text-align:right">209</td>
+      <td style="text-align:right">341</td>
+      <td style="text-align:right" class="num-neg">-6</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hvcs8813lf" data-color="4r2" data-name="밴쿠버 3인 좌 몸통(패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-8</td>
+      <td style="text-align:center">2026-09-10</td>
+      <td style="font-family:Montserrat,monospace">HVCS8813LF</td>
+      <td style="text-align:center">4R2</td>
+      <td>밴쿠버 3인 좌 몸통(패브릭)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남소파</td>
+    </tr>
+<tr data-code="ibp10du00a" data-color="oat" data-name="하부서랍 앞판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBP10DU00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>하부서랍 앞판</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibp10du01a" data-color="oat" data-name="하부서랍 몸통">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBP10DU01A</td>
+      <td style="text-align:center">OAT</td>
+      <td>하부서랍 몸통</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="idv00ed00a" data-color="ww" data-name="집중형 책상 측판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IDV00ED00A</td>
+      <td style="text-align:center">WW</td>
+      <td>집중형 책상 측판</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">2</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="idt11dx00a" data-color="oat" data-name="리프트업 테이블 상판 1100폭 ">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IDT11DX00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>리프트업 테이블 상판 1100폭 </td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충2</td>
+    </tr>
+<tr data-code="ibb11du00a" data-color="oat" data-name="바닥판(ss)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBB11DU00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>바닥판(SS)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibb15du00a" data-color="oat" data-name="바닥판(q)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBB15DU00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>바닥판(Q)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibp11du00a" data-color="oat" data-name="하부서랍 b(ss) 앞판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBP11DU00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>하부서랍 B(SS) 앞판</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="icd90de00a" data-color="nk" data-name="집중형 책상 상부 수납장 (도어 포함)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">ICD90DE00A</td>
+      <td style="text-align:center">NK</td>
+      <td>집중형 책상 상부 수납장 (도어 포함)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="idt90ed00a" data-color="nk" data-name="집중형 책상 상판, 선반류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IDT90ED00A</td>
+      <td style="text-align:center">NK</td>
+      <td>집중형 책상 상판, 선반류</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibg05aw01a" data-color="2v2l" data-name="침대 가드 500폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBG05AW01A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>침대 가드 500폭(실리콘패브릭)</td>
+      <td style="text-align:right">13</td>
+      <td style="text-align:right">11</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibb16du00a" data-color="oat" data-name="바닥판(k)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBB16DU00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>바닥판(K)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibp11du01a" data-color="oat" data-name="하부서랍 b(ss) 몸통">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IBP11DU01A</td>
+      <td style="text-align:center">OAT</td>
+      <td>하부서랍 B(SS) 몸통</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hvch2810fc" data-color="a443d" data-name="링고아이 (고정중심봉,싯브레이크캐스터,발걸이)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">HVCH2810FC</td>
+      <td style="text-align:center">A443D</td>
+      <td>링고아이 (고정중심봉,싯브레이크캐스터,발걸이)</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">2</td>
+      <td>시디즈양지</td>
+    </tr>
+<tr data-code="hb72y09eba" data-color="a4810" data-name="침대 풋보드 900폭(1500폭용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">HB72Y09EBA</td>
+      <td style="text-align:center">A4810</td>
+      <td>침대 풋보드 900폭(1500폭용)</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ivn11cp06a" data-color="3w1" data-name="뉴트 침대 패브릭 파티션 (침대장세트용,l)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IVN11CP06A</td>
+      <td style="text-align:center">3W1</td>
+      <td>뉴트 침대 패브릭 파티션 (침대장세트용,L)</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ivn12cp03a" data-color="3w1" data-name="뉴트 침대 패브릭 파티션 (침대단품용,l)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IVN12CP03A</td>
+      <td style="text-align:center">3W1</td>
+      <td>뉴트 침대 패브릭 파티션 (침대단품용,L)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="icd90de00a" data-color="ww" data-name="집중형 책상 상부 수납장 (도어 포함)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">ICD90DE00A</td>
+      <td style="text-align:center">WW</td>
+      <td>집중형 책상 상부 수납장 (도어 포함)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="idt90ed00a" data-color="ww" data-name="집중형 책상 상판, 선반류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-9</td>
+      <td style="text-align:center">2026-09-11</td>
+      <td style="font-family:Montserrat,monospace">IDT90ED00A</td>
+      <td style="text-align:center">WW</td>
+      <td>집중형 책상 상판, 선반류</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hvch3501khln" data-color="456" data-name="아이핏 (헤드레스트,럼버서포트,bk)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-10</td>
+      <td style="text-align:center">2026-09-12</td>
+      <td style="font-family:Montserrat,monospace">HVCH3501KHLN</td>
+      <td style="text-align:center">456</td>
+      <td>아이핏 (헤드레스트,럼버서포트,BK)</td>
+      <td style="text-align:right">7</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>시디즈양지</td>
+    </tr>
+<tr data-code="hb72y05eba" data-color="a441d" data-name="침대 가드 500폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-10</td>
+      <td style="text-align:center">2026-09-12</td>
+      <td style="font-family:Montserrat,monospace">HB72Y05EBA</td>
+      <td style="text-align:center">A441D</td>
+      <td>침대 가드 500폭</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ivn11cp07a" data-color="3w1" data-name="뉴트 침대 패브릭 파티션 (침대장세트용,r)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-10</td>
+      <td style="text-align:center">2026-09-12</td>
+      <td style="font-family:Montserrat,monospace">IVN11CP07A</td>
+      <td style="text-align:center">3W1</td>
+      <td>뉴트 침대 패브릭 파티션 (침대장세트용,R)</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y15eba" data-color="a482m" data-name="침대 헤드/가드 1500폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-10</td>
+      <td style="text-align:center">2026-09-12</td>
+      <td style="font-family:Montserrat,monospace">HB72Y15EBA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 헤드/가드 1500폭</td>
+      <td style="text-align:right">136</td>
+      <td style="text-align:right">143</td>
+      <td style="text-align:right" class="num-neg">-13</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibg20aw00a" data-color="a482m" data-name="쿠시노 벽가드 2000폭(인조)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-10</td>
+      <td style="text-align:center">2026-09-12</td>
+      <td style="font-family:Montserrat,monospace">IBG20AW00A</td>
+      <td style="text-align:center">A482M</td>
+      <td>쿠시노 벽가드 2000폭(인조)</td>
+      <td style="text-align:right">51</td>
+      <td style="text-align:right">48</td>
+      <td style="text-align:right" class="num-neg">-8</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y10eaa" data-color="a482m" data-name="침대 헤드보드 1000폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-12</td>
+      <td style="text-align:center">2026-09-14</td>
+      <td style="font-family:Montserrat,monospace">HB72Y10EAA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 헤드보드 1000폭</td>
+      <td style="text-align:right">12</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibg11ap00a" data-color="a480v" data-name="상부 쿠션 가드">
+      <td style="text-align:center;font-weight:700;color:#374151">D-12</td>
+      <td style="text-align:center">2026-09-14</td>
+      <td style="font-family:Montserrat,monospace">IBG11AP00A</td>
+      <td style="text-align:center">A480V</td>
+      <td>상부 쿠션 가드</td>
+      <td style="text-align:right">11</td>
+      <td style="text-align:right">7</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y11eaa" data-color="a482m" data-name="침대 헤드보드 1100폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-13</td>
+      <td style="text-align:center">2026-09-15</td>
+      <td style="font-family:Montserrat,monospace">HB72Y11EAA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 헤드보드 1100폭</td>
+      <td style="text-align:right">202</td>
+      <td style="text-align:right">274</td>
+      <td style="text-align:right" class="num-neg">-16</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ibh10aw01a" data-color="2v2l" data-name="침대 헤드보드 1000폭(실리콘패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-13</td>
+      <td style="text-align:center">2026-09-15</td>
+      <td style="font-family:Montserrat,monospace">IBH10AW01A</td>
+      <td style="text-align:center">2V2L</td>
+      <td>침대 헤드보드 1000폭(실리콘패브릭)</td>
+      <td style="text-align:right">11</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsse0100g" data-color="a441d" data-name="쿠션형 침대가드">
+      <td style="text-align:center;font-weight:700;color:#374151">D-14</td>
+      <td style="text-align:center">2026-09-16</td>
+      <td style="font-family:Montserrat,monospace">HSSE0100G</td>
+      <td style="text-align:center">A441D</td>
+      <td>쿠션형 침대가드</td>
+      <td style="text-align:right">31</td>
+      <td style="text-align:right">14</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hvch3501hln" data-color="454a" data-name="아이핏 (헤드레스트,럼버서포트)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-15</td>
+      <td style="text-align:center">2026-09-17</td>
+      <td style="font-family:Montserrat,monospace">HVCH3501HLN</td>
+      <td style="text-align:center">454A</td>
+      <td>아이핏 (헤드레스트,럼버서포트)</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>시디즈양지</td>
+    </tr>
+<tr data-code="hb72y16eaa" data-color="a441d" data-name="헤드/풋보드 1650폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-17</td>
+      <td style="text-align:center">2026-09-19</td>
+      <td style="font-family:Montserrat,monospace">HB72Y16EAA</td>
+      <td style="text-align:center">A441D</td>
+      <td>헤드/풋보드 1650폭</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hb72y15eba" data-color="a441d" data-name="침대 헤드/가드 1500폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-17</td>
+      <td style="text-align:center">2026-09-19</td>
+      <td style="font-family:Montserrat,monospace">HB72Y15EBA</td>
+      <td style="text-align:center">A441D</td>
+      <td>침대 헤드/가드 1500폭</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right">13</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ics14dd00a" data-color="nk" data-name="1400폭 2단 책장 선반류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-17</td>
+      <td style="text-align:center">2026-09-19</td>
+      <td style="font-family:Montserrat,monospace">ICS14DD00A</td>
+      <td style="text-align:center">NK</td>
+      <td>1400폭 2단 책장 선반류</td>
+      <td style="text-align:right">12</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hb72y10eba" data-color="a482m" data-name="침대 가드 1000폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-17</td>
+      <td style="text-align:center">2026-09-19</td>
+      <td style="font-family:Montserrat,monospace">HB72Y10EBA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 가드 1000폭</td>
+      <td style="text-align:right">88</td>
+      <td style="text-align:right">87</td>
+      <td style="text-align:right" class="num-neg">-22</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hsvb0042gna" data-color="brz" data-name="2단 유리도어 400폭(1ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-20</td>
+      <td style="text-align:center">2026-09-22</td>
+      <td style="font-family:Montserrat,monospace">HSVB0042GNA</td>
+      <td style="text-align:center">BRZ</td>
+      <td>2단 유리도어 400폭(1EA)</td>
+      <td style="text-align:right">8</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>대울</td>
+    </tr>
+<tr data-code="hb72y09eba" data-color="a482m" data-name="침대 풋보드 900폭(1500폭용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-21</td>
+      <td style="text-align:center">2026-09-23</td>
+      <td style="font-family:Montserrat,monospace">HB72Y09EBA</td>
+      <td style="text-align:center">A482M</td>
+      <td>침대 풋보드 900폭(1500폭용)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="hvsud0018tl" data-color="ncc" data-name="패밀리테이블 다리">
+      <td style="text-align:center;font-weight:700;color:#374151">D-26</td>
+      <td style="text-align:center">2026-09-28</td>
+      <td style="font-family:Montserrat,monospace">HVSUD0018TL</td>
+      <td style="text-align:center">NCC</td>
+      <td>패밀리테이블 다리</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>베트남목제</td>
+    </tr>
+<tr data-code="ibn00cp02b" data-color="ww" data-name="침대 서랍앞판(가로수납형r)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-26</td>
+      <td style="text-align:center">2026-09-28</td>
+      <td style="font-family:Montserrat,monospace">IBN00CP02B</td>
+      <td style="text-align:center">WW</td>
+      <td>침대 서랍앞판(가로수납형R)</td>
+      <td style="text-align:right">30</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">2</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hsoc0125dbfr" data-color="sp" data-name="5단 책상장 뒷판류 1200폭 (모션용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-26</td>
+      <td style="text-align:center">2026-09-28</td>
+      <td style="font-family:Montserrat,monospace">HSOC0125DBFR</td>
+      <td style="text-align:center">SP</td>
+      <td>5단 책상장 뒷판류 1200폭 (모션용)</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="ics60cp04a" data-color="ww" data-name="4단 적층장 선반류 600폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-26</td>
+      <td style="text-align:center">2026-09-28</td>
+      <td style="font-family:Montserrat,monospace">ICS60CP04A</td>
+      <td style="text-align:center">WW</td>
+      <td>4단 적층장 선반류 600폭</td>
+      <td style="text-align:right">27</td>
+      <td style="text-align:right">20</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼니엠</td>
+    </tr>
+<tr data-code="iwb11cp01a" data-color="ww" data-name="기본형 침대장 뒷판류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-27</td>
+      <td style="text-align:center">2026-09-29</td>
+      <td style="font-family:Montserrat,monospace">IWB11CP01A</td>
+      <td style="text-align:center">WW</td>
+      <td>기본형 침대장 뒷판류</td>
+      <td style="text-align:right">12</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hp61y222el" data-color="soat" data-name="2단 av장 바디 2200폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-27</td>
+      <td style="text-align:center">2026-09-29</td>
+      <td style="font-family:Montserrat,monospace">HP61Y222EL</td>
+      <td style="text-align:center">SOAT</td>
+      <td>2단 AV장 바디 2200폭</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right">19</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="hste0014g" data-color="3w7" data-name="1400폭 침대가드">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">HSTE0014G</td>
+      <td style="text-align:center">3W7</td>
+      <td>1400폭 침대가드</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">5</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>주식회사 인퍼니쳐</td>
+    </tr>
+<tr data-code="ht41g10eee" data-color="sv" data-name="1000폭 led조명(1ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">HT41G10EEE</td>
+      <td style="text-align:center">SV</td>
+      <td>1000폭 LED조명(1EA)</td>
+      <td style="text-align:right">11</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>프리즘</td>
+    </tr>
+<tr data-code="hvcs8811rf" data-color="4r2" data-name="밴쿠버 1인 우 몸통(패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">HVCS8811RF</td>
+      <td style="text-align:center">4R2</td>
+      <td>밴쿠버 1인 우 몸통(패브릭)</td>
+      <td style="text-align:right">5</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남소파</td>
+    </tr>
+<tr data-code="ihv00cp00a" data-color="ww" data-name="2단 사이드장 측판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">IHV00CP00A</td>
+      <td style="text-align:center">WW</td>
+      <td>2단 사이드장 측판</td>
+      <td style="text-align:right">84</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right" class="num-neg">-4</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ivn14cp00a" data-color="ww" data-name="목재 스크린 1400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">IVN14CP00A</td>
+      <td style="text-align:center">WW</td>
+      <td>목재 스크린 1400폭</td>
+      <td style="text-align:right">17</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hskb5000sna" data-color="lu" data-name="옷장손잡이">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">HSKB5000SNA</td>
+      <td style="text-align:center">LU</td>
+      <td>옷장손잡이</td>
+      <td style="text-align:right">30</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>휴먼하이텍</td>
+    </tr>
+<tr data-code="iwd11cp00a" data-color="ww" data-name="침대장 상부도어(580폭 2ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-28</td>
+      <td style="text-align:center">2026-09-30</td>
+      <td style="font-family:Montserrat,monospace">IWD11CP00A</td>
+      <td style="text-align:center">WW</td>
+      <td>침대장 상부도어(580폭 2EA)</td>
+      <td style="text-align:right">63</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hvba40h15eal" data-color="sp" data-name="모던 수납헤드(q)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-29</td>
+      <td style="text-align:center">2026-10-01</td>
+      <td style="font-family:Montserrat,monospace">HVBA40H15EAL</td>
+      <td style="text-align:center">SP</td>
+      <td>모던 수납헤드(Q)</td>
+      <td style="text-align:right">8</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남목제</td>
+    </tr>
+<tr data-code="ics60cp04b" data-color="ww" data-name="4단 적층장 선반류 600폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-29</td>
+      <td style="text-align:center">2026-10-01</td>
+      <td style="font-family:Montserrat,monospace">ICS60CP04B</td>
+      <td style="text-align:center">WW</td>
+      <td>4단 적층장 선반류 600폭</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>퍼니엠</td>
+    </tr>
+<tr data-code="hpec0006v" data-color="gym" data-name="책장캣타워 6단 측판류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-30</td>
+      <td style="text-align:center">2026-10-02</td>
+      <td style="font-family:Montserrat,monospace">HPEC0006V</td>
+      <td style="text-align:center">GYM</td>
+      <td>책장캣타워 6단 측판류</td>
+      <td style="text-align:right">15</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="idf09ad00b" data-color="bnt" data-name="블릭 상판프레임 900폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-30</td>
+      <td style="text-align:center">2026-10-02</td>
+      <td style="font-family:Montserrat,monospace">IDF09AD00B</td>
+      <td style="text-align:center">BNT</td>
+      <td>블릭 상판프레임 900폭</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>CERUBO</td>
+    </tr>
+<tr data-code="hvba40f20pel" data-color="sp" data-name="측판류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-30</td>
+      <td style="text-align:center">2026-10-02</td>
+      <td style="font-family:Montserrat,monospace">HVBA40F20PEL</td>
+      <td style="text-align:center">SP</td>
+      <td>측판류</td>
+      <td style="text-align:right">135</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>베트남목제</td>
+    </tr>
+<tr data-code="hsfc1082hn" data-color="ncc" data-name="2단 깊은책장 선반류 600폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-30</td>
+      <td style="text-align:center">2026-10-02</td>
+      <td style="font-family:Montserrat,monospace">HSFC1082HN</td>
+      <td style="text-align:center">NCC</td>
+      <td>2단 깊은책장 선반류 600폭</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibb11dd00a" data-color="nk" data-name="바닥판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-30</td>
+      <td style="text-align:center">2026-10-02</td>
+      <td style="font-family:Montserrat,monospace">IBB11DD00A</td>
+      <td style="text-align:center">NK</td>
+      <td>바닥판</td>
+      <td style="text-align:right">27</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hskb0121ra" data-color="ivgym" data-name="(벽고정-적층장 제외) 1단 상부도어 1200폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-36</td>
+      <td style="text-align:center">2026-10-08</td>
+      <td style="font-family:Montserrat,monospace">HSKB0121RA</td>
+      <td style="text-align:center">IVGYM</td>
+      <td>(벽고정-적층장 제외) 1단 상부도어 1200폭</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ibp00ap01b" data-color="iv" data-name="하부서랍(확장1ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-38</td>
+      <td style="text-align:center">2026-10-10</td>
+      <td style="font-family:Montserrat,monospace">IBP00AP01B</td>
+      <td style="text-align:center">IV</td>
+      <td>하부서랍(확장1EA)</td>
+      <td style="text-align:right">7</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hc60y161eel" data-color="gym" data-name="1600 콘솔 몸통">
+      <td style="text-align:center;font-weight:700;color:#374151">D-43</td>
+      <td style="text-align:center">2026-10-15</td>
+      <td style="font-family:Montserrat,monospace">HC60Y161EEL</td>
+      <td style="text-align:center">GYM</td>
+      <td>1600 콘솔 몸통</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hc60y161evl" data-color="gym" data-name="1600 콘솔 측판류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-43</td>
+      <td style="text-align:center">2026-10-15</td>
+      <td style="font-family:Montserrat,monospace">HC60Y161EVL</td>
+      <td style="text-align:center">GYM</td>
+      <td>1600 콘솔 측판류</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hc60d161ebl" data-color="ncc" data-name="1600 콘솔 도어류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-43</td>
+      <td style="text-align:center">2026-10-15</td>
+      <td style="font-family:Montserrat,monospace">HC60D161EBL</td>
+      <td style="text-align:center">NCC</td>
+      <td>1600 콘솔 도어류</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hc60y161esl" data-color="ncc" data-name="1600 콘솔 선반류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-43</td>
+      <td style="text-align:center">2026-10-15</td>
+      <td style="font-family:Montserrat,monospace">HC60Y161ESL</td>
+      <td style="text-align:center">NCC</td>
+      <td>1600 콘솔 선반류</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hc60y161ebl" data-color="gym" data-name="1600 콘솔 뒷판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-43</td>
+      <td style="text-align:center">2026-10-15</td>
+      <td style="font-family:Montserrat,monospace">HC60Y161EBL</td>
+      <td style="text-align:center">GYM</td>
+      <td>1600 콘솔 뒷판</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ims15ac03a" data-color="9m2" data-name="데일리 투인원 매트리스 (q)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-45</td>
+      <td style="text-align:center">2026-10-17</td>
+      <td style="font-family:Montserrat,monospace">IMS15AC03A</td>
+      <td style="text-align:center">9M2</td>
+      <td>데일리 투인원 매트리스 (Q)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td></td>
+    </tr>
+<tr data-code="ihd12cp02a" data-color="ww" data-name="1단 상부도어 1200폭 (620*2ea, 모션데스크용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-45</td>
+      <td style="text-align:center">2026-10-17</td>
+      <td style="font-family:Montserrat,monospace">IHD12CP02A</td>
+      <td style="text-align:center">WW</td>
+      <td>1단 상부도어 1200폭 (620*2EA, 모션데스크용)</td>
+      <td style="text-align:right">5</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">2</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hvba40h15eal" data-color="ncc" data-name="모던 수납헤드(q)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-45</td>
+      <td style="text-align:center">2026-10-17</td>
+      <td style="font-family:Montserrat,monospace">HVBA40H15EAL</td>
+      <td style="text-align:center">NCC</td>
+      <td>모던 수납헤드(Q)</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남목제</td>
+    </tr>
+<tr data-code="ht71t17etl" data-color="cz" data-name="다이닝테이블 상판 1700폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-45</td>
+      <td style="text-align:center">2026-10-17</td>
+      <td style="font-family:Montserrat,monospace">HT71T17ETL</td>
+      <td style="text-align:center">CZ</td>
+      <td>다이닝테이블 상판 1700폭</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충2</td>
+    </tr>
+<tr data-code="ihv14cp01b" data-color="ww" data-name="6단 책상장 측판류 1400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-49</td>
+      <td style="text-align:center">2026-10-21</td>
+      <td style="font-family:Montserrat,monospace">IHV14CP01B</td>
+      <td style="text-align:center">WW</td>
+      <td>6단 책상장 측판류 1400폭</td>
+      <td style="text-align:right">81</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ifn00aq04a" data-color="sp" data-name="3단서랍 앞판 (테일러 손잡이용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-54</td>
+      <td style="text-align:center">2026-10-26</td>
+      <td style="font-family:Montserrat,monospace">IFN00AQ04A</td>
+      <td style="text-align:center">SP</td>
+      <td>3단서랍 앞판 (테일러 손잡이용)</td>
+      <td style="text-align:right">24</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ifv00aq23a" data-color="oat" data-name="사이드장 측판류 400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-55</td>
+      <td style="text-align:center">2026-10-27</td>
+      <td style="font-family:Montserrat,monospace">IFV00AQ23A</td>
+      <td style="text-align:center">OAT</td>
+      <td>사이드장 측판류 400폭</td>
+      <td style="text-align:right">10</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ifv00aq23a" data-color="sp" data-name="사이드장 측판류 400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-55</td>
+      <td style="text-align:center">2026-10-27</td>
+      <td style="font-family:Montserrat,monospace">IFV00AQ23A</td>
+      <td style="text-align:center">SP</td>
+      <td>사이드장 측판류 400폭</td>
+      <td style="text-align:right">16</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hvcs8812rf" data-color="4r2" data-name="밴쿠버 1.5인 몸통 우(패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-56</td>
+      <td style="text-align:center">2026-10-28</td>
+      <td style="font-family:Montserrat,monospace">HVCS8812RF</td>
+      <td style="text-align:center">4R2</td>
+      <td>밴쿠버 1.5인 몸통 우(패브릭)</td>
+      <td style="text-align:right">9</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남소파</td>
+    </tr>
+<tr data-code="igm40aq00a" data-color="wcs" data-name="거울도어 400폭 l">
+      <td style="text-align:center;font-weight:700;color:#374151">D-57</td>
+      <td style="text-align:center">2026-10-29</td>
+      <td style="font-family:Montserrat,monospace">IGM40AQ00A</td>
+      <td style="text-align:center">WCS</td>
+      <td>거울도어 400폭 L</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>르누보</td>
+    </tr>
+<tr data-code="hsop1064r" data-color="ww" data-name="600폭 4단 서랍장 몸통">
+      <td style="text-align:center;font-weight:700;color:#374151">D-57</td>
+      <td style="text-align:center">2026-10-29</td>
+      <td style="font-family:Montserrat,monospace">HSOP1064R</td>
+      <td style="text-align:center">WW</td>
+      <td>600폭 4단 서랍장 몸통</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">7</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="idf12ad00a" data-color="cz" data-name="상판프레임 1200폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-58</td>
+      <td style="text-align:center">2026-10-30</td>
+      <td style="font-family:Montserrat,monospace">IDF12AD00A</td>
+      <td style="text-align:center">CZ</td>
+      <td>상판프레임 1200폭</td>
+      <td style="text-align:right">1</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>CERUBO</td>
+    </tr>
+<tr data-code="hsfc0124b" data-color="iv" data-name="4단 책장 뒷판 1200폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">HSFC0124B</td>
+      <td style="text-align:center">IV</td>
+      <td>4단 책장 뒷판 1200폭</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="hsse2800p" data-color="ivgym" data-name="수납형침대 수납헤드">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">HSSE2800P</td>
+      <td style="text-align:center">IVGYM</td>
+      <td>수납형침대 수납헤드</td>
+      <td style="text-align:right">10</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>유진퍼니처</td>
+    </tr>
+<tr data-code="ifs40aq03a" data-color="spv" data-name="2단 행거형 선반류 400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">IFS40AQ03A</td>
+      <td style="text-align:center">SPV</td>
+      <td>2단 행거형 선반류 400폭</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ihd12cp00a" data-color="ww" data-name="(벽고정-ㄱ형책상세트제외) 1단 상부도어 1200폭 (600*2ea)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">IHD12CP00A</td>
+      <td style="text-align:center">WW</td>
+      <td>(벽고정-ㄱ형책상세트제외) 1단 상부도어 1200폭 (600*2EA)</td>
+      <td style="text-align:right">32</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hsfc0084vn" data-color="iv" data-name="4단 책장 측판 800폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">HSFC0084VN</td>
+      <td style="text-align:center">IV</td>
+      <td>4단 책장 측판 800폭</td>
+      <td style="text-align:right">7</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="icd60cp01a" data-color="nk" data-name="(4단이상책장 설치시 벽고정) 뉴트 2단 도어 600폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">ICD60CP01A</td>
+      <td style="text-align:center">NK</td>
+      <td>(4단이상책장 설치시 벽고정) 뉴트 2단 도어 600폭</td>
+      <td style="text-align:right">2</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-3</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="idt14dd00a" data-color="ww" data-name="1400폭 책상 상판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">IDT14DD00A</td>
+      <td style="text-align:center">WW</td>
+      <td>1400폭 책상 상판</td>
+      <td style="text-align:right">34</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ifs40aq05a" data-color="sp" data-name="사이드장 선반류 400폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-59</td>
+      <td style="text-align:center">2026-10-31</td>
+      <td style="font-family:Montserrat,monospace">IFS40AQ05A</td>
+      <td style="text-align:center">SP</td>
+      <td>사이드장 선반류 400폭</td>
+      <td style="text-align:right">26</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ivx00cp01a" data-color="xx" data-name="목재 파티션 철물류(침대단품용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-61</td>
+      <td style="text-align:center">2026-11-02</td>
+      <td style="font-family:Montserrat,monospace">IVX00CP01A</td>
+      <td style="text-align:center">XX</td>
+      <td>목재 파티션 철물류(침대단품용)</td>
+      <td style="text-align:right">10</td>
+      <td style="text-align:right">20</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>송아퍼니처</td>
+    </tr>
+<tr data-code="hvcs8812l" data-color="l845" data-name="밴쿠버 1.5인 몸통 좌(가죽)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-66</td>
+      <td style="text-align:center">2026-11-07</td>
+      <td style="font-family:Montserrat,monospace">HVCS8812L</td>
+      <td style="text-align:center">L845</td>
+      <td>밴쿠버 1.5인 몸통 좌(가죽)</td>
+      <td style="text-align:right">10</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>베트남소파</td>
+    </tr>
+<tr data-code="iss00dg00a" data-color="6a2l" data-name="파베 스툴 (패브릭)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-66</td>
+      <td style="text-align:center">2026-11-07</td>
+      <td style="font-family:Montserrat,monospace">ISS00DG00A</td>
+      <td style="text-align:center">6A2L</td>
+      <td>파베 스툴 (패브릭)</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>TRAYTON</td>
+    </tr>
+<tr data-code="ibb11cp02a" data-color="ww" data-name="침대 바닥판류(가로수납형r)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-66</td>
+      <td style="text-align:center">2026-11-07</td>
+      <td style="font-family:Montserrat,monospace">IBB11CP02A</td>
+      <td style="text-align:center">WW</td>
+      <td>침대 바닥판류(가로수납형R)</td>
+      <td style="text-align:right">45</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">1</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ics00dq00a" data-color="oat" data-name="책장 선반류">
+      <td style="text-align:center;font-weight:700;color:#374151">D-73</td>
+      <td style="text-align:center">2026-11-14</td>
+      <td style="font-family:Montserrat,monospace">ICS00DQ00A</td>
+      <td style="text-align:center">OAT</td>
+      <td>책장 선반류</td>
+      <td style="text-align:right">6</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hskb0082s" data-color="gym" data-name="2단 하부도어 800폭">
+      <td style="text-align:center;font-weight:700;color:#374151">D-76</td>
+      <td style="text-align:center">2026-11-17</td>
+      <td style="font-family:Montserrat,monospace">HSKB0082S</td>
+      <td style="text-align:center">GYM</td>
+      <td>2단 하부도어 800폭</td>
+      <td style="text-align:right">6</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="ifn00aq00a" data-color="sp" data-name="2단서랍 앞판 (테일러 손잡이용)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-76</td>
+      <td style="text-align:center">2026-11-17</td>
+      <td style="font-family:Montserrat,monospace">IFN00AQ00A</td>
+      <td style="text-align:center">SP</td>
+      <td>2단서랍 앞판 (테일러 손잡이용)</td>
+      <td style="text-align:right">18</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>퍼시스충1</td>
+    </tr>
+<tr data-code="hl10y060tl" data-color="gym" data-name="타우 소파테이블 상판">
+      <td style="text-align:center;font-weight:700;color:#374151">D-89</td>
+      <td style="text-align:center">2026-11-30</td>
+      <td style="font-family:Montserrat,monospace">HL10Y060TL</td>
+      <td style="text-align:center">GYM</td>
+      <td>타우 소파테이블 상판</td>
+      <td style="text-align:right">3</td>
+      <td style="text-align:right">4</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>제일퍼니처</td>
+    </tr>
+<tr data-code="igd10by01a" data-color="oatp" data-name="리디 도어 1000폭(3단 서랍)">
+      <td style="text-align:center;font-weight:700;color:#374151">D-89</td>
+      <td style="text-align:center">2026-11-30</td>
+      <td style="font-family:Montserrat,monospace">IGD10BY01A</td>
+      <td style="text-align:center">OATP</td>
+      <td>리디 도어 1000폭(3단 서랍)</td>
+      <td style="text-align:right">8</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-1</td>
+      <td style="text-align:right">0</td>
+      <td>비앤비데코</td>
+    </tr>
+<tr data-code="ivx00aa00a" data-color="ww" data-name="거울 브라켓">
+      <td style="text-align:center;font-weight:700;color:#374151">D-89</td>
+      <td style="text-align:center">2026-11-30</td>
+      <td style="font-family:Montserrat,monospace">IVX00AA00A</td>
+      <td style="text-align:center">WW</td>
+      <td>거울 브라켓</td>
+      <td style="text-align:right">19</td>
+      <td style="text-align:right">0</td>
+      <td style="text-align:right" class="num-neg">-2</td>
+      <td style="text-align:right">0</td>
+      <td>승호정밀</td>
+    </tr>
+</tbody>
+</table>
+</div>
+
+<script>
+function filterTable() {
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  let vis = 0;
+  document.querySelectorAll('#tableBody tr[data-code]').forEach(row => {
+    const match = !q || row.dataset.code.includes(q) || row.dataset.color.includes(q) || row.dataset.name.includes(q);
+    row.style.display = match ? '' : 'none';
+    if (match) vis++;
+  });
+  document.getElementById('resultCount').textContent = q ? `${vis} / 123 건` : '';
+}
+</script>
+<script>
+const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
+const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
+const SS_USER_KEY='iloom_ep_session';
+function getAllowedIds(){try{const s=JSON.parse(localStorage.getItem(LS_EP_IDS_KEY)||'null');if(Array.isArray(s))return[...new Set([...EP_DEFAULT_IDS,...s])];}catch(e){}return[...EP_DEFAULT_IDS];}
+function getLoggedInUser(){return sessionStorage.getItem(SS_USER_KEY)||null;}
+function showLoginModal(){const saved=localStorage.getItem('iloom_saved_ep_id')||'';document.getElementById('loginInput').value=saved;const chk=document.getElementById('saveIdChk');if(chk)chk.checked=!!saved;document.getElementById('loginError').textContent='';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('loginInput').focus(),50);}
+function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
+function doLogin(){const v=document.getElementById('loginInput').value.trim();if(!v){document.getElementById('loginError').textContent='ID를 입력하세요.';return;}if(getAllowedIds().includes(v)){sessionStorage.setItem(SS_USER_KEY,v);const chk=document.getElementById('saveIdChk');if(chk&&chk.checked)localStorage.setItem('iloom_saved_ep_id',v);else localStorage.removeItem('iloom_saved_ep_id');hideLoginModal();updateAuthUI();}else{document.getElementById('loginError').textContent='허용되지 않은 EP ID입니다.';}}
+function doLogout(){sessionStorage.removeItem(SS_USER_KEY);updateAuthUI();}
+function updateAuthUI(){const user=getLoggedInUser();const ov=document.getElementById('authOverlay');if(ov)ov.style.display=user?'none':'flex';const bl=document.getElementById('btnNavLogin');if(bl)bl.style.display=user?'none':'';const bo=document.getElementById('btnNavLogout');if(bo)bo.style.display=user?'':'none';const chip=document.getElementById('navUserChip');if(chip){chip.style.display=user?'':'none';chip.textContent=user?('👤 '+user):'';}document.querySelectorAll('.auth-hide').forEach(el=>{el.style.display=user?'inline':'none';});document.querySelectorAll('.guest-only').forEach(el=>{el.style.display=user?'none':'inline';});}
+updateAuthUI();
+</script>
+</body>
+</html>
