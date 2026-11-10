@@ -106,12 +106,12 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     <a class="iloom-nav-logo" href="../">iloom<span class="iloom-nav-divider"></span><span class="iloom-nav-sub">SCM 대시보드</span></a>
     <div class="iloom-nav-tabs">
 <a class="iloom-tab auth-hide" href="../spec-change/">사양변경</a>
+<a class="iloom-tab active auth-hide" href="../discontinued-sku/">단종(단품)</a>
 <a class="iloom-tab" href="../outlet/">아울렛 재고</a>
 <a class="iloom-tab auth-hide" href="../coupang/">쿠팡가능수량 계산</a>
 <a class="iloom-tab auth-hide" href="../vn-monitoring/">VN 간단 모니터링</a>
 <a class="iloom-tab auth-hide" href="../shortage-check/">부족분 간단 점검</a>
 <a class="iloom-tab auth-hide" href="../shortage-forecast/">부족일자 예측</a>
-<a class="iloom-tab active auth-hide" href="../discontinued-sku/">단종(단품)</a>
 <a class="iloom-tab auth-hide" href="../cumulative/">누적재고관리</a>
 <a class="iloom-tab auth-hide" href="../sku-status/">운영품목 현황</a>
 <a class="iloom-tab auth-hide" href="../matching/">짝맞추기</a>
@@ -124,9 +124,12 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
     </div>
   </div>
 </nav>
-<div class="page-header">
-  <h1>단종(단품) 재고 현황</h1>
-  <div class="meta">기준: BigQuery 최신 기준일자 &nbsp;|&nbsp; 생성: 2026-11-10 09:31</div>
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+  <div>
+    <h1>단종(단품) 재고 현황</h1>
+    <div class="meta">기준: BigQuery 최신 기준일자 &nbsp;|&nbsp; 생성: 2026-11-10 15:56 &nbsp;|&nbsp; 품목추가 내용은 구글시트에 바로 기록되고 화면에는 다음 갱신 때 반영됩니다</div>
+  </div>
+  <button type="button" class="ai-open-btn" onclick="aiOpen()">＋ 품목추가</button>
 </div>
 
 <div class="summary-bar">
@@ -134,7 +137,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
   <div class="sum-item"><span class="sum-num" style="color:#059669">298</span><span class="sum-lbl">재고있음</span></div>
   <div class="sum-item"><span class="sum-num" style="color:#c80a1e">164</span><span class="sum-lbl">재고없음</span></div>
   <div class="sum-sep"></div>
-  <div class="sum-item"><span class="sum-num">4,917</span><span class="sum-lbl">가용재고 합계</span></div>
+  <div class="sum-item"><span class="sum-num">4,911</span><span class="sum-lbl">가용재고 합계</span></div>
   <div class="sum-item"><span class="sum-num">10</span><span class="sum-lbl">구분</span></div>
 </div>
 
@@ -190,14 +193,14 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
           <td style="text-align:right">245</td>
           <td style="text-align:right;font-weight:700;color:#111827">22</td>
           <td style="text-align:right;font-weight:700;color:#111827">223</td>
-          <td style="text-align:right;font-weight:700;color:#111827">1,798</td>
+          <td style="text-align:right;font-weight:700;color:#111827">1,792</td>
         </tr>
 <tr class="gs-row" onclick="scrollToGroup('어바니 시리즈 단종(26년 8월까지 운영)')">
           <td class="tl">어바니 시리즈 단종(26년 8월까지 운영)</td>
           <td style="text-align:right">34</td>
           <td style="text-align:right;font-weight:700;color:#111827">5</td>
           <td style="text-align:right;font-weight:700;color:#111827">29</td>
-          <td style="text-align:right;font-weight:700;color:#111827">372</td>
+          <td style="text-align:right;font-weight:700;color:#111827">369</td>
         </tr>
 <tr class="gs-row" onclick="scrollToGroup('토스카노 프리모 사양 단종의 건 (1400폭, 1800폭 와이드)')">
           <td class="tl">토스카노 프리모 사양 단종의 건 (1400폭, 1800폭 와이드)</td>
@@ -225,7 +228,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
         <td style="text-align:right">462</td>
         <td style="text-align:right">55</td>
         <td style="text-align:right">407</td>
-        <td style="text-align:right">5,085</td>
+        <td style="text-align:right">5,076</td>
       </tr>
     </tbody>
   </table>
@@ -2764,7 +2767,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
             26년 품목정비 2차 단종 품목(26년 10월까지 운영)
             <span class="group-meta">245개 &nbsp;|&nbsp;
               가용재고 있음 148개 &nbsp;|&nbsp;
-              합계 1,705</span>
+              합계 1,702</span>
           </td>
         </tr>
 <tr class="item-row"
@@ -3255,9 +3258,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">GYM</td>
               <td>사이드장 바디</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">5</td>
-              <td style="text-align:right">2</td>
               <td style="text-align:right">4</td>
+              <td style="text-align:right">2</td>
+              <td style="text-align:right">3</td>
               <td style="text-align:right;font-weight:700;color:#d97706">3</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
@@ -3399,9 +3402,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">GY</td>
               <td>사이드장 앞판</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">7</td>
+              <td style="text-align:right">6</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">4</td>
+              <td style="text-align:right">3</td>
               <td style="text-align:right;font-weight:700;color:#d97706">3</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
@@ -3433,8 +3436,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-size:12px;color:#374151">재고소진 단종</td>
               <td style="text-align:right">18</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#059669">16</td>
+              <td style="text-align:right">3</td>
+              <td style="text-align:right;font-weight:700;color:#059669">15</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -3785,8 +3788,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-size:12px;color:#374151">재고소진 단종</td>
               <td style="text-align:right">18</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">9</td>
-              <td style="text-align:right;font-weight:700;color:#d97706">9</td>
+              <td style="text-align:right">10</td>
+              <td style="text-align:right;font-weight:700;color:#d97706">8</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -4327,10 +4330,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">KW</td>
               <td>1000폭 전시형 냉장고장 뒷판류</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">23</td>
+              <td style="text-align:right">24</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">5</td>
-              <td style="text-align:right;font-weight:700;color:#059669">18</td>
+              <td style="text-align:right;font-weight:700;color:#059669">19</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -5913,8 +5916,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-size:12px;color:#374151">재고소진 단종</td>
               <td style="text-align:right">1</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">1</td>
-              <td style="text-align:right;font-weight:700;color:#c80a1e">0</td>
+              <td style="text-align:right">2</td>
+              <td style="text-align:right;font-weight:700;color:#c80a1e">-1</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -5959,10 +5962,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">IV</td>
               <td>좁은책장 이동선반</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">52</td>
+              <td style="text-align:right">51</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#059669">50</td>
+              <td style="text-align:right;font-weight:700;color:#059669">49</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -5975,10 +5978,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">IV</td>
               <td>좁은책장 뒷판 1000폭</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">36</td>
+              <td style="text-align:right">35</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#059669">34</td>
+              <td style="text-align:right;font-weight:700;color:#059669">33</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -6423,10 +6426,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">GG</td>
               <td>다나 1000폭 책상 다리</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">22</td>
+              <td style="text-align:right">21</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#059669">20</td>
+              <td style="text-align:right;font-weight:700;color:#059669">19</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -6583,10 +6586,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">KW</td>
               <td>전시형 냉장고장 측판류</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">31</td>
+              <td style="text-align:right">32</td>
               <td style="text-align:right">1</td>
               <td style="text-align:right">8</td>
-              <td style="text-align:right;font-weight:700;color:#059669">24</td>
+              <td style="text-align:right;font-weight:700;color:#059669">25</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -6599,10 +6602,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">IV</td>
               <td>좁은책장 측판류</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">1</td>
+              <td style="text-align:right">0</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#c80a1e">-1</td>
+              <td style="text-align:right;font-weight:700;color:#c80a1e">-2</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -6631,10 +6634,10 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">IV</td>
               <td>좁은책장 윗판류 1000폭</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">1</td>
+              <td style="text-align:right">0</td>
               <td style="text-align:right">0</td>
               <td style="text-align:right">2</td>
-              <td style="text-align:right;font-weight:700;color:#c80a1e">-1</td>
+              <td style="text-align:right;font-weight:700;color:#c80a1e">-2</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -6647,9 +6650,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">GG</td>
               <td>1000폭 책상 다리서포트</td>
               <td style="font-size:12px;color:#374151">기간만료 단종</td>
-              <td style="text-align:right">22</td>
+              <td style="text-align:right">21</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">3</td>
+              <td style="text-align:right">2</td>
               <td style="text-align:right;font-weight:700;color:#059669">19</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
@@ -6692,7 +6695,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
             어바니 시리즈 단종(26년 8월까지 운영)
             <span class="group-meta">34개 &nbsp;|&nbsp;
               가용재고 있음 21개 &nbsp;|&nbsp;
-              합계 351</span>
+              합계 348</span>
           </td>
         </tr>
 <tr class="item-row"
@@ -6913,8 +6916,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="font-size:12px;color:#374151">영업운영</td>
               <td style="text-align:right">317</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">131</td>
-              <td style="text-align:right;font-weight:700;color:#059669">186</td>
+              <td style="text-align:right">134</td>
+              <td style="text-align:right;font-weight:700;color:#059669">183</td>
               <td style="font-size:11px;color:#9ca3af">-</td>
               <td style="font-size:12px;color:#374151">사용</td>
               <td style="text-align:center;padding:4px 6px"><button onclick="handleDone_disc(this)" style="padding:2px 10px;background:#fff;border:1px solid #D1D5DB;border-radius:4px;font-size:11px;cursor:pointer;color:#6B7280">완료</button></td>
@@ -7391,9 +7394,9 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:#F4F
               <td style="text-align:center">9M2</td>
               <td>데일리 투인원 매트리스 (SS)</td>
               <td style="font-size:12px;color:#374151">자재소진 대상</td>
-              <td style="text-align:right">6</td>
+              <td style="text-align:right">5</td>
               <td style="text-align:right">0</td>
-              <td style="text-align:right">1</td>
+              <td style="text-align:right">0</td>
               <td style="text-align:right;font-weight:700;color:#d97706">5</td>
               <td style="font-size:11px;color:#9ca3af">8</td>
               <td style="font-size:12px;color:#374151">사용</td>
@@ -7831,6 +7834,204 @@ async function hideCompleted() {
 
 hideCompleted();
 </script>
+
+<style>
+.ai-open-btn{padding:7px 16px;background:#c80a1e;color:#fff;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.ai-open-btn:hover{background:#a50818}
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
+.ai-overlay.show{display:flex}
+.ai-modal{background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);width:100%;max-width:820px;font-family:'Noto Sans KR',sans-serif;color:#333}
+.ai-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid #eee}
+.ai-head h3{font-size:16px;font-weight:700}
+.ai-x{background:none;border:none;font-size:20px;color:#999;cursor:pointer;line-height:1}
+.ai-body{padding:18px 22px}
+.ai-note{font-size:12px;color:#888;margin-bottom:14px}
+.ai-common{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:16px}
+.ai-field label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:4px}
+.ai-field label .req,.ai-rows th .req{color:#c80a1e;margin-left:2px}
+.ai-modal input{width:100%;padding:7px 9px;border:1px solid #d1d5db;border-radius:4px;font-size:13px;font-family:inherit;outline:none}
+.ai-modal input:focus{border-color:#c80a1e}
+.ai-modal input.err{border-color:#c80a1e;background:#fff5f5}
+.ai-modal input.code{text-transform:uppercase;font-family:Consolas,monospace}
+.ai-rows-wrap{overflow-x:auto}
+table.ai-rows{width:100%;border-collapse:collapse;font-size:12px}
+.ai-rows th{background:#f8f8f8;font-weight:600;color:#555;padding:7px 6px;text-align:left;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+.ai-rows td{padding:5px 4px;border-bottom:1px solid #f3f4f6}
+.ai-rows td.no{color:#aaa;text-align:center;width:28px}
+.ai-del{background:none;border:none;color:#bbb;font-size:15px;cursor:pointer;padding:0 6px}
+.ai-del:hover{color:#c80a1e}
+.ai-addrow{margin-top:8px;background:#fff;border:1px dashed #bbb;color:#666;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit}
+.ai-addrow:hover{border-color:#c80a1e;color:#c80a1e}
+.ai-msg{margin-top:14px;font-size:13px;padding:10px 12px;border-radius:4px;display:none;white-space:pre-line}
+.ai-msg.show{display:block}
+.ai-msg.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.ai-msg.bad{background:#fff5f5;color:#b91c1c;border:1px solid #fecaca}
+.ai-msg.info{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.ai-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #eee;background:#fafafa;border-radius:0 0 10px 10px}
+.ai-foot button{padding:8px 18px;border-radius:5px;font-size:13px;cursor:pointer;font-family:inherit}
+.ai-cancel{background:#fff;border:1px solid #d1d5db;color:#374151}
+.ai-submit{background:#c80a1e;border:none;color:#fff;font-weight:700}
+.ai-submit:disabled{background:#e5a3aa;cursor:wait}
+</style>
+<div class="ai-overlay" id="aiOverlay" onclick="if(event.target===this)aiClose()">
+  <div class="ai-modal" role="dialog" aria-modal="true" aria-labelledby="aiTitle">
+    <div class="ai-head"><h3 id="aiTitle"></h3><button class="ai-x" onclick="aiClose()" aria-label="닫기">×</button></div>
+    <div class="ai-body">
+      <div class="ai-note" id="aiNote"></div>
+      <div class="ai-common" id="aiCommon"></div>
+      <div class="ai-rows-wrap"><table class="ai-rows"><thead id="aiRowsHead"></thead><tbody id="aiRowsBody"></tbody></table></div>
+      <button type="button" class="ai-addrow" onclick="aiAddRow()">＋ 행 추가</button>
+      <div class="ai-msg" id="aiMsg"></div>
+    </div>
+    <div class="ai-foot">
+      <button type="button" class="ai-cancel" onclick="aiClose()">닫기</button>
+      <button type="button" class="ai-submit" id="aiSubmit" onclick="aiSubmit()">구글시트에 등록</button>
+    </div>
+  </div>
+</div>
+<datalist id="aiGroupList"></datalist>
+<script>
+(function(){
+const CFG = {"sheet": "단종(단품)", "title": "단종(단품) 품목추가", "common": [["구분", "구분", "예) 업모션 대체단종", "group"]], "rows": [["단품코드", "단품코드", "IDT18AZ00A", "code"], ["색상", "색상", "SP", "code"]], "note": "같은 구분의 단품은 행을 추가해 한 번에 등록하세요. 발의년도(M열)는 올해로 자동 입력됩니다."};
+const URL_ = "https://script.google.com/macros/s/AKfycbxD11tQrCBou3cjIVfrvaS1HA3kmzn9TuKmX6FImU2EGYyAKQ9WdfIRSSwjWrF00uaTBQ/exec";
+const GROUPS = ["26년 품목정비 1차 단종 품목", "26년 품목정비 2차 단종 품목(26년 10월까지 운영)", "데일리 투인원 매트리스 단종", "모드 파티션, 전용 악세서리 단종", "뷰스크 화장대 단종", "어바니 시리즈 단종(26년 8월까지 운영)", "업모션 대체단종", "일룸 LDK 품목 사양 단종(다이닝 3종+펫 1종)", "토스카노 프리모 사양 단종의 건 (1400폭, 1800폭 와이드)", "학생방 슬라이딩 거울도어 단종"];
+const MAX_ROWS = 50;
+const $ = id => document.getElementById(id);
+const escA = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+function input(f, extra){
+  const [key, label, ph, kind] = f;
+  const cls = kind === 'code' ? 'code' : '';
+  const list = kind === 'group' ? ' list="aiGroupList"' : '';
+  const type = kind === 'url' ? 'url' : 'text';
+  return `<input type="${type}" class="${cls}" data-key="${escA(key)}" data-kind="${kind}" placeholder="${escA(ph)}"${list} autocomplete="off" ${extra || ''}>`;
+}
+
+function build(){
+  $('aiTitle').textContent = CFG.title;
+  $('aiNote').textContent = '모든 칸이 필수입니다. ' + CFG.note;
+  $('aiCommon').innerHTML = CFG.common.map(f =>
+    `<div class="ai-field"><label>${escA(f[1])}<span class="req">*</span></label>${input(f)}</div>`).join('');
+  $('aiRowsHead').innerHTML = '<tr><th>#</th>' + CFG.rows.map(f => `<th>${escA(f[1])}<span class="req">*</span></th>`).join('') + '<th></th></tr>';
+  $('aiGroupList').innerHTML = GROUPS.map(g => `<option value="${escA(g)}">`).join('');
+  $('aiRowsBody').innerHTML = '';
+  aiAddRow();
+  msg('', '');
+}
+
+function renumber(){
+  [...$('aiRowsBody').rows].forEach((tr, i) => { tr.cells[0].textContent = i + 1; });
+}
+
+window.aiAddRow = function(){
+  const body = $('aiRowsBody');
+  if(body.rows.length >= MAX_ROWS){ msg('bad', `한 번에 최대 ${MAX_ROWS}행까지 등록할 수 있습니다.`); return; }
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td class="no"></td>' + CFG.rows.map(f => `<td>${input(f)}</td>`).join('') +
+    '<td><button type="button" class="ai-del" title="행 삭제">✕</button></td>';
+  tr.querySelector('.ai-del').onclick = () => { if(body.rows.length > 1){ tr.remove(); renumber(); } };
+  body.appendChild(tr);
+  renumber();
+  const first = tr.querySelector('input');
+  if(first && body.rows.length > 1) first.focus();
+};
+
+function msg(kind, text){
+  const el = $('aiMsg');
+  el.className = 'ai-msg' + (kind ? ' show ' + kind : '');
+  el.textContent = text || '';
+}
+
+function val(inp){
+  let v = (inp.value || '').trim();
+  if(inp.dataset.kind === 'code') v = v.toUpperCase();
+  return v;
+}
+
+function collect(){
+  const errs = [];
+  document.querySelectorAll('#aiOverlay input.err').forEach(i => i.classList.remove('err'));
+  const bad = (inp, m) => { inp.classList.add('err'); errs.push(m); };
+
+  const common = {};
+  $('aiCommon').querySelectorAll('input').forEach(inp => {
+    const v = val(inp), key = inp.dataset.key;
+    if(!v) bad(inp, `${key}을(를) 입력하세요.`);
+    else if(inp.dataset.kind === 'url' && !/^https?:\/\/\S+$/i.test(v)) bad(inp, '문서링크는 http:// 또는 https:// 로 시작하는 주소여야 합니다.');
+    common[key] = v;
+  });
+
+  const rows = [], seen = new Set();
+  [...$('aiRowsBody').rows].forEach((tr, i) => {
+    const inputs = [...tr.querySelectorAll('input')];
+    const r = {};
+    inputs.forEach(inp => { r[inp.dataset.key] = val(inp); });
+    if(inputs.every(inp => !val(inp))) return;           // 완전히 빈 행은 무시
+    inputs.forEach(inp => {
+      const v = val(inp);
+      if(!v) bad(inp, `${i + 1}행: ${inp.dataset.key}을(를) 입력하세요.`);
+      else if(inp.dataset.kind === 'code' && !/^[A-Z0-9\-_.]+$/.test(v)) bad(inp, `${i + 1}행: ${inp.dataset.key}에는 영문·숫자만 입력하세요.`);
+    });
+    const k = CFG.sheet === '사양변경' ? [r['구사양코드'], r['신사양코드'], r['색상']].join('|') : [r['단품코드'], r['색상']].join('|');
+    if(seen.has(k)) { inputs.forEach(inp => inp.classList.add('err')); errs.push(`${i + 1}행: 위 행과 같은 코드·색상입니다.`); }
+    seen.add(k);
+    rows.push(r);
+  });
+  if(rows.length === 0) errs.push('품목을 1행 이상 입력하세요.');
+  return {errs: [...new Set(errs)], common, rows};
+}
+
+window.aiOpen = function(){
+  build();
+  $('aiOverlay').classList.add('show');
+  const first = $('aiCommon').querySelector('input');
+  if(first) setTimeout(() => first.focus(), 30);
+};
+window.aiClose = function(){
+  if($('aiSubmit').disabled) return;
+  $('aiOverlay').classList.remove('show');
+};
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('aiOverlay').classList.contains('show')) aiClose();
+});
+
+window.aiSubmit = async function(){
+  const {errs, common, rows} = collect();
+  if(errs.length){ msg('bad', errs.slice(0, 6).join('\n') + (errs.length > 6 ? `\n… 외 ${errs.length - 6}건` : '')); return; }
+  const summary = rows.map(r => CFG.sheet === '사양변경'
+      ? `${r['구사양코드']} → ${r['신사양코드']} (${r['색상']})` : `${r['단품코드']} (${r['색상']})`);
+  const head = CFG.sheet === '사양변경' ? common['사양변경내용'] : common['구분'];
+  if(!confirm(`[${CFG.sheet}] 시트에 ${rows.length}행을 등록합니다.\n\n${head}\n` +
+      summary.slice(0, 10).map(s => ' · ' + s).join('\n') + (summary.length > 10 ? `\n … 외 ${summary.length - 10}행` : ''))) return;
+
+  const btn = $('aiSubmit');
+  btn.disabled = true; btn.textContent = '등록 중...';
+  msg('info', '구글시트에 등록하는 중입니다...');
+  let user = '';
+  try { user = sessionStorage.getItem('iloom_ep_session') || ''; } catch(e) {}
+  const payload = JSON.stringify({action: 'appendRows', sheet: CFG.sheet, common, rows, user});
+  try {
+    // text/plain 단순 요청 → preflight 없이 Apps Script 응답(JSON)을 읽을 수 있다
+    const resp = await fetch(URL_, {method: 'POST', body: payload});
+    let res = null;
+    try { res = JSON.parse(await resp.text()); } catch(e) {}
+    if(res && res.status === 'ok'){
+      msg('ok', `✓ ${res.added}행 등록 완료 (시트 ${res.rows[0]}~${res.rows[res.rows.length - 1]}행)\n페이지 목록에는 다음 갱신 때 반영됩니다.`);
+      $('aiRowsBody').innerHTML = ''; aiAddRow();
+    } else if(res && res.status === 'error'){
+      msg('bad', '등록 실패: ' + (res.msg || '알 수 없는 오류') + (res.dups ? '\n이미 시트에 있는 항목: ' + res.dups.join(', ') : ''));
+    } else {
+      msg('info', '등록 요청은 보냈지만 결과를 확인하지 못했습니다. 구글시트 최하단을 확인해 주세요.');
+    }
+  } catch(e){
+    msg('bad', '등록 요청 실패: ' + e.message + '\n네트워크 상태를 확인한 뒤 다시 시도하세요.');
+  } finally {
+    btn.disabled = false; btn.textContent = '구글시트에 등록';
+  }
+};
+})();
+</script>
+
 <script>
 const EP_DEFAULT_IDS=['k94rainy','wonsuk_kim','nakwon_choi'];
 const LS_EP_IDS_KEY='iloom_allowed_ep_ids';
