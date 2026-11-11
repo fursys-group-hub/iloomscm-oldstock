@@ -281,6 +281,7 @@ th.iloom-col-filter-active::after {
   </div>
 </div>
 
+
 <style>
 .iloom-nav{position:sticky;top:0;background:#fff;border-bottom:1px solid #E0E0E0;z-index:1000;font-family:'Noto Sans KR','Montserrat',sans-serif}
 .iloom-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
@@ -322,6 +323,337 @@ th.iloom-col-filter-active::after {
       <button id="btnNavLogout" class="btn-nav-logout" style="display:none" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
+<script>/*tbe:v1*/
+(function(){
+if(window.__tbeLoaded) return; window.__tbeLoaded = true;
+
+var css = document.createElement('style');
+css.textContent =
+  'th.tbe-s{cursor:pointer;user-select:none}' +
+  'th.tbe-s:hover{filter:brightness(.96)}' +
+  'th.tbe-s .tbe-i{display:inline-block;margin-left:4px;font-size:9px;opacity:.35;vertical-align:1px;font-weight:400}' +
+  'th.tbe-s:hover .tbe-i{opacity:.7}' +
+  'th.tbe-s.tbe-asc .tbe-i,th.tbe-s.tbe-desc .tbe-i{opacity:1;color:#c80a1e;font-weight:700}' +
+  'th.tbe-stick{position:sticky!important;z-index:3}' +
+  'th.tbe-float{position:relative!important;top:auto!important;z-index:3;will-change:transform}' +
+  'th.tbe-float.tbe-on{box-shadow:0 2px 3px rgba(0,0,0,.10)}';
+document.head.appendChild(css);
+
+var BOUNDARY = /(^|[\s_-])(group|grp-head|group-header|subtotal|total|sum|sec|section|filter|prevcmp|bl-new|bl-gone|bl-sub|divider)([\s_-]|$)/i;
+var ATTACHED = /(^|[\s_-])(det|detail|detail-row|cp-detail-row|child|expand)([\s_-]|$)/i;
+
+function headRows(t){
+  if(t.tHead && t.tHead.rows.length) return Array.prototype.slice.call(t.tHead.rows);
+  var out = [], rows = t.rows;
+  for(var i = 0; i < rows.length; i++){
+    var r = rows[i], cells = r.cells, allTh = cells.length > 0;
+    for(var j = 0; j < cells.length; j++) if(cells[j].tagName !== 'TH'){ allTh = false; break; }
+    if(!allTh) break;
+    out.push(r);
+  }
+  return out;
+}
+
+// 다단 헤더 → 각 th 의 열 위치. leaf = 맨 아래 단까지 내려오는 단일 열 th
+function headGrid(rows){
+  var occ = [], leaf = [], ncol = 0;
+  for(var ri = 0; ri < rows.length; ri++){
+    occ[ri] = occ[ri] || [];
+    var c = 0, cells = rows[ri].cells;
+    for(var k = 0; k < cells.length; k++){
+      var th = cells[k];
+      while(occ[ri][c]) c++;
+      var cs = th.colSpan || 1, rs = th.rowSpan || 1;
+      for(var a = 0; a < rs; a++){
+        occ[ri + a] = occ[ri + a] || [];
+        for(var b = 0; b < cs; b++) occ[ri + a][c + b] = true;
+      }
+      if(cs === 1 && ri + rs >= rows.length) leaf.push({th: th, col: c});
+      c += cs; if(c > ncol) ncol = c;
+    }
+  }
+  return {leaf: leaf, ncol: ncol};
+}
+
+function bodyRows(t, hrows){
+  var out = [];
+  for(var i = 0; i < t.tBodies.length; i++){
+    var rs = t.tBodies[i].rows;
+    for(var j = 0; j < rs.length; j++) if(hrows.indexOf(rs[j]) < 0) out.push(rs[j]);
+  }
+  return out;
+}
+
+function cellAt(row, col){
+  var c = 0, cells = row.cells;
+  for(var i = 0; i < cells.length; i++){
+    var cs = cells[i].colSpan || 1;
+    if(col >= c && col < c + cs) return cs === 1 ? cells[i] : null;
+    c += cs;
+  }
+  return null;
+}
+
+function rowSpanWidth(row){
+  var w = 0; for(var i = 0; i < row.cells.length; i++) w += row.cells[i].colSpan || 1; return w;
+}
+
+function kind(row, ncol){
+  var cls = (row.className || '') + ' ' + (row.id || '');
+  if(ATTACHED.test(cls) || /^(cp-)?det-/.test(row.id || '')) return 'att';
+  if(BOUNDARY.test(row.className || '')) return 'fix';
+  if(row.parentNode && row.parentNode.tagName === 'TFOOT') return 'fix';
+  for(var i = 0; i < row.cells.length; i++) if((row.cells[i].colSpan || 1) > 1) return 'fix';
+  if(ncol && rowSpanWidth(row) < ncol - 0) return row.cells.length <= 1 ? 'fix' : 'row';
+  return 'row';
+}
+
+function valOf(cell){
+  if(!cell) return null;
+  var inp = cell.querySelector('input,select,textarea');
+  var s = (inp ? inp.value : (cell.getAttribute('data-sort') || cell.textContent || '')).replace(/\s+/g, ' ').trim();
+  if(s === '' || s === '-' || s === '—' || s === '·') return null;
+  var neg = /▼/.test(s);
+  var n = s.replace(/[▲▼₩,%\s]|원|개|건|EA|ea/g, '').replace(/^\+/, '');
+  if(/^-?\d+(\.\d+)?$/.test(n)){ var v = parseFloat(n); return neg && v > 0 ? -v : v; }
+  return s;
+}
+
+var collator = (window.Intl && Intl.Collator) ? new Intl.Collator('ko', {numeric: true, sensitivity: 'base'}) : null;
+function cmpStr(a, b){ return collator ? collator.compare(a, b) : String(a).localeCompare(String(b), 'ko'); }
+
+function snapshot(t){ return bodyRows(t, t.__tbeH || []); }
+function sameRows(a, b){
+  if(!a || a.length !== b.length) return false;
+  for(var i = 0; i < a.length; i++) if(a[i] !== b[i]) return false;
+  return true;
+}
+
+function setInd(t, th, dir){
+  var ths = t.__tbeLeaf || [];
+  for(var i = 0; i < ths.length; i++){
+    var h = ths[i].th; h.classList.remove('tbe-asc', 'tbe-desc');
+    var ind = h.querySelector('.tbe-i'); if(ind) ind.textContent = '⇅';
+  }
+  if(th && dir){
+    th.classList.add(dir > 0 ? 'tbe-asc' : 'tbe-desc');
+    var i2 = th.querySelector('.tbe-i'); if(i2) i2.textContent = dir > 0 ? '▲' : '▼';
+  }
+}
+
+function reset(t){
+  t.__tbeState = null; t.__tbeLast = null;
+  setInd(t, null, 0);
+}
+
+function sortTable(t, col, th){
+  var st = t.__tbeState;
+  var dir = (!st || st.col !== col) ? 1 : (st.dir === 1 ? -1 : 0);
+  var rows = snapshot(t);
+  if(!st || !sameRows(t.__tbeLast, rows)){
+    for(var i = 0; i < rows.length; i++) rows[i].__tbeIdx = i;     // 원래 순서 기록
+  }
+  var ncol = t.__tbeN;
+  // tbody 별로 블록(본 행 + 붙은 상세 행) 구성, 고정 행으로 구간 분리
+  for(var bi = 0; bi < t.tBodies.length; bi++){
+    var tb = t.tBodies[bi];
+    var list = Array.prototype.filter.call(tb.rows, function(r){ return (t.__tbeH || []).indexOf(r) < 0; });
+    if(!list.length) continue;
+    var out = [], seg = [], cur = null;
+    var flush = function(){
+      if(seg.length > 1){
+        seg.sort(function(a, b){
+          if(dir === 0) return a.idx - b.idx;
+          var va = a.v, vb = b.v;
+          if(va === null && vb === null) return a.idx - b.idx;
+          if(va === null) return 1;
+          if(vb === null) return -1;
+          var r;
+          if(typeof va === 'number' && typeof vb === 'number') r = va - vb;
+          else r = cmpStr(String(va), String(vb));
+          return r === 0 ? a.idx - b.idx : r * dir;
+        });
+      }
+      for(var s = 0; s < seg.length; s++) out.push.apply(out, seg[s].rows);
+      seg = []; cur = null;
+    };
+    for(var j = 0; j < list.length; j++){
+      var r = list[j], k = kind(r, ncol);
+      if(k === 'att' && cur){ cur.rows.push(r); continue; }
+      if(k === 'fix' || k === 'att'){ flush(); out.push(r); continue; }
+      cur = {rows: [r], v: valOf(cellAt(r, col)), idx: r.__tbeIdx == null ? 1e9 + j : r.__tbeIdx};
+      seg.push(cur);
+    }
+    flush();
+    var frag = document.createDocumentFragment();
+    for(var o = 0; o < out.length; o++) frag.appendChild(out[o]);
+    tb.appendChild(frag);
+  }
+  t.__tbeState = dir ? {col: col, dir: dir} : null;
+  t.__tbeLast = snapshot(t);
+  setInd(t, th, dir);
+}
+
+function sortable(t){
+  if(t.hasAttribute('data-no-sort') || t.classList.contains('ai-rows')) return false;
+  if(t.closest && t.closest('#aiOverlay')) return false;
+  // 본문에 여러 행을 합친 칸(rowspan)이 있는 피벗형 표는 행을 옮기면 모양이 깨지므로 정렬 제외
+  for(var b = 0; b < t.tBodies.length; b++){
+    var rs = t.tBodies[b].rows;
+    for(var x = 0; x < rs.length; x++) for(var y = 0; y < rs[x].cells.length; y++) if((rs[x].cells[y].rowSpan || 1) > 1) return false;
+  }
+  var hs = t.__tbeH;
+  for(var i = 0; i < hs.length; i++){
+    var cs = hs[i].cells;
+    for(var j = 0; j < cs.length; j++){
+      if(cs[j].hasAttribute('onclick') || cs[j].querySelector('.th-label,[onclick]')) return false;
+    }
+  }
+  return true;
+}
+
+function enhance(t){
+  if(t.__tbe) return;
+  var hs = headRows(t);
+  if(!hs.length) return;
+  t.__tbe = true; t.__tbeH = hs;
+  var g = headGrid(hs); t.__tbeN = g.ncol; t.__tbeLeaf = [];
+  t.__tbeNested = !!(t.parentNode && t.parentNode.closest && t.parentNode.closest('table'));
+  if(sortable(t) && bodyRows(t, hs).length > 1){
+    g.leaf.forEach(function(L){
+      if(L.th.querySelector('input,select,button,textarea')) return;
+      if(!L.th.textContent.replace(/\s+/g, '')) return;            // 제목 없는 열(펼침 버튼 등)은 제외
+      L.th.classList.add('tbe-s');
+      L.th.title = L.th.title || '클릭: 오름차순 / 내림차순 / 원래 순서';
+      var ind = document.createElement('span'); ind.className = 'tbe-i'; ind.textContent = '⇅';
+      L.th.appendChild(ind);
+      L.th.addEventListener('click', function(ev){
+        if(ev.target.closest('a,input,select,button')) return;
+        sortTable(t, L.col, L.th);
+      });
+      t.__tbeLeaf.push(L);
+    });
+  }
+}
+
+// ── 행고정 오프셋 ─────────────────────────────────────────────
+function navH(){
+  var n = document.querySelector('.iloom-nav');
+  if(!n) return 0;
+  var cs = getComputedStyle(n);
+  return (cs.position === 'sticky' || cs.position === 'fixed') ? n.getBoundingClientRect().height : 0;
+}
+
+// sticky 를 막는 가장 가까운 스크롤 컨테이너. overflow:hidden(둥근 모서리 자르기용 등)은
+// 스크롤이 없으면 overflow:clip 으로 바꿔 잘림은 유지하고 sticky 는 살린다.
+function scrollBox(t){
+  for(var el = t; el && el !== document.body && el !== document.documentElement; el = el.parentElement){
+    var cs = getComputedStyle(el);
+    var ov = cs.overflowX + ' ' + cs.overflowY;
+    if(/(auto|scroll|overlay)/.test(ov)) return el === t ? null : el;
+    if(/hidden/.test(ov)){
+      if(el.scrollHeight <= el.clientHeight + 1 && el.scrollWidth <= el.clientWidth + 1){ el.style.overflow = 'clip'; continue; }
+      return el === t ? null : el;
+    }
+  }
+  return null;
+}
+
+function bgOf(th){
+  for(var el = th; el && el !== document.documentElement; el = el.parentElement){
+    var b = getComputedStyle(el).backgroundColor;
+    if(b && b !== 'transparent' && !/rgba\(\s*0,\s*0,\s*0,\s*0\s*\)/.test(b)) return b;
+  }
+  return '#fff';
+}
+
+// 모드 결정:
+//   stick : 표가 페이지에 바로 있거나 자체 세로 스크롤 박스 안 → CSS sticky (top = nav 높이 또는 0)
+//   float : 가로 스크롤만 있는 박스 안(sticky 불가) → 스크롤 시 헤더를 translateY 로 nav 아래까지 밀어줌
+function setMode(t, mode){
+  if(t.__tbeMode === mode) return;
+  t.__tbeMode = mode;
+  t.__tbeH.forEach(function(r){
+    for(var i = 0; i < r.cells.length; i++){
+      var c = r.cells[i];
+      c.classList.toggle('tbe-stick', mode === 'stick');
+      c.classList.toggle('tbe-float', mode === 'float');
+      if(mode !== 'float'){ c.style.transform = ''; c.classList.remove('tbe-on'); }
+      if(mode !== 'stick') c.style.top = '';
+    }
+  });
+}
+
+function layout(t){
+  if(!t.__tbe || t.__tbeNested || !t.offsetParent) return;
+  var base = navH(), mode = 'stick';
+  var box = scrollBox(t);
+  if(box){
+    var csb = getComputedStyle(box);
+    var vScroll = /(auto|scroll|overlay)/.test(csb.overflowY) && box.scrollHeight > box.clientHeight + 1;
+    if(vScroll) base = 0; else mode = 'float';
+  }
+  setMode(t, mode);
+  var top = base, hh = 0;
+  t.__tbeH.forEach(function(r){
+    var h = r.getBoundingClientRect().height;
+    for(var i = 0; i < r.cells.length; i++){
+      var c = r.cells[i];
+      if(mode === 'stick') c.style.top = top + 'px';
+      if(!c.__tbeBg){ c.style.backgroundColor = bgOf(c); c.__tbeBg = true; }
+    }
+    top += h; hh += h;
+  });
+  t.__tbeHH = hh;
+}
+
+var raf = 0;
+function floatAll(){
+  raf = 0;
+  var nh = navH();
+  for(var i = 0; i < tables.length; i++){
+    var t = tables[i];
+    if(t.__tbeMode !== 'float' || !t.offsetParent) continue;
+    var r = t.getBoundingClientRect();
+    var maxOff = r.height - (t.__tbeHH || 0) - 24;
+    var off = Math.max(0, Math.min(nh - r.top, maxOff));
+    var tf = off > 0 ? 'translateY(' + off + 'px)' : '';
+    t.__tbeH.forEach(function(row){
+      for(var k = 0; k < row.cells.length; k++){
+        var c = row.cells[k];
+        if(c.style.transform !== tf){ c.style.transform = tf; c.classList.toggle('tbe-on', off > 0); }
+      }
+    });
+  }
+}
+function onScroll(){ floatAll(); }   // 대상 표가 몇 개뿐이라 스크롤 중 바로 계산 (프레임 지연 없음)
+
+var tables = [];
+function scan(){
+  var all = document.querySelectorAll('table');
+  for(var i = 0; i < all.length; i++){
+    var t = all[i];
+    if(!t.__tbe){ enhance(t); if(t.__tbe) tables.push(t); }
+  }
+  tables = tables.filter(function(t){ return t.isConnected; });
+  tables.forEach(function(t){
+    if(t.__tbeState && !sameRows(t.__tbeLast, snapshot(t))) reset(t);  // 페이지가 다시 그림 → 정렬 표시 초기화
+    layout(t);
+  });
+  floatAll();
+}
+
+var timer = null;
+function later(ms){ clearTimeout(timer); timer = setTimeout(scan, ms || 80); }
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ scan(); });
+else scan();
+window.addEventListener('load', function(){ later(50); });
+window.addEventListener('resize', function(){ later(150); });
+document.addEventListener('scroll', onScroll, {passive: true, capture: true});
+document.addEventListener('click', function(){ later(60); }, true);
+new MutationObserver(function(){ later(120); }).observe(document.documentElement, {childList: true, subtree: true});
+})();
+</script>
 </nav>
 
 
